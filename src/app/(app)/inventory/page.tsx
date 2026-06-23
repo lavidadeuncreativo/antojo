@@ -5,7 +5,7 @@ import { useGlobalState } from "@/lib/state";
 import { Plus, X, Check, AlertTriangle, History } from "lucide-react";
 
 export default function InventarioPage() {
-  const { inventory, movements, addInventoryMovement, addPurchase } = useGlobalState();
+  const { inventory, movements, addInventoryMovement } = useGlobalState();
 
   const [activeTab, setActiveTab] = useState<"items" | "movements">("items");
   const [modalOpen, setModalOpen] = useState(false);
@@ -51,44 +51,46 @@ export default function InventarioPage() {
   const alertItems = inventory.filter((item) => item.stock <= item.min_stock);
 
   return (
-    <div className="space-y-6 text-left select-none">
+    <div className="space-y-8 text-left select-none max-w-7xl mx-auto">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/5">
+      <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
         <div>
-          <h2 className="text-xl font-bold text-white">Gestión de Inventario</h2>
-          <p className="text-xs text-[var(--color-text-muted)] mt-1">
+          <h1 className="text-3xl font-black tracking-tighter text-black uppercase">
+            ALMACÉN E <span className="font-light italic text-[var(--color-text-secondary)]">inventario.</span>
+          </h1>
+          <p className="text-xs text-[var(--color-text-secondary)] mt-1 font-medium">
             Supervisa el stock de materia prima y audita sus movimientos de entrada/salida.
           </p>
         </div>
 
         <button onClick={() => setModalOpen(true)} className="btn btn-primary self-start">
-          <Plus size={16} />
+          <Plus size={14} />
           Ajustar Existencia
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-white/5">
+      <div className="flex border-b border-[var(--color-border)]">
         <button
           onClick={() => setActiveTab("items")}
-          className={`px-4 py-2 text-xs font-bold border-b-2 transition-all ${
+          className={`px-4 py-2 text-xs font-bold border-b-2 uppercase tracking-wider transition-all ${
             activeTab === "items"
-              ? "border-[var(--color-accent)] text-white"
-              : "border-transparent text-[var(--color-text-secondary)] hover:text-white"
+              ? "border-black text-black"
+              : "border-transparent text-[var(--color-text-secondary)] hover:text-black"
           }`}
         >
           Materia Prima
         </button>
         <button
           onClick={() => setActiveTab("movements")}
-          className={`px-4 py-2 text-xs font-bold border-b-2 transition-all flex items-center gap-1.5 ${
+          className={`px-4 py-2 text-xs font-bold border-b-2 uppercase tracking-wider transition-all flex items-center gap-1.5 ${
             activeTab === "movements"
-              ? "border-[var(--color-accent)] text-white"
-              : "border-transparent text-[var(--color-text-secondary)] hover:text-white"
+              ? "border-black text-black"
+              : "border-transparent text-[var(--color-text-secondary)] hover:text-black"
           }`}
         >
-          <History size={13} />
+          <History size={12} />
           Historial Auditado
         </button>
       </div>
@@ -97,43 +99,43 @@ export default function InventarioPage() {
         <div className="space-y-6">
           {/* Alerts bar */}
           {alertItems.length > 0 && (
-            <div className="flex items-center gap-3 p-4 bg-[var(--color-error-bg)] border border-[var(--color-error)]/20 rounded-2xl text-[var(--color-error)] text-xs">
+            <div className="flex items-center gap-3 p-4 bg-[var(--color-error-bg)] border border-[var(--color-error)] text-[var(--color-error)] text-xs font-bold uppercase tracking-wide">
               <AlertTriangle size={16} className="flex-shrink-0" />
               <div>
-                <span className="font-bold">Alerta de Existencias:</span> Hay {alertItems.length} insumos por debajo del stock mínimo de seguridad.
+                Alerta de Existencias: Hay {alertItems.length} insumos por debajo del stock mínimo de seguridad.
               </div>
             </div>
           )}
 
           {/* Grid Bento of raw materials */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {inventory.map((item) => {
               const isLow = item.stock <= item.min_stock;
               return (
-                <div key={item.id} className="card p-5 text-left flex flex-col justify-between min-h-[130px]">
+                <div key={item.id} className="card p-5 text-left flex flex-col justify-between min-h-[140px] border border-[var(--color-border)] bg-white rounded-none">
                   <div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase">
+                      <span className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
                         Insumo Base
                       </span>
                       {isLow && (
-                        <span className="text-[9px] font-bold text-[var(--color-error)] bg-[var(--color-error-bg)] px-2 py-0.5 rounded">
+                        <span className="text-[9px] font-bold text-[var(--color-error)] bg-[var(--color-error-bg)] px-2 py-0.5 border border-[var(--color-error)]">
                           Stock Bajo
                         </span>
                       )}
                     </div>
-                    <h3 className="text-sm font-bold text-white mt-1.5">{item.name}</h3>
+                    <h3 className="text-base font-extrabold text-black mt-2 leading-tight tracking-tight">{item.name}</h3>
                   </div>
 
-                  <div className="flex items-baseline justify-between border-t border-white/5 pt-3 mt-3">
-                    <span className="text-2xl font-bold text-white tabular-nums">
+                  <div className="flex items-baseline justify-between border-t border-[var(--color-border)] pt-3 mt-3">
+                    <span className="text-2xl font-extrabold text-black tabular-nums">
                       {item.stock}{" "}
-                      <span className="text-xs font-normal text-[var(--color-text-muted)]">
+                      <span className="text-xs font-normal text-[var(--color-text-secondary)]">
                         {item.unit}
                       </span>
                     </span>
-                    <span className="text-[9px] text-[var(--color-text-muted)] font-medium">
-                      Mínimo: {item.min_stock} {item.unit}
+                    <span className="text-[9px] text-[var(--color-text-muted)] font-bold uppercase tracking-wide">
+                      Min: {item.min_stock} {item.unit}
                     </span>
                   </div>
                 </div>
@@ -150,15 +152,15 @@ export default function InventarioPage() {
                 <th>Fecha</th>
                 <th>Insumo</th>
                 <th>Tipo</th>
-                <th>Cantidad</th>
+                <th className="text-right">Cantidad</th>
                 <th>Motivo / Auditoría</th>
               </tr>
             </thead>
             <tbody>
               {movements.map((mov) => (
                 <tr key={mov.id}>
-                  <td className="text-[var(--color-text-secondary)]">{mov.date}</td>
-                  <td className="font-bold text-white">{mov.itemName}</td>
+                  <td className="text-[var(--color-text-secondary)] font-medium">{mov.date}</td>
+                  <td className="font-extrabold text-black">{mov.itemName}</td>
                   <td>
                     <span
                       className={`badge ${
@@ -168,13 +170,13 @@ export default function InventarioPage() {
                       {mov.type === "entrada" ? "Entrada" : "Salida"}
                     </span>
                   </td>
-                  <td className="font-bold tabular-nums">{mov.qty}</td>
-                  <td className="italic text-[var(--color-text-secondary)]">{mov.reason}</td>
+                  <td className="text-right font-extrabold text-black tabular-nums">{mov.qty}</td>
+                  <td className="italic text-[var(--color-text-secondary)] font-medium">{mov.reason}</td>
                 </tr>
               ))}
               {movements.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-center py-6 text-[var(--color-text-muted)]">
+                  <td colSpan={5} className="text-center py-8 text-[var(--color-text-muted)] font-medium">
                     No se registran movimientos en la bitácora.
                   </td>
                 </tr>
@@ -190,19 +192,19 @@ export default function InventarioPage() {
           <div className="modal-content relative text-left">
             <button
               onClick={() => setModalOpen(false)}
-              className="absolute top-4 right-4 text-[var(--color-text-secondary)] hover:text-white"
+              className="absolute top-4 right-4 text-[var(--color-text-secondary)] hover:text-black"
             >
               <X size={18} />
             </button>
 
-            <h3 className="text-base font-bold text-white mb-6">Ajustar Existencia Manual</h3>
+            <h3 className="text-lg font-bold text-black mb-6 uppercase tracking-tight">Ajustar Existencia Manual</h3>
 
             {successMsg ? (
               <div className="flex flex-col items-center justify-center py-8 space-y-3">
                 <div className="w-12 h-12 rounded-full bg-[var(--color-success-bg)] text-[var(--color-success)] flex items-center justify-center">
-                  <Check size={24} />
+                  <Check size={20} />
                 </div>
-                <p className="text-sm font-semibold text-white">{successMsg}</p>
+                <p className="text-sm font-bold text-black">{successMsg}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -261,7 +263,7 @@ export default function InventarioPage() {
                   />
                 </div>
 
-                <div className="pt-4 border-t border-white/5 flex justify-end gap-2">
+                <div className="pt-4 border-t border-[var(--color-border)] flex justify-end gap-2">
                   <button
                     type="button"
                     onClick={() => setModalOpen(false)}

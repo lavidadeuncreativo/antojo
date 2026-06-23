@@ -9,19 +9,19 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        editorial: ["var(--font-editorial)", "Georgia", "serif"],
+        sans: ["var(--font-sans)", "Helvetica", "Arial", "sans-serif"],
+        editorial: ["var(--font-sans)", "Helvetica", "Arial", "sans-serif"],
       },
       colors: {
         cream: "var(--color-canvas)",
         wine: {
           DEFAULT: "var(--color-accent)",
-          dark: "var(--color-accent-hover)",
-          hover: "var(--color-accent-hover)",
+          dark: "var(--color-accent)",
+          hover: "var(--color-accent)",
           soft: "var(--color-accent)",
           bg: "var(--color-surface)",
         },
-        border: "var(--border-soft)",
+        border: "var(--color-border)",
         surface: "var(--color-surface)",
         text: {
           DEFAULT: "var(--color-text-primary)",

@@ -1,26 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { useGlobalState } from "@/lib/state";
 import { formatCurrency, formatNumber } from "@/lib/utils";
-import {
-  Package,
-  Layers,
-  Edit2,
-  Check,
-  Compass
-} from "lucide-react";
+import { ArrowRight, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 export function DashboardClient({ data }: { data?: any }) {
-  const { products, sales, purchases, monthlyGoal } = useGlobalState();
+  const { products, sales, purchases, inventory, monthlyGoal } = useGlobalState();
 
-  // Local state for interactive UI controls
-  const [selectedFilter, setSelectedFilter] = useState("Suscripciones");
-  const [toggleInsumos, setToggleInsumos] = useState(true);
-  const [toggleReserva, setToggleReserva] = useState(true);
-  const [selectedPlan, setSelectedPlan] = useState("Volumen");
-
-  // Dynamic calculations based on state
+  // Calculations
   const totalSalesVal = sales.reduce((acc, s) => acc + s.total, 0);
   const totalExpensesVal = purchases.reduce((acc, p) => acc + p.cost, 0);
   
@@ -36,382 +24,248 @@ export function DashboardClient({ data }: { data?: any }) {
 
   const goalPercent = Math.min(100, Math.round((totalSalesVal / monthlyGoal.goal) * 100));
 
-  // Generate calendar days (1-31)
-  const calendarDays = Array.from({ length: 31 }, (_, i) => i + 1);
+  // Helper component for flavor can
+  const BeverageCan = ({ productId }: { productId: string }) => {
+    let color = "#1E6B35"; // Matcha Green
+    let label = "MATCHA";
+    if (productId === "p2") { color = "#D66B7C"; label = "PÓCIMA"; } // Fresa Pink
+    else if (productId === "p3") { color = "#D4AF37"; label = "C. BREW"; } // Yellow
+    else if (productId === "p4") { color = "#7B68EE"; label = "MOJITO"; } // Purple/Blue
+
+    return (
+      <svg width="50" height="90" viewBox="0 0 50 90" className="mx-auto my-3 select-none pointer-events-none drop-shadow-sm">
+        {/* Can lid */}
+        <ellipse cx="25" cy="6" rx="16" ry="3" fill="#CCCCCC" stroke="#999999" strokeWidth="0.5" />
+        <ellipse cx="25" cy="4" rx="11" ry="1.5" fill="#E5E5E5" />
+        {/* Can body */}
+        <rect x="9" y="6" width="32" height="78" fill={color} rx="1.5" />
+        {/* Can bottom */}
+        <path d="M 9 84 Q 25 88 41 84 L 41 85 Q 25 89 9 85 Z" fill="#CCCCCC" />
+        {/* Label banner */}
+        <rect x="9" y="30" width="32" height="30" fill="#FFFFFF" opacity="0.9" />
+        <text x="25" y="47" fontSize="6" fontWeight="900" fill="#000000" textAnchor="middle" letterSpacing="0.05em">
+          {label}
+        </text>
+        <text x="25" y="55" fontSize="4" fontWeight="700" fill="#666666" textAnchor="middle">
+          ANTOJO
+        </text>
+        {/* Highlight sheen */}
+        <rect x="11" y="6" width="3" height="78" fill="#FFFFFF" opacity="0.1" />
+      </svg>
+    );
+  };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10 select-none pb-6">
-      
-      {/* ── Seccion Superior: Titulo, Meta Segmentada y Metricas ── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/5">
+    <div className="max-w-7xl mx-auto space-y-12 select-none text-left">
+      {/* ── Title Header ── */}
+      <div className="py-6 border-b border-[var(--color-border)] flex flex-col md:flex-row md:items-baseline justify-between gap-4">
+        <div>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-black uppercase">
+            OPERACIÓN <span className="font-light italic text-[var(--color-text-secondary)]">diaria.</span>
+          </h1>
+          <p className="text-xs text-[var(--color-text-secondary)] mt-1 font-semibold uppercase tracking-wider">
+            ERP de Cobros & Bebidas Frías • ANTOJO OS
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text-secondary)]">
+          <span>Progreso Meta:</span>
+          <span className="text-black tabular-nums">{goalPercent}% ({formatCurrency(totalSalesVal, { compact: true })} / {formatCurrency(monthlyGoal.goal, { compact: true })})</span>
+        </div>
+      </div>
+
+      {/* ── Swiss Grid Metric Panels (3 metrics, 1px border grid) ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 border-y border-[var(--color-border)] bg-[var(--color-border)] gap-[1px]">
+        <div className="bg-white p-8 text-left">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Ingresos de Ventas</span>
+          <div className="metric-value text-black">
+            {formatNumber(totalSalesVal, 2)}
+            <span className="currency">$</span>
+          </div>
+          <span className="text-[10px] text-green-700 font-bold mt-1 block">↑ flujo de entrada activo</span>
+        </div>
         
-        {/* Titulo & Indicador circular de meta (Clean & Minimalist) */}
-        <div className="flex items-center gap-6">
-          <div className="text-left space-y-1">
-            <h1 className="hero-title">Operación ANTOJO</h1>
-            <p className="text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-widest">
-              ERP de Cobros & Bebidas Frías
-            </p>
+        <div className="bg-white p-8 text-left">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Egresos de Compras</span>
+          <div className="metric-value text-black">
+            {formatNumber(totalExpensesVal, 2)}
+            <span className="currency">$</span>
           </div>
+          <span className="text-[10px] text-red-600 font-bold mt-1 block">↓ egreso de insumos</span>
+        </div>
 
-          {/* Progreso Circular Segmentado (Sin cajas externas) */}
-          <div className="flex items-center gap-3">
-            <div className="relative w-12 h-12 flex items-center justify-center">
-              <svg width="48" height="48" viewBox="0 0 100 100" className="transform -rotate-[100deg]">
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  fill="none"
-                  stroke="rgba(255, 255, 255, 0.05)"
-                  strokeWidth="12"
-                  strokeDasharray="251"
-                  strokeDashoffset="60"
-                  strokeLinecap="round"
-                />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  fill="none"
-                  stroke="var(--color-accent)"
-                  strokeWidth="12"
-                  strokeDasharray="251"
-                  strokeDashoffset={251 - (191 * (goalPercent / 100))}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-bold text-[10px] text-white tabular-nums">{goalPercent}%</span>
+        <div className="bg-white p-8 text-left">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Caja Chica / Utilidad</span>
+          <div className="metric-value text-black">
+            {formatNumber(estimatedProfitVal, 2)}
+            <span className="currency">$</span>
+          </div>
+          <span className="text-[10px] text-black font-bold mt-1 block">★ margen operativo positivo</span>
+        </div>
+      </div>
+
+      {/* ── Product Catalog Section ── */}
+      <div className="space-y-6">
+        <div className="flex items-baseline justify-between border-b border-[var(--color-border)] pb-3">
+          <h2 className="text-xl font-bold uppercase tracking-tighter text-black">
+            Catálogo de <span className="font-light italic text-[var(--color-text-secondary)]">bebidas.</span>
+          </h2>
+          <Link href="/products" className="text-xs font-bold text-black hover:underline uppercase tracking-wider flex items-center gap-1">
+            Recetas y Productos <ArrowRight size={12} />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {products.map((prod) => {
+            // Map backgrounds
+            let bgClass = "card-original"; // default
+            let flavorName = "Bebida";
+            if (prod.id === "p1") {
+              bgClass = "card-mint"; // Matcha Light Green
+              flavorName = "MATCHA LATTE";
+            } else if (prod.id === "p2") {
+              bgClass = "card-hibiscus"; // Pócima Fresa Light Pink
+              flavorName = "PÓCIMA FRESA";
+            } else if (prod.id === "p3") {
+              bgClass = "card-passion"; // Cold Brew Light Yellow
+              flavorName = "COLD BREW";
+            } else if (prod.id === "p4") {
+              bgClass = "card-ginger"; // Mojito Light Purple/Blue (ginger/orange token in globals.css)
+              flavorName = "MOJITO MEZCAL";
+            }
+
+            return (
+              <div
+                key={prod.id}
+                className={`card-interactive relative flex flex-col justify-between p-6 overflow-hidden rounded-[28px] ${bgClass} transition-all duration-300 hover:-translate-y-1 h-[280px] border border-black/5`}
+              >
+                <div className="text-left">
+                  <span className="text-[8px] font-black tracking-widest text-black/40 uppercase block mb-1">
+                    {flavorName}
+                  </span>
+                  <h3 className="text-base font-extrabold text-black leading-tight tracking-tight">
+                    {prod.name}
+                  </h3>
+                  <div className="text-xs font-bold text-black/70 mt-1">
+                    {formatCurrency(prod.price)}
+                  </div>
+                </div>
+
+                {/* Render Can Illustration */}
+                <BeverageCan productId={prod.id} />
+
+                {/* Bottom row containing recipe summary and circular arrow link */}
+                <div className="flex items-end justify-between mt-auto">
+                  <div className="text-[8px] font-bold text-black/60 uppercase tracking-wide leading-none text-left">
+                    Receta: {prod.recipe.length} ingredientes <br />
+                    Costo: {formatCurrency(prod.cost)}
+                  </div>
+                  
+                  <Link
+                    href={`/products?id=${prod.id}`}
+                    className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center transition-transform duration-200 hover:scale-105"
+                    title="Editar Receta"
+                  >
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
               </div>
-            </div>
-            <div className="text-left leading-none">
-              <span className="text-[8px] font-bold uppercase text-[var(--color-text-muted)] tracking-wider block">Meta del Mes</span>
-              <span className="text-xs font-bold text-white mt-1 block tabular-nums">
-                {formatCurrency(totalSalesVal, { compact: true })}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Cifras de Desempeño Principal (Superíndices) */}
-        <div className="flex items-center gap-8 md:gap-12 flex-wrap">
-          <div>
-            <span className="text-[9px] font-bold uppercase text-[var(--color-text-muted)] tracking-widest block mb-0.5">
-              Ventas
-            </span>
-            <div className="metric-value font-medium text-[var(--color-text-primary)]">
-              {formatNumber(totalSalesVal)}
-              <span className="currency">$</span>
-            </div>
-          </div>
-
-          <div>
-            <span className="text-[9px] font-bold uppercase text-[var(--color-text-muted)] tracking-widest block mb-0.5">
-              Utilidad
-            </span>
-            <div className="metric-value font-medium text-[var(--color-text-primary)]">
-              {formatNumber(estimatedProfitVal)}
-              <span className="currency">$</span>
-            </div>
-          </div>
-
-          <div>
-            <span className="text-[9px] font-bold uppercase text-[var(--color-text-muted)] tracking-widest block mb-0.5">
-              Egresos / Compras
-            </span>
-            <div className="metric-value font-medium text-[var(--color-text-primary)]">
-              {formatNumber(totalExpensesVal)}
-              <span className="currency">$</span>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* ── Filtros Rápidos (Chips) ── */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {["Todos", "Ventas", "Gastos", "Suscripciones", "Producción", "Compras"].map((filter) => {
-          const isSelected = selectedFilter === filter;
-          return (
-            <button
-              key={filter}
-              onClick={() => setSelectedFilter(filter)}
-              className={`chip transition-all duration-160 ${
-                isSelected ? "chip--selected" : ""
-              }`}
-            >
-              {filter}
-            </button>
-          );
-        })}
-        <button 
-          className="w-9 h-9 flex items-center justify-center rounded-full bg-[var(--color-accent)] text-[var(--color-ink)] hover:bg-[var(--color-accent-hover)] active:scale-95 transition-all duration-160"
-          title="Nuevo Elemento"
-        >
-          <span className="text-lg font-bold leading-none">+</span>
-        </button>
-      </div>
-
-      {/* ── Layout Bento Principal: Ficha Izquierda & Controles Derechos ── */}
-      <div className="bento-grid">
+      {/* ── Lower Split Section ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
         
-        {/* COMPONENTE PRINCIPAL (8 columnas): Ficha de Producto y Procesos */}
-        <div className="bento-8 card flex flex-col justify-between space-y-6">
-          
-          {/* Cabecera del Producto (Matcha Latte) */}
-          <div className="flex items-center justify-between pb-3 border-b border-white/5">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[var(--color-accent)] flex items-center justify-center text-[var(--color-ink)]">
-                <Compass size={16} strokeWidth={2.2} />
-              </div>
-              <div className="text-left">
-                <h3 className="text-sm font-bold text-white">Matcha Latte Cream</h3>
-                <p className="text-[9px] text-[var(--color-text-muted)] font-semibold">
-                  Receta base y cobro recurrente
-                </p>
-              </div>
-            </div>
-
-            {/* Ingredientes representativos (Sin sobreponerse con el texto) */}
-            <div className="flex items-center gap-1">
-              {["🍵 Matcha", "🥛 Leche Coco", " vasos"].map((label, i) => (
-                <span key={i} className="text-[9px] font-bold px-2 py-0.5 rounded bg-white/5 text-[var(--color-text-secondary)] border border-white/5">
-                  {label}
-                </span>
-              ))}
-            </div>
+        {/* Left Side: Recent Sales */}
+        <div className="space-y-4">
+          <div className="flex items-baseline justify-between border-b border-[var(--color-border)] pb-2">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-black">
+              Flujo de Entrada <span className="font-light italic text-[var(--color-text-secondary)]">reciente.</span>
+            </h3>
+            <Link href="/sales" className="text-[10px] font-bold text-black hover:underline uppercase tracking-wider">
+              Ver ventas →
+            </Link>
           </div>
 
-          {/* Línea de Proceso Temporal (Estilo editorial plano) */}
-          <div className="relative py-1">
-            <div className="absolute top-1/2 left-0 right-0 h-[1.5px] bg-white/10 -translate-y-1/2" />
-            <div className="absolute top-1/2 left-[15%] w-2 h-2 rounded-full bg-white -translate-y-1/2" />
-            <div className="absolute top-1/2 left-[50%] w-2 h-2 rounded-full bg-white -translate-y-1/2" />
-            <div className="absolute top-1/2 left-[85%] w-2.5 h-2.5 rounded-full bg-[var(--color-accent)] -translate-y-1/2" />
+          <div className="table-container border border-[var(--color-border)]">
+            <table className="antojo-table">
+              <thead>
+                <tr>
+                  <th>Folio</th>
+                  <th>Cliente</th>
+                  <th>Canal</th>
+                  <th className="text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sales.slice(0, 5).map((sale) => (
+                  <tr key={sale.id}>
+                    <td className="font-bold tracking-tight">{sale.folio}</td>
+                    <td>
+                      <span className="font-bold text-black">{sale.customer}</span>
+                      <span className="text-[10px] text-[var(--color-text-secondary)] block mt-0.5">{sale.time}</span>
+                    </td>
+                    <td>
+                      <span className="badge badge-neutral">{sale.channel}</span>
+                    </td>
+                    <td className="text-right font-bold text-green-700 tabular-nums">
+                      +{formatCurrency(sale.total)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-
-          {/* Compartimentos Planos (Sin tarjetas anidadas redundantes) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-            
-            {/* Panel 1: Calendario plano */}
-            <div className="flex flex-col justify-between min-h-[180px] text-left">
-              <div>
-                <span className="text-[9px] font-bold uppercase text-[var(--color-text-muted)] tracking-wider block mb-2">
-                  Días de Entrega
-                </span>
-                
-                <div className="grid grid-cols-7 gap-1 text-center max-w-[150px]">
-                  {calendarDays.map((day) => {
-                    const isActive = day === 18;
-                    return (
-                      <span
-                        key={day}
-                        className={`text-[8px] font-semibold h-3.5 w-3.5 rounded-full flex items-center justify-center leading-none ${
-                          isActive
-                            ? "bg-[var(--color-accent)] text-[var(--color-ink)] font-bold"
-                            : "text-[var(--color-text-secondary)]"
-                        }`}
-                      >
-                        {day}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-white/5 space-y-1">
-                <div className="flex justify-between text-[9px]">
-                  <span className="text-[var(--color-text-muted)]">Frecuencia:</span>
-                  <span className="text-white font-bold">18 / mes</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Panel 2: Selector de Plan */}
-            <div className="flex flex-col justify-between min-h-[180px] text-left border-l border-white/5 pl-4">
-              <div>
-                <span className="text-[9px] font-bold uppercase text-[var(--color-text-muted)] tracking-wider block mb-2">
-                  Esquema de Despacho
-                </span>
-
-                <div className="flex flex-col gap-1">
-                  {["Individual", "Paquete", "Volumen"].map((plan) => {
-                    const isSelected = selectedPlan === plan;
-                    return (
-                      <button
-                        key={plan}
-                        onClick={() => setSelectedPlan(plan)}
-                        className={`text-left px-2 py-1 rounded text-[9px] font-semibold transition-all duration-160 ${
-                          isSelected
-                            ? "bg-[var(--color-accent)] text-[var(--color-ink)]"
-                            : "text-[var(--color-text-secondary)] hover:bg-white/5"
-                        }`}
-                      >
-                        {plan}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-white/5">
-                <span className="text-xs font-bold text-white">Plan Activo: {selectedPlan}</span>
-              </div>
-            </div>
-
-            {/* Panel 3: Canal y demanda */}
-            <div className="flex flex-col justify-between min-h-[180px] text-left border-l border-white/5 pl-4">
-              <div>
-                <span className="text-[9px] font-bold uppercase text-[var(--color-text-muted)] tracking-wider block mb-2">
-                  Canales y Demanda
-                </span>
-
-                {/* Gráfico de barras minimalista sin gridlines */}
-                <div className="flex items-end justify-around h-20 pb-1">
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="w-3.5 h-12 bg-white/10 rounded-t" title="Calle: 60%" />
-                    <span className="text-[7px] text-[var(--color-text-muted)] font-semibold">Calle</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="w-3.5 h-16 bg-[var(--color-accent)] rounded-t" title="Insta: 85%" />
-                    <span className="text-[7px] text-[var(--color-accent)] font-bold">Inst</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="w-3.5 h-8 bg-white/20 rounded-t" title="Mayoreo: 40%" />
-                    <span className="text-[7px] text-[var(--color-text-muted)] font-semibold">Mayo</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-white/5 text-[9px] text-[var(--color-text-muted)]">
-                Instagram lidera el periodo
-              </div>
-            </div>
-
-          </div>
-
-          {/* Fila de metadatos al pie */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-white/5 pt-4">
-            <div className="text-left">
-              <span className="text-[9px] text-[var(--color-text-muted)] uppercase block">Lotes Mensuales</span>
-              <span className="text-xs font-bold text-white tabular-nums">18 lotes</span>
-            </div>
-            <div className="text-left">
-              <span className="text-[9px] text-[var(--color-text-muted)] uppercase block">Uds Estimadas</span>
-              <span className="text-xs font-bold text-white tabular-nums">90 botellas</span>
-            </div>
-            <div className="text-left">
-              <span className="text-[9px] text-[var(--color-text-muted)] uppercase block">Costo Lote</span>
-              <span className="text-xs font-bold text-white tabular-nums">375 MXN</span>
-            </div>
-            <div className="text-left">
-              <span className="text-[9px] text-[var(--color-text-muted)] uppercase block">Método de Pago</span>
-              <span className="text-xs font-bold text-white">Wise Transfer</span>
-            </div>
-          </div>
-
         </div>
 
-        {/* CONTROLES DERECHOS (4 columnas): Tarjetas minimalistas con toggles */}
-        <div className="bento-4 flex flex-col gap-4">
-          
-          {/* Tarjeta 1: Límite Operativo (Dark Glass) */}
-          <div className="surface-card flex flex-col justify-between p-5 min-h-[145px]">
-            <div className="flex items-center justify-between text-left">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-white">
-                  <Package size={13} />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-white">Límite Diario</h4>
-                  <p className="text-[8px] text-[var(--color-text-muted)] font-medium">Tope de insumos</p>
-                </div>
-              </div>
-              <button className="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:border-white/20 text-white transition-all duration-160">
-                <Edit2 size={10} />
-              </button>
-            </div>
-
-            <div className="flex items-end justify-between mt-3">
-              <div className="metric-value font-medium text-2xl leading-none text-left">
-                200<span className="text-xs currency">$</span>
-              </div>
-
-              {/* Toggle Switch */}
-              <button
-                onClick={() => setToggleInsumos(!toggleInsumos)}
-                className={`w-12 h-7 rounded-full p-0.5 transition-all duration-200 border ${
-                  toggleInsumos
-                    ? "bg-white/15 border-white/20"
-                    : "bg-black/20 border-white/5"
-                } flex items-center justify-between`}
-              >
-                <span className={`text-[7px] font-bold ml-1 ${toggleInsumos ? "opacity-0" : "text-white/60"}`}>x</span>
-                <span
-                  className={`w-5.5 h-5.5 rounded-full bg-white flex items-center justify-center text-[8px] font-bold text-black transition-all duration-200 transform ${
-                    toggleInsumos ? "translate-x-5" : "translate-x-0"
-                  }`}
-                >
-                  {toggleInsumos ? <Check size={8} strokeWidth={3.5} /> : ""}
-                </span>
-              </button>
-            </div>
+        {/* Right Side: Inventory Alerts */}
+        <div className="space-y-4">
+          <div className="flex items-baseline justify-between border-b border-[var(--color-border)] pb-2">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-black">
+              Estado de <span className="font-light italic text-[var(--color-text-secondary)]">ingredientes.</span>
+            </h3>
+            <Link href="/inventory" className="text-[10px] font-bold text-black hover:underline uppercase tracking-wider">
+              Ver almacén →
+            </Link>
           </div>
 
-          {/* Tarjeta 2: Fondo Reserva (Ivory sólido de acento) */}
-          <div className="surface-card-accent flex flex-col justify-between p-5 min-h-[145px]">
-            <div className="flex items-center justify-between text-left">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-[var(--color-ink)]/5 flex items-center justify-center text-[var(--color-ink)]">
-                  <Layers size={13} />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[var(--color-ink)]">Caja Chica</h4>
-                  <p className="text-[8px] text-[var(--color-ink)]/70 font-medium">Fondo de emergencia</p>
-                </div>
-              </div>
-              <button className="w-6 h-6 flex items-center justify-center rounded-full bg-black/5 border border-black/10 hover:border-black/20 text-[var(--color-ink)] transition-all duration-160">
-                <Edit2 size={10} />
-              </button>
-            </div>
-
-            <div className="flex items-end justify-between mt-3">
-              <div className="metric-value font-medium text-2xl leading-none text-left text-[var(--color-ink)]">
-                2,999<span className="text-xs currency text-[var(--color-ink)]">$</span>
-              </div>
-
-              {/* Toggle Switch */}
-              <button
-                onClick={() => setToggleReserva(!toggleReserva)}
-                className={`w-12 h-7 rounded-full p-0.5 transition-all duration-200 border ${
-                  toggleReserva
-                    ? "bg-[var(--color-ink)] border-[var(--color-ink)]"
-                    : "bg-transparent border-[var(--color-ink)]/20"
-                } flex items-center justify-between`}
-              >
-                <span className={`text-[7px] font-bold ml-1 ${toggleReserva ? "opacity-0" : "text-[var(--color-ink)]/60"}`}>x</span>
-                <span
-                  className={`w-5.5 h-5.5 rounded-full bg-white flex items-center justify-center text-[8px] font-bold text-black transition-all duration-200 transform ${
-                    toggleReserva ? "translate-x-5" : "translate-x-0"
-                  }`}
-                >
-                  {toggleReserva ? <Check size={8} strokeWidth={3.5} /> : ""}
-                </span>
-              </button>
-            </div>
+          <div className="table-container border border-[var(--color-border)]">
+            <table className="antojo-table">
+              <thead>
+                <tr>
+                  <th>Ingrediente</th>
+                  <th className="text-right">Stock</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inventory.slice(0, 5).map((item) => {
+                  const isLow = item.stock <= item.min_stock;
+                  return (
+                    <tr key={item.id}>
+                      <td className="font-bold">{item.name}</td>
+                      <td className="text-right font-semibold tabular-nums">
+                        {formatNumber(item.stock)} {item.unit}
+                      </td>
+                      <td>
+                        {isLow ? (
+                          <span className="badge badge-error flex items-center gap-1 w-fit">
+                            <AlertCircle size={10} /> bajo stock
+                          </span>
+                        ) : (
+                          <span className="badge badge-success w-fit">ok</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-
         </div>
 
       </div>
-
-      {/* Footer Indicadores (Matches mockup bottom indicator) */}
-      <div className="flex justify-center gap-1.5 pt-4">
-        <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
-        <span className="w-4 h-1.5 rounded bg-white/70" />
-        <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
-      </div>
-
     </div>
   );
 }

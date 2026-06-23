@@ -58,13 +58,15 @@ export default function VentasPage() {
   };
 
   return (
-    <div className="space-y-6 text-left select-none">
+    <div className="space-y-8 text-left select-none max-w-7xl mx-auto">
       
       {/* Header section with clean flat stats */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/5">
+      <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
         <div>
-          <h2 className="text-xl font-bold text-white">Registro de Ventas</h2>
-          <p className="text-xs text-[var(--color-text-muted)] mt-1">
+          <h1 className="text-3xl font-black tracking-tighter text-black uppercase">
+            REGISTRO DE <span className="font-light italic text-[var(--color-text-secondary)]">ventas.</span>
+          </h1>
+          <p className="text-xs text-[var(--color-text-secondary)] mt-1 font-medium">
             Visualiza y genera las ventas de bebidas y despachos diarios.
           </p>
         </div>
@@ -73,20 +75,20 @@ export default function VentasPage() {
           onClick={() => setModalOpen(true)}
           className="btn btn-primary self-start"
         >
-          <Plus size={16} />
+          <Plus size={14} />
           Registrar Venta
         </button>
       </div>
 
-      {/* Mini metric bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="surface-card p-4 text-left">
-          <span className="text-[9px] text-[var(--color-text-muted)] uppercase block">Total Transacciones</span>
-          <span className="text-lg font-bold text-white tabular-nums">{sales.length}</span>
+      {/* Mini metric bar (Editorial Flat Cells) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--color-border)] bg-[var(--color-border)] gap-[1px]">
+        <div className="bg-white p-6">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Total Transacciones</span>
+          <span className="text-3xl font-extrabold text-black tabular-nums">{sales.length}</span>
         </div>
-        <div className="surface-card p-4 text-left">
-          <span className="text-[9px] text-[var(--color-text-muted)] uppercase block">Ticket Promedio</span>
-          <span className="text-lg font-bold text-white tabular-nums">
+        <div className="bg-white p-6">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Ticket Promedio</span>
+          <span className="text-3xl font-extrabold text-black tabular-nums">
             {formatCurrency(
               sales.length > 0
                 ? sales.reduce((acc, s) => acc + s.total, 0) / sales.length
@@ -121,34 +123,36 @@ export default function VentasPage() {
                 <th>Cliente</th>
                 <th>Canal</th>
                 <th>Artículos</th>
-                <th>Total</th>
+                <th className="text-right">Total</th>
                 <th>Fecha</th>
               </tr>
             </thead>
             <tbody>
               {filteredSales.map((sale) => (
                 <tr key={sale.id}>
-                  <td className="font-bold text-[var(--color-accent)]">{sale.folio}</td>
-                  <td className="font-semibold">{sale.customer}</td>
+                  <td className="font-bold tracking-tight text-black">{sale.folio}</td>
+                  <td>
+                    <span className="font-bold text-black">{sale.customer}</span>
+                  </td>
                   <td>
                     <span className="badge badge-neutral">{sale.channel}</span>
                   </td>
                   <td>
                     {sale.items.map((it, idx) => (
-                      <div key={idx} className="text-xs">
+                      <div key={idx} className="text-xs font-medium">
                         {it.qty}x {it.name}
                       </div>
                     ))}
                   </td>
-                  <td className="font-bold text-white tabular-nums">
+                  <td className="text-right font-bold text-black tabular-nums">
                     {formatCurrency(sale.total)}
                   </td>
-                  <td className="text-[var(--color-text-secondary)]">{sale.time}</td>
+                  <td className="text-[var(--color-text-secondary)] font-medium">{sale.time}</td>
                 </tr>
               ))}
               {filteredSales.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center py-6 text-[var(--color-text-muted)]">
+                  <td colSpan={6} className="text-center py-8 text-[var(--color-text-muted)] font-medium">
                     No se encontraron transacciones registradas.
                   </td>
                 </tr>
@@ -158,25 +162,25 @@ export default function VentasPage() {
         </div>
       </div>
 
-      {/* New Sale Glass Modal */}
+      {/* New Sale Modal */}
       {modalOpen && (
         <div className="modal-overlay flex items-center justify-center p-4">
           <div className="modal-content relative text-left">
             <button
               onClick={() => setModalOpen(false)}
-              className="absolute top-4 right-4 text-[var(--color-text-secondary)] hover:text-white"
+              className="absolute top-4 right-4 text-[var(--color-text-secondary)] hover:text-black"
             >
               <X size={18} />
             </button>
 
-            <h3 className="text-base font-bold text-white mb-6">Registrar Nueva Venta</h3>
+            <h3 className="text-lg font-bold text-black mb-6 uppercase tracking-tight">Registrar Nueva Venta</h3>
 
             {successMsg ? (
               <div className="flex flex-col items-center justify-center py-8 space-y-3">
                 <div className="w-12 h-12 rounded-full bg-[var(--color-success-bg)] text-[var(--color-success)] flex items-center justify-center">
-                  <Check size={24} />
+                  <Check size={20} />
                 </div>
-                <p className="text-sm font-semibold text-white">{successMsg}</p>
+                <p className="text-sm font-bold text-black">{successMsg}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -238,12 +242,12 @@ export default function VentasPage() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-[var(--color-border)] flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-[var(--color-text-muted)] block uppercase">
+                    <span className="text-[10px] text-[var(--color-text-muted)] block uppercase font-bold">
                       Total a Cobrar
                     </span>
-                    <span className="text-lg font-bold text-[var(--color-accent)] tabular-nums">
+                    <span className="text-xl font-extrabold text-black tabular-nums">
                       {formatCurrency(total)}
                     </span>
                   </div>

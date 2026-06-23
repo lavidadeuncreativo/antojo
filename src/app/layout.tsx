@@ -1,21 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Newsreader } from "next/font/google";
 import "./globals.css";
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
-  display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const newsreader = Newsreader({
-  subsets: ["latin"],
-  variable: "--font-newsreader",
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -48,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es-MX" className={`${manrope.variable} ${newsreader.variable}`}>
+    <html lang="es-MX">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

@@ -60,20 +60,20 @@ function LoginContent() {
         <div style={{ textAlign: "center", marginBottom: 40 }}>
           <div
             style={{
-              fontFamily: "'Helvetica Neue', Arial, sans-serif",
-              fontWeight: 700,
+              fontFamily: "var(--font-sans)",
+              fontWeight: 900,
               fontSize: 40,
-              color: "var(--color-text)",
-              letterSpacing: "-0.03em",
+              color: "var(--color-text-primary)",
+              letterSpacing: "-0.04em",
               lineHeight: 1,
             }}
           >
-            ANTOJO<span style={{ color: "var(--color-wine)" }}>.</span>
+            ANTOJO<span style={{ color: "var(--color-accent)" }}>.</span>
           </div>
           <div
             style={{
               fontSize: 12,
-              fontWeight: 600,
+              fontWeight: 700,
               color: "var(--color-text-muted)",
               letterSpacing: "0.15em",
               textTransform: "uppercase",
@@ -85,18 +85,20 @@ function LoginContent() {
         </div>
 
         {/* Card */}
-        <div className="card" style={{ padding: 32 }}>
+        <div className="card" style={{ padding: 32, borderRadius: 0, border: "1px solid var(--color-border)", background: "#FFFFFF" }}>
           <h1
             style={{
               fontSize: 22,
-              fontWeight: 600,
+              fontWeight: 800,
               marginBottom: 6,
-              color: "var(--color-text)",
+              color: "var(--color-text-primary)",
+              fontFamily: "var(--font-sans)",
+              letterSpacing: "-0.03em"
             }}
           >
             Bienvenido de vuelta
           </h1>
-          <p style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 28 }}>
+          <p style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 28, fontFamily: "var(--font-sans)", fontWeight: 500 }}>
             Ingresa a tu cuenta para continuar.
           </p>
 

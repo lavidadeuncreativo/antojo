@@ -22,21 +22,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Dashboard Glass Shell */}
-      <div className="dashboard-shell">
-        <main className="app-main">
-          <Topbar onMenuToggle={() => setMobileMenuOpen(true)} />
+      <main className="app-main">
+        <Topbar onMenuToggle={() => setMobileMenuOpen(true)} />
 
-          <motion.div
-            className="app-content"
-            key={pathname}
-            initial={{ opacity: 0, filter: "blur(8px)", y: 12 }}
-            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-            transition={{ duration: 0.45, ease: [0.22, 0.8, 0.2, 1] }}
-          >
-            {children}
-          </motion.div>
-        </main>
-      </div>
+        <motion.div
+          className="app-content"
+          key={pathname}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: [0.22, 0.8, 0.2, 1] }}
+        >
+          {children}
+        </motion.div>
+      </main>
 
       {/* Mobile Bottom Nav */}
       <div className="visible-mobile">

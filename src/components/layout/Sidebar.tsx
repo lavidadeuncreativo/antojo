@@ -3,62 +3,39 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  LayoutDashboard,
-  Package,
-  Wallet,
-  Settings,
-  Menu,
-  X,
-  LogOut,
-} from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 
-interface RailItem {
+interface NavItemDetails {
   href: string;
-  group: "principal" | "operaciones" | "negocios" | "estrategia";
-  icon: React.ElementType;
   label: string;
-  paths: string[];
+  group: "principal" | "operaciones" | "negocios" | "estrategia" | "sistema";
 }
 
-const railItems: RailItem[] = [
-  {
-    href: "/dashboard",
-    group: "principal",
-    icon: LayoutDashboard,
-    label: "Dashboard",
-    paths: ["/dashboard"],
-  },
-  {
-    href: "/sales",
-    group: "operaciones",
-    icon: Package,
-    label: "Operaciones",
-    paths: ["/sales", "/products", "/inventory", "/production", "/purchases"],
-  },
-  {
-    href: "/finance",
-    group: "negocios",
-    icon: Wallet,
-    label: "Negocios",
-    paths: ["/finance", "/commercial", "/events", "/quotes"],
-  },
-  {
-    href: "/marketing",
-    group: "estrategia",
-    icon: Settings,
-    label: "Estrategia y Sistema",
-    paths: ["/marketing", "/calendar", "/growth", "/reports", "/settings"],
-  },
+const navItems: NavItemDetails[] = [
+  { href: "/dashboard", label: "Resumen", group: "principal" },
+  { href: "/sales", label: "Ventas", group: "operaciones" },
+  { href: "/products", label: "Productos y Recetas", group: "operaciones" },
+  { href: "/inventory", label: "Inventario", group: "operaciones" },
+  { href: "/production", label: "Producción", group: "operaciones" },
+  { href: "/purchases", label: "Compras", group: "operaciones" },
+  { href: "/finance", label: "Finanzas", group: "negocios" },
+  { href: "/commercial", label: "Comercial", group: "negocios" },
+  { href: "/events", label: "Eventos", group: "negocios" },
+  { href: "/quotes", label: "Cotizaciones", group: "negocios" },
+  { href: "/marketing", label: "Marketing", group: "estrategia" },
+  { href: "/calendar", label: "Calendario", group: "estrategia" },
+  { href: "/growth", label: "Crecimiento", group: "estrategia" },
+  { href: "/reports", label: "Reportes", group: "estrategia" },
+  { href: "/settings", label: "Configuración", group: "sistema" },
 ];
 
-// Helper to check if a rail item is active based on current path
-function isItemActive(item: RailItem, pathname: string): boolean {
-  if (item.group === "principal") {
-    return pathname === "/dashboard";
-  }
-  return item.paths.some(p => pathname === p || pathname.startsWith(p + "/"));
-}
+const groupLabels: Record<string, string> = {
+  principal: "Principal",
+  operaciones: "Operaciones",
+  negocios: "Negocios",
+  estrategia: "Estrategia",
+  sistema: "Sistema",
+};
 
 interface SidebarProps {
   collapsed: boolean;
@@ -68,134 +45,132 @@ interface SidebarProps {
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
 
+  // Group nav items
+  const groups = navItems.reduce<Record<string, NavItemDetails[]>>((acc, item) => {
+    if (!acc[item.group]) acc[item.group] = [];
+    acc[item.group].push(item);
+    return acc;
+  }, {});
+
   return (
-    <aside className="side-rail flex flex-col items-center justify-between py-6">
-      {/* Top Logo Icon */}
-      <div className="flex items-center justify-center w-11 h-11 rounded-full bg-white/5 border border-white/10 text-white font-bold text-lg select-none">
-        <span className="text-[var(--color-accent)]">a</span>b
+    <aside className="app-sidebar select-none h-screen sticky top-0 overflow-y-auto">
+      {/* Sidebar Header Brand (Clean text logo) */}
+      <div className="p-6 border-b border-[var(--color-border)] flex items-center justify-between">
+        <Link href="/dashboard" className="decoration-none">
+          <span className="font-extrabold text-lg text-black tracking-tighter block leading-none">
+            ANTOJO<span className="text-black">.</span>
+          </span>
+          <span className="text-[9px] font-bold text-[var(--color-text-muted)] tracking-widest uppercase block mt-1">
+            control erp
+          </span>
+        </Link>
       </div>
 
-      {/* Mid Rail Icons */}
-      <div className="flex flex-col gap-3.5 my-auto">
-        {railItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = isItemActive(item, pathname);
+      {/* Navigation List */}
+      <nav className="flex-1 p-4 space-y-6">
+        {Object.entries(groups).map(([group, items]) => (
+          <div key={group} className="space-y-1">
+            <span className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider block px-2 mb-2">
+              {groupLabels[group]}
+            </span>
+            <div className="space-y-0.5">
+              {items.map((item) => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/dashboard" && pathname.startsWith(item.href));
 
-          return (
-            <Link
-              key={item.group}
-              href={item.href}
-              className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-180 ease-premium relative ${
-                isActive
-                  ? "bg-[var(--color-accent)] text-[var(--color-ink)] shadow-md"
-                  : "text-[var(--color-text-primary)]/80 hover:bg-white/10 hover:text-white"
-              }`}
-              title={item.label}
-            >
-              <Icon size={19} strokeWidth={1.8} />
-              {isActive && (
-                <motion.div
-                  layoutId="activeRailIndicator"
-                  className="absolute -right-[6px] w-[3px] h-3 bg-[var(--color-accent)] rounded-l-full"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
-            </Link>
-          );
-        })}
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`block px-2 py-1.5 text-xs font-semibold rounded transition-all leading-none ${
+                      isActive
+                        ? "bg-black text-white"
+                        : "text-[var(--color-text-secondary)] hover:text-black hover:bg-black/5"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </nav>
+
+      {/* Logout button at the bottom */}
+      <div className="p-4 border-t border-[var(--color-border)]">
+        <button
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              window.location.href = "/";
+            }
+          }}
+          className="flex items-center gap-2 px-2 py-1.5 w-full text-left text-xs font-semibold text-[var(--color-text-secondary)] hover:text-black transition-all"
+        >
+          <LogOut size={13} />
+          Salir del ERP
+        </button>
       </div>
-
-      {/* Bottom Action Icon (Logout/System) */}
-      <button
-        onClick={() => {
-          // Fallback simple o logout demo
-          if (typeof window !== "undefined") {
-            window.location.href = "/";
-          }
-        }}
-        className="w-11 h-11 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:bg-white/10 hover:text-white transition-all duration-180 ease-premium"
-        title="Salir"
-      >
-        <LogOut size={18} strokeWidth={1.8} />
-      </button>
     </aside>
   );
 }
 
-// ── Bottom Navigation (Mobile - Styled as floating pill) ──────────
+// ── Mobile Bottom Navigation (Floating capsule) ────────────────────
 
 export function MobileBottomNav({ onMenuOpen }: { onMenuOpen: () => void }) {
   const pathname = usePathname();
 
+  // Simple tabs for mobile shortcuts
+  const shortcuts = [
+    { href: "/dashboard", label: "Inicio" },
+    { href: "/sales", label: "Ventas" },
+    { href: "/inventory", label: "Almacén" },
+    { href: "/finance", label: "Caja" },
+  ];
+
   return (
     <nav
-      className="fixed bottom-4 left-4 right-4 h-14 z-50 flex items-center justify-around px-2"
+      className="fixed bottom-4 left-4 right-4 h-12 z-50 flex items-center justify-around px-2 border"
       style={{
-        background: "rgba(45, 43, 42, 0.88)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-        border: "1px solid var(--border-medium)",
+        background: "#FFFFFF",
+        borderColor: "var(--color-border)",
         borderRadius: "999px",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.38)",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.06)",
       }}
     >
-      {railItems.map((item) => {
-        const Icon = item.icon;
-        const isActive = isItemActive(item, pathname);
+      {shortcuts.map((item) => {
+        const isActive =
+          pathname === item.href ||
+          (item.href !== "/dashboard" && pathname.startsWith(item.href));
 
         return (
           <Link
-            key={item.group}
+            key={item.href}
             href={item.href}
-            className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-180 ${
+            className={`px-3 py-1.5 text-xs font-bold rounded-full transition-all ${
               isActive
-                ? "bg-[var(--color-accent)] text-[var(--color-ink)]"
-                : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+                ? "bg-black text-white"
+                : "text-[var(--color-text-secondary)]"
             }`}
-            title={item.label}
           >
-            <Icon size={18} strokeWidth={1.8} />
+            {item.label}
           </Link>
         );
       })}
 
-      {/* Plus/Menu Trigger for all subpaths */}
       <button
         onClick={onMenuOpen}
-        className="w-10 h-10 flex items-center justify-center rounded-full text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-all duration-180"
-        title="Más Opciones"
+        className="px-3 py-1.5 text-xs font-bold text-[var(--color-text-secondary)] flex items-center gap-1"
       >
-        <Menu size={18} strokeWidth={1.8} />
+        <Menu size={14} />
+        Más
       </button>
     </nav>
   );
 }
 
-// ── Mobile Full Menu Drawer (Styled as dark glass sheet) ──────────
-
-interface NavItemDetails {
-  href: string;
-  label: string;
-  group: string;
-}
-
-const allNavItems: NavItemDetails[] = [
-  { href: "/dashboard", label: "Dashboard / Resumen", group: "Principal" },
-  { href: "/sales", label: "Ventas", group: "Operaciones" },
-  { href: "/products", label: "Productos y Recetas", group: "Operaciones" },
-  { href: "/inventory", label: "Inventario", group: "Operaciones" },
-  { href: "/production", label: "Producción", group: "Operaciones" },
-  { href: "/purchases", label: "Compras", group: "Operaciones" },
-  { href: "/finance", label: "Finanzas", group: "Negocios" },
-  { href: "/commercial", label: "Comercial", group: "Negocios" },
-  { href: "/events", label: "Eventos", group: "Negocios" },
-  { href: "/quotes", label: "Cotizaciones", group: "Negocios" },
-  { href: "/marketing", label: "Marketing", group: "Estrategia" },
-  { href: "/calendar", label: "Calendario", group: "Estrategia" },
-  { href: "/growth", label: "Crecimiento", group: "Estrategia" },
-  { href: "/reports", label: "Reportes", group: "Estrategia" },
-  { href: "/settings", label: "Configuración", group: "Sistema" },
-];
+// ── Mobile Menu Drawer ─────────────────────────────────────────────
 
 export function MobileMenuDrawer({
   open,
@@ -206,8 +181,7 @@ export function MobileMenuDrawer({
 }) {
   const pathname = usePathname();
 
-  // Group items for the drawer layout
-  const groupedItems = allNavItems.reduce<Record<string, NavItemDetails[]>>((acc, item) => {
+  const grouped = navItems.reduce<Record<string, NavItemDetails[]>>((acc, item) => {
     if (!acc[item.group]) acc[item.group] = [];
     acc[item.group].push(item);
     return acc;
@@ -217,54 +191,50 @@ export function MobileMenuDrawer({
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop blur overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[6px]"
+            className="fixed inset-0 z-50 bg-black/30 backdrop-blur-[2px]"
           />
 
-          {/* Drawer container */}
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
-            className="fixed bottom-0 left-0 right-0 z-50 overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[var(--color-border)]"
             style={{
-              background: "linear-gradient(180deg, rgba(65, 63, 62, 0.96) 0%, rgba(35, 34, 33, 0.98) 100%)",
-              borderTop: "1px solid var(--border-strong)",
               borderRadius: "24px 24px 0 0",
               padding: "16px 20px calc(24px + env(safe-area-inset-bottom))",
-              maxHeight: "85vh",
-              boxShadow: "0 -10px 40px rgba(0,0,0,0.5)",
+              maxHeight: "80vh",
+              overflowY: "auto",
+              boxShadow: "0 -8px 30px rgba(0,0,0,0.06)",
             }}
           >
-            {/* Grab handle */}
-            <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mb-6" />
+            <div className="w-8 h-1 bg-black/10 rounded-full mx-auto mb-6" />
 
-            {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
+            <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border)] mb-6">
               <div>
-                <h3 className="font-bold text-lg text-white">ANTOJO<span className="text-[var(--color-accent)]">.</span></h3>
-                <p className="text-[10px] text-[var(--color-text-muted)] tracking-widest uppercase">Navegación del Sistema</p>
+                <h3 className="font-extrabold text-base text-black">ANTOJO.</h3>
+                <p className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
+                  Navegación del Negocio
+                </p>
               </div>
               <button
                 onClick={onClose}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white"
+                className="w-7 h-7 flex items-center justify-center rounded-full border border-black/10 text-black"
               >
-                <X size={16} />
+                <X size={14} />
               </button>
             </div>
 
-            {/* Content List */}
             <div className="space-y-6">
-              {Object.entries(groupedItems).map(([group, items]) => (
+              {Object.entries(grouped).map(([group, items]) => (
                 <div key={group}>
-                  <h4 className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-2 px-1">
-                    {group}
+                  <h4 className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-2 px-1 text-left">
+                    {groupLabels[group]}
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
                     {items.map((item) => {
@@ -274,10 +244,10 @@ export function MobileMenuDrawer({
                           key={item.href}
                           href={item.href}
                           onClick={onClose}
-                          className={`flex items-center px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-180 ${
+                          className={`flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
                             isActive
-                              ? "bg-[var(--color-accent)] text-[var(--color-ink)]"
-                              : "bg-white/5 text-[var(--color-text-secondary)] hover:bg-white/10 hover:text-white"
+                              ? "bg-black text-white"
+                              : "bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:bg-black/5 hover:text-black"
                           }`}
                         >
                           {item.label}
