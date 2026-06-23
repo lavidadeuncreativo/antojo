@@ -2,63 +2,63 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
-  ShoppingCart,
   Package,
-  Warehouse,
-  FlaskConical,
-  ShoppingBag,
   Wallet,
-  Users,
-  CalendarDays,
-  Megaphone,
-  Calendar,
-  TrendingUp,
-  BarChart3,
   Settings,
-  ChevronLeft,
-  ChevronRight,
   Menu,
   X,
-  Ticket,
-  PartyPopper,
+  LogOut,
 } from "lucide-react";
 
-interface NavItem {
+interface RailItem {
   href: string;
-  label: string;
+  group: "principal" | "operaciones" | "negocios" | "estrategia";
   icon: React.ElementType;
-  group?: string;
+  label: string;
+  paths: string[];
 }
 
-const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Resumen", icon: LayoutDashboard, group: "principal" },
-  { href: "/sales", label: "Ventas", icon: ShoppingCart, group: "operaciones" },
-  { href: "/products", label: "Productos y recetas", icon: Package, group: "operaciones" },
-  { href: "/inventory", label: "Inventario", icon: Warehouse, group: "operaciones" },
-  { href: "/production", label: "Producción", icon: FlaskConical, group: "operaciones" },
-  { href: "/purchases", label: "Compras", icon: ShoppingBag, group: "operaciones" },
-  { href: "/finance", label: "Finanzas", icon: Wallet, group: "negocios" },
-  { href: "/commercial", label: "Comercial", icon: Users, group: "negocios" },
-  { href: "/events", label: "Eventos", icon: PartyPopper, group: "negocios" },
-  { href: "/quotes", label: "Cotizaciones", icon: Ticket, group: "negocios" },
-  { href: "/marketing", label: "Marketing", icon: Megaphone, group: "estrategia" },
-  { href: "/calendar", label: "Calendario", icon: Calendar, group: "estrategia" },
-  { href: "/growth", label: "Crecimiento", icon: TrendingUp, group: "estrategia" },
-  { href: "/reports", label: "Reportes", icon: BarChart3, group: "estrategia" },
-  { href: "/settings", label: "Configuración", icon: Settings, group: "sistema" },
+const railItems: RailItem[] = [
+  {
+    href: "/dashboard",
+    group: "principal",
+    icon: LayoutDashboard,
+    label: "Dashboard",
+    paths: ["/dashboard"],
+  },
+  {
+    href: "/sales",
+    group: "operaciones",
+    icon: Package,
+    label: "Operaciones",
+    paths: ["/sales", "/products", "/inventory", "/production", "/purchases"],
+  },
+  {
+    href: "/finance",
+    group: "negocios",
+    icon: Wallet,
+    label: "Negocios",
+    paths: ["/finance", "/commercial", "/events", "/quotes"],
+  },
+  {
+    href: "/marketing",
+    group: "estrategia",
+    icon: Settings,
+    label: "Estrategia y Sistema",
+    paths: ["/marketing", "/calendar", "/growth", "/reports", "/settings"],
+  },
 ];
 
-const groupLabels: Record<string, string> = {
-  principal: "Principal",
-  operaciones: "Operaciones",
-  negocios: "Negocios",
-  estrategia: "Estrategia",
-  sistema: "Sistema",
-};
+// Helper to check if a rail item is active based on current path
+function isItemActive(item: RailItem, pathname: string): boolean {
+  if (item.group === "principal") {
+    return pathname === "/dashboard";
+  }
+  return item.paths.some(p => pathname === p || pathname.startsWith(p + "/"));
+}
 
 interface SidebarProps {
   collapsed: boolean;
@@ -68,240 +68,134 @@ interface SidebarProps {
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
 
-  const groups = navItems.reduce<Record<string, NavItem[]>>((acc, item) => {
-    const g = item.group ?? "otros";
-    if (!acc[g]) acc[g] = [];
-    acc[g].push(item);
-    return acc;
-  }, {});
-
   return (
-    <aside
-      className="app-sidebar"
-      style={{ width: collapsed ? "var(--sidebar-collapsed-width)" : "var(--sidebar-width)" }}
-    >
-      {/* Logo */}
-      <div
-        style={{
-          padding: "20px 16px",
-          borderBottom: "1px solid var(--color-border)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          minHeight: 64,
-        }}
-      >
-        {!collapsed && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <div
-              style={{
-                fontFamily: "'Helvetica Neue', 'Arial', sans-serif",
-                fontWeight: 700,
-                fontSize: 18,
-                color: "var(--color-text)",
-                letterSpacing: "-0.02em",
-                lineHeight: 1,
-              }}
-            >
-              ANTOJO<span style={{ color: "var(--color-wine)" }}>.</span>
-            </div>
-            <div
-              style={{
-                fontSize: 10,
-                fontWeight: 600,
-                color: "var(--color-text-muted)",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                marginTop: 3,
-              }}
-            >
-              OS
-            </div>
-          </motion.div>
-        )}
-        {collapsed && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            style={{
-              fontFamily: "'Helvetica Neue', 'Arial', sans-serif",
-              fontWeight: 700,
-              fontSize: 16,
-              color: "var(--color-wine)",
-              margin: "0 auto",
-            }}
-          >
-            A.
-          </motion.div>
-        )}
-        {!collapsed && (
-          <button
-            onClick={onToggle}
-            className="btn btn-ghost btn-icon"
-            style={{ marginLeft: "auto" }}
-            aria-label="Colapsar sidebar"
-          >
-            <ChevronLeft size={16} />
-          </button>
-        )}
+    <aside className="side-rail flex flex-col items-center justify-between py-6">
+      {/* Top Logo Icon */}
+      <div className="flex items-center justify-center w-11 h-11 rounded-full bg-white/5 border border-white/10 text-white font-bold text-lg select-none">
+        <span className="text-[var(--color-accent)]">a</span>b
       </div>
 
-      {/* Navegación */}
-      <nav
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          overflowX: "hidden",
-          padding: "8px 8px",
+      {/* Mid Rail Icons */}
+      <div className="flex flex-col gap-3.5 my-auto">
+        {railItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = isItemActive(item, pathname);
+
+          return (
+            <Link
+              key={item.group}
+              href={item.href}
+              className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-180 ease-premium relative ${
+                isActive
+                  ? "bg-[var(--color-accent)] text-[var(--color-ink)] shadow-md"
+                  : "text-[var(--color-text-primary)]/80 hover:bg-white/10 hover:text-white"
+              }`}
+              title={item.label}
+            >
+              <Icon size={19} strokeWidth={1.8} />
+              {isActive && (
+                <motion.div
+                  layoutId="activeRailIndicator"
+                  className="absolute -right-[6px] w-[3px] h-3 bg-[var(--color-accent)] rounded-l-full"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* Bottom Action Icon (Logout/System) */}
+      <button
+        onClick={() => {
+          // Fallback simple o logout demo
+          if (typeof window !== "undefined") {
+            window.location.href = "/";
+          }
         }}
+        className="w-11 h-11 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:bg-white/10 hover:text-white transition-all duration-180 ease-premium"
+        title="Salir"
       >
-        {Object.entries(groups).map(([group, items]) => (
-          <div key={group}>
-            {!collapsed && (
-              <div className="nav-group-label">{groupLabels[group] ?? group}</div>
-            )}
-            {items.map((item) => {
-              const Icon = item.icon;
-              const isActive =
-                pathname === item.href ||
-                (item.href !== "/dashboard" && pathname.startsWith(item.href));
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`nav-item ${isActive ? "active" : ""}`}
-                  title={collapsed ? item.label : undefined}
-                  style={{
-                    justifyContent: collapsed ? "center" : "flex-start",
-                    padding: collapsed ? "9px" : "9px 12px",
-                  }}
-                >
-                  <Icon className="nav-icon" />
-                  {!collapsed && (
-                    <motion.span
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {item.label}
-                    </motion.span>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        ))}
-      </nav>
-
-      {/* Toggle expandir (cuando colapsado) */}
-      {collapsed && (
-        <div style={{ padding: 8 }}>
-          <button
-            onClick={onToggle}
-            className="btn btn-ghost btn-icon"
-            style={{ width: "100%", justifyContent: "center" }}
-            aria-label="Expandir sidebar"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
-      )}
+        <LogOut size={18} strokeWidth={1.8} />
+      </button>
     </aside>
   );
 }
 
-// ── Bottom Navigation (Mobile) ────────────────────────────────
-
-const mobileNavItems = [
-  { href: "/dashboard", label: "Inicio", icon: LayoutDashboard },
-  { href: "/sales", label: "Ventas", icon: ShoppingCart },
-  { href: "/production", label: "Producción", icon: FlaskConical },
-  { href: "/calendar", label: "Calendario", icon: CalendarDays },
-];
+// ── Bottom Navigation (Mobile - Styled as floating pill) ──────────
 
 export function MobileBottomNav({ onMenuOpen }: { onMenuOpen: () => void }) {
   const pathname = usePathname();
 
   return (
     <nav
+      className="fixed bottom-4 left-4 right-4 h-14 z-50 flex items-center justify-around px-2"
       style={{
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        background: "rgba(255,255,255,0.95)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        borderTop: "1px solid var(--color-border)",
-        display: "flex",
-        alignItems: "center",
-        height: 64,
-        zIndex: 50,
-        paddingBottom: "env(safe-area-inset-bottom)",
+        background: "rgba(45, 43, 42, 0.88)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+        border: "1px solid var(--border-medium)",
+        borderRadius: "999px",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.38)",
       }}
     >
-      {mobileNavItems.map((item) => {
+      {railItems.map((item) => {
         const Icon = item.icon;
-        const isActive =
-          pathname === item.href ||
-          (item.href !== "/dashboard" && pathname.startsWith(item.href));
+        const isActive = isItemActive(item, pathname);
+
         return (
           <Link
-            key={item.href}
+            key={item.group}
             href={item.href}
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 4,
-              padding: "10px 0",
-              color: isActive ? "var(--color-wine)" : "var(--color-text-muted)",
-              textDecoration: "none",
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: "0.02em",
-              transition: "color 0.15s ease",
-            }}
+            className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-180 ${
+              isActive
+                ? "bg-[var(--color-accent)] text-[var(--color-ink)]"
+                : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+            }`}
+            title={item.label}
           >
-            <Icon size={22} />
-            {item.label}
+            <Icon size={18} strokeWidth={1.8} />
           </Link>
         );
       })}
-      {/* Botón Más */}
+
+      {/* Plus/Menu Trigger for all subpaths */}
       <button
         onClick={onMenuOpen}
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 4,
-          padding: "10px 0",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: "var(--color-text-muted)",
-          fontSize: 10,
-          fontWeight: 600,
-          letterSpacing: "0.02em",
-        }}
+        className="w-10 h-10 flex items-center justify-center rounded-full text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-all duration-180"
+        title="Más Opciones"
       >
-        <Menu size={22} />
-        Más
+        <Menu size={18} strokeWidth={1.8} />
       </button>
     </nav>
   );
 }
 
-// ── Mobile Full Menu Drawer ────────────────────────────────────
+// ── Mobile Full Menu Drawer (Styled as dark glass sheet) ──────────
+
+interface NavItemDetails {
+  href: string;
+  label: string;
+  group: string;
+}
+
+const allNavItems: NavItemDetails[] = [
+  { href: "/dashboard", label: "Dashboard / Resumen", group: "Principal" },
+  { href: "/sales", label: "Ventas", group: "Operaciones" },
+  { href: "/products", label: "Productos y Recetas", group: "Operaciones" },
+  { href: "/inventory", label: "Inventario", group: "Operaciones" },
+  { href: "/production", label: "Producción", group: "Operaciones" },
+  { href: "/purchases", label: "Compras", group: "Operaciones" },
+  { href: "/finance", label: "Finanzas", group: "Negocios" },
+  { href: "/commercial", label: "Comercial", group: "Negocios" },
+  { href: "/events", label: "Eventos", group: "Negocios" },
+  { href: "/quotes", label: "Cotizaciones", group: "Negocios" },
+  { href: "/marketing", label: "Marketing", group: "Estrategia" },
+  { href: "/calendar", label: "Calendario", group: "Estrategia" },
+  { href: "/growth", label: "Crecimiento", group: "Estrategia" },
+  { href: "/reports", label: "Reportes", group: "Estrategia" },
+  { href: "/settings", label: "Configuración", group: "Sistema" },
+];
 
 export function MobileMenuDrawer({
   open,
@@ -312,95 +206,87 @@ export function MobileMenuDrawer({
 }) {
   const pathname = usePathname();
 
+  // Group items for the drawer layout
+  const groupedItems = allNavItems.reduce<Record<string, NavItemDetails[]>>((acc, item) => {
+    if (!acc[item.group]) acc[item.group] = [];
+    acc[item.group].push(item);
+    return acc;
+  }, {});
+
   return (
     <AnimatePresence>
       {open && (
         <>
+          {/* Backdrop blur overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(25,23,21,0.4)",
-              backdropFilter: "blur(4px)",
-              zIndex: 60,
-            }}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[6px]"
           />
+
+          {/* Drawer container */}
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 28, stiffness: 300 }}
+            transition={{ type: "spring", damping: 28, stiffness: 280 }}
+            className="fixed bottom-0 left-0 right-0 z-50 overflow-y-auto"
             style={{
-              position: "fixed",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              background: "var(--color-white)",
-              borderRadius: "20px 20px 0 0",
-              zIndex: 70,
-              padding: "12px 0 calc(24px + env(safe-area-inset-bottom))",
-              maxHeight: "80dvh",
-              overflowY: "auto",
+              background: "linear-gradient(180deg, rgba(65, 63, 62, 0.96) 0%, rgba(35, 34, 33, 0.98) 100%)",
+              borderTop: "1px solid var(--border-strong)",
+              borderRadius: "24px 24px 0 0",
+              padding: "16px 20px calc(24px + env(safe-area-inset-bottom))",
+              maxHeight: "85vh",
+              boxShadow: "0 -10px 40px rgba(0,0,0,0.5)",
             }}
           >
-            {/* Handle */}
-            <div
-              style={{
-                width: 40,
-                height: 4,
-                background: "var(--color-border)",
-                borderRadius: 2,
-                margin: "0 auto 20px",
-              }}
-            />
+            {/* Grab handle */}
+            <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mb-6" />
+
             {/* Header */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "0 20px 16px",
-                borderBottom: "1px solid var(--color-border)",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'Helvetica Neue', Arial, sans-serif",
-                  fontWeight: 700,
-                  fontSize: 20,
-                  color: "var(--color-text)",
-                }}
-              >
-                ANTOJO<span style={{ color: "var(--color-wine)" }}>.</span>
+            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
+              <div>
+                <h3 className="font-bold text-lg text-white">ANTOJO<span className="text-[var(--color-accent)]">.</span></h3>
+                <p className="text-[10px] text-[var(--color-text-muted)] tracking-widest uppercase">Navegación del Sistema</p>
               </div>
-              <button onClick={onClose} className="btn btn-ghost btn-icon">
-                <X size={18} />
+              <button
+                onClick={onClose}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white"
+              >
+                <X size={16} />
               </button>
             </div>
-            {/* Nav items */}
-            <div style={{ padding: "12px 12px 0" }}>
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/dashboard" && pathname.startsWith(item.href));
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={onClose}
-                    className={`nav-item ${isActive ? "active" : ""}`}
-                    style={{ minHeight: 48 }}
-                  >
-                    <Icon className="nav-icon" />
-                    {item.label}
-                  </Link>
-                );
-              })}
+
+            {/* Content List */}
+            <div className="space-y-6">
+              {Object.entries(groupedItems).map(([group, items]) => (
+                <div key={group}>
+                  <h4 className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-2 px-1">
+                    {group}
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {items.map((item) => {
+                      const isActive = pathname === item.href;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={onClose}
+                          className={`flex items-center px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-180 ${
+                            isActive
+                              ? "bg-[var(--color-accent)] text-[var(--color-ink)]"
+                              : "bg-white/5 text-[var(--color-text-secondary)] hover:bg-white/10 hover:text-white"
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </motion.div>
         </>

@@ -1,196 +1,148 @@
 "use client";
 
-import { Search, Bell, Plus, ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Menu, Settings, Bell, Search, Sparkles } from "lucide-react";
 
 interface TopbarProps {
   onMenuToggle?: () => void;
 }
 
-const quickActions = [
-  { label: "Registrar venta", href: "/sales/new", shortcut: "V" },
-  { label: "Crear lote", href: "/production/new", shortcut: "L" },
-  { label: "Registrar compra", href: "/purchases/new", shortcut: "C" },
-  { label: "Registrar gasto", href: "/finance/expenses/new", shortcut: "G" },
-  { label: "Crear cotización", href: "/quotes/new", shortcut: "Q" },
-  { label: "Agendar tarea", href: "/calendar?new=task", shortcut: "T" },
-];
+interface CapsuleItem {
+  href: string;
+  label: string;
+}
 
 export function Topbar({ onMenuToggle }: TopbarProps) {
-  const [quickOpen, setQuickOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Determine which sub-menu to display in the top capsule based on pathname
+  let capsuleItems: CapsuleItem[] = [];
+  
+  if (pathname === "/dashboard") {
+    capsuleItems = [
+      { href: "/dashboard", label: "Resumen" },
+      { href: "/sales", label: "Ventas" },
+      { href: "/products", label: "Productos" },
+      { href: "/inventory", label: "Inventario" },
+      { href: "/finance", label: "Finanzas" },
+      { href: "/calendar", label: "Calendario" },
+    ];
+  } else if (
+    pathname.startsWith("/sales") ||
+    pathname.startsWith("/products") ||
+    pathname.startsWith("/inventory") ||
+    pathname.startsWith("/production") ||
+    pathname.startsWith("/purchases")
+  ) {
+    capsuleItems = [
+      { href: "/sales", label: "Ventas" },
+      { href: "/products", label: "Productos" },
+      { href: "/inventory", label: "Inventario" },
+      { href: "/production", label: "Producción" },
+      { href: "/purchases", label: "Compras" },
+    ];
+  } else if (
+    pathname.startsWith("/finance") ||
+    pathname.startsWith("/commercial") ||
+    pathname.startsWith("/events") ||
+    pathname.startsWith("/quotes")
+  ) {
+    capsuleItems = [
+      { href: "/finance", label: "Finanzas" },
+      { href: "/commercial", label: "Comercial" },
+      { href: "/events", label: "Eventos" },
+      { href: "/quotes", label: "Cotizaciones" },
+    ];
+  } else {
+    capsuleItems = [
+      { href: "/marketing", label: "Marketing" },
+      { href: "/calendar", label: "Calendario" },
+      { href: "/growth", label: "Crecimiento" },
+      { href: "/reports", label: "Reportes" },
+      { href: "/settings", label: "Configuración" },
+    ];
+  }
 
   return (
-    <header className="app-topbar">
-      {/* Búsqueda global */}
-      <div
-        style={{
-          flex: 1,
-          maxWidth: 420,
-          position: "relative",
-        }}
-      >
-        <Search
-          size={15}
-          style={{
-            position: "absolute",
-            left: 12,
-            top: "50%",
-            transform: "translateY(-50%)",
-            color: "var(--color-text-muted)",
-          }}
-        />
-        <input
-          type="search"
-          placeholder="Buscar productos, ventas, clientes… ⌘K"
-          className="input-base"
-          style={{
-            paddingLeft: 36,
-            fontSize: 13,
-            height: 36,
-            background: "var(--color-surface)",
-            border: "1px solid transparent",
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.background = "var(--color-white)";
-            e.currentTarget.style.borderColor = "var(--color-border)";
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.background = "var(--color-surface)";
-            e.currentTarget.style.borderColor = "transparent";
-          }}
-        />
+    <header className="w-full flex items-center justify-between h-12 mb-6 gap-4 border-b border-white/5 pb-4 select-none">
+      {/* Mobile Menu trigger & Brand Logo */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onMenuToggle}
+          className="visible-mobile w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white"
+          aria-label="Menú principal"
+        >
+          <Menu size={16} />
+        </button>
+
+        {/* Brand Logo inside dashboard shell (Matches "qb" icon from mockup) */}
+        <Link href="/dashboard" className="flex items-center gap-2 group decoration-none">
+          <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white font-bold text-sm group-hover:border-[var(--border-strong)] transition-all duration-180">
+            qb
+          </div>
+          <span className="hidden-mobile font-semibold text-sm tracking-tight text-white group-hover:text-[var(--color-accent)] transition-all duration-180">
+            ANTOJO<span className="text-[var(--color-accent)]">.</span>
+          </span>
+        </Link>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: "auto" }}>
-        {/* Acción rápida */}
-        <div style={{ position: "relative" }}>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => setQuickOpen(!quickOpen)}
-            style={{ gap: 6 }}
-          >
-            <Plus size={14} />
-            Crear
-            <ChevronDown size={12} style={{ opacity: 0.7 }} />
-          </button>
+      {/* Center: Capsule Navigation (Matches capsule bar from mockup) */}
+      <nav className="hidden-mobile nav-container mx-auto">
+        {capsuleItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={isActive ? "page" : undefined}
+              className={`nav-item ${isActive ? "active" : ""}`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
 
-          <AnimatePresence>
-            {quickOpen && (
-              <>
-                <div
-                  style={{ position: "fixed", inset: 0, zIndex: 40 }}
-                  onClick={() => setQuickOpen(false)}
-                />
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.97 }}
-                  transition={{ duration: 0.15 }}
-                  style={{
-                    position: "absolute",
-                    top: "calc(100% + 8px)",
-                    right: 0,
-                    background: "var(--color-white)",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "var(--radius-lg)",
-                    boxShadow: "var(--shadow-menu)",
-                    padding: 6,
-                    minWidth: 220,
-                    zIndex: 50,
-                  }}
-                >
-                  {quickActions.map((action) => (
-                    <a
-                      key={action.href}
-                      href={action.href}
-                      onClick={() => setQuickOpen(false)}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        padding: "9px 12px",
-                        borderRadius: "var(--radius-md)",
-                        fontSize: 14,
-                        color: "var(--color-text)",
-                        textDecoration: "none",
-                        transition: "background 0.1s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLElement).style.background =
-                          "var(--color-surface)";
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLElement).style.background =
-                          "transparent";
-                      }}
-                    >
-                      <span>{action.label}</span>
-                      <span
-                        style={{
-                          fontSize: 11,
-                          color: "var(--color-text-muted)",
-                          background: "var(--color-surface)",
-                          padding: "2px 6px",
-                          borderRadius: 4,
-                          fontWeight: 500,
-                        }}
-                      >
-                        {action.shortcut}
-                      </span>
-                    </a>
-                  ))}
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
+      {/* Right side: User card & Quick actions */}
+      <div className="flex items-center gap-2">
+        {/* Search button / Icon */}
+        <button
+          className="w-9 h-9 hidden-mobile flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-[var(--color-text-secondary)] hover:text-white hover:border-white/20 transition-all duration-180"
+          title="Buscar"
+        >
+          <Search size={15} />
+        </button>
+
+        {/* Notification indicator */}
+        <button
+          className="w-9 h-9 relative flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-[var(--color-text-secondary)] hover:text-white hover:border-white/20 transition-all duration-180"
+          title="Notificaciones"
+        >
+          <Bell size={15} />
+          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[var(--color-error)]" />
+        </button>
+
+        {/* User Badge Capsule (Matches Jon Snow avatar capsule from mockup) */}
+        <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full pl-2 pr-1 py-1 h-9 select-none">
+          {/* Mock profile photo */}
+          <div className="w-[26px] h-[26px] rounded-full bg-[var(--color-surface)] border border-white/20 flex items-center justify-center overflow-hidden font-bold text-xs text-[var(--color-ink)] select-none">
+            AC
+          </div>
+          <div className="hidden-mobile flex flex-col text-left pr-3">
+            <span className="text-[10px] font-bold leading-tight text-white">Admin ANTOJO</span>
+            <span className="text-[8px] leading-tight text-[var(--color-text-muted)]">Control OS</span>
+          </div>
         </div>
 
-        {/* Notificaciones */}
-        <button
-          className="btn btn-ghost btn-icon"
-          aria-label="Notificaciones"
-          style={{ position: "relative" }}
+        {/* Small settings icon next to user (Matches mockup) */}
+        <Link
+          href="/settings"
+          className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-[var(--color-text-secondary)] hover:text-white hover:border-white/20 transition-all duration-180"
+          title="Configuración"
         >
-          <Bell size={18} />
-          {/* Badge de notificación */}
-          <span
-            style={{
-              position: "absolute",
-              top: 6,
-              right: 6,
-              width: 7,
-              height: 7,
-              background: "var(--color-wine)",
-              borderRadius: "50%",
-              border: "2px solid var(--color-cream)",
-            }}
-          />
-        </button>
-
-        {/* Avatar */}
-        <button
-          className="btn btn-ghost"
-          style={{ gap: 8, padding: "5px 8px", borderRadius: "var(--radius-md)" }}
-          aria-label="Perfil"
-        >
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              background: "var(--color-wine-bg)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 12,
-              fontWeight: 700,
-              color: "var(--color-wine)",
-            }}
-          >
-            A
-          </div>
-        </button>
+          <Settings size={15} />
+        </Link>
       </div>
     </header>
   );

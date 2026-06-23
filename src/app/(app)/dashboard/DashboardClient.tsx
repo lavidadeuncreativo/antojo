@@ -4,806 +4,506 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   TrendingUp,
-  TrendingDown,
-  ShoppingCart,
   Package,
-  Wallet,
-  AlertTriangle,
-  ArrowRight,
+  Calendar,
+  Compass,
+  ArrowUpRight,
+  Edit2,
+  Check,
   ChevronRight,
-  Clock,
-  FlaskConical,
-  Users,
-  Megaphone,
-  CheckCircle2,
-  XCircle,
+  TrendingDown,
+  Layers,
+  Sparkles
 } from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
-import { formatCurrency, formatNumber, formatPercent, percentChange } from "@/lib/utils";
-import Link from "next/link";
-
+import { formatCurrency, formatNumber, percentChange } from "@/lib/utils";
 import { DashboardData } from "@/types/dashboard";
 import { demoDashboardData } from "@/lib/demo-data";
 
-// Mapeo de strings a componentes de icono
-const iconMap = {
-  Package,
-  AlertTriangle,
-  Users,
-  CheckCircle2,
-  XCircle,
-};
-
-// ── Componentes helper ────────────────────────────────────────
-
-function KPICard({
-  label,
-  value,
-  previous,
-  prefix = "",
-  suffix = "",
-  format: fmt = "currency",
-  miniData,
-  delay = 0,
-}: {
-  label: string;
-  value: number;
-  previous: number;
-  prefix?: string;
-  suffix?: string;
-  format?: "currency" | "number" | "percent";
-  miniData?: number[];
-  delay?: number;
-}) {
-  const change = percentChange(value, previous);
-  const isPositive = change >= 0;
-
-  const formattedValue =
-    fmt === "currency"
-      ? formatCurrency(value)
-      : fmt === "percent"
-      ? formatPercent(value)
-      : formatNumber(value);
-
-  const chartData = miniData?.map((v, i) => ({ i, v })) ?? [];
-
-  return (
-    <motion.div
-      className="card card-interactive"
-      initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 0.45, delay, ease: [0.4, 0, 0.2, 1] }}
-      style={{ display: "flex", flexDirection: "column", gap: 8, minHeight: 110 }}
-    >
-      <div className="kpi-label">{label}</div>
-      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 8 }}>
-        <div>
-          <div className="kpi-value tabular-nums">{formattedValue}</div>
-          <div style={{ marginTop: 6, display: "flex", alignItems: "baseline", gap: 6 }}>
-            <span className={isPositive ? "kpi-change-positive" : "kpi-change-negative"}>
-              {isPositive ? "↑" : "↓"} {Math.abs(change).toFixed(1)}%
-            </span>
-            <span style={{ fontSize: 10, color: "var(--color-text-muted)" }}>
-              vs anterior
-            </span>
-          </div>
-        </div>
-        {chartData.length > 0 && (
-          <div style={{ width: 64, height: 28, flexShrink: 0, opacity: 0.8 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
-                <Area
-                  type="monotone"
-                  dataKey="v"
-                  stroke="var(--color-wine)"
-                  fill="none"
-                  strokeWidth={1.2}
-                  dot={false}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </div>
-    </motion.div>
-  );
+interface DashboardClientProps {
+  data?: DashboardData;
 }
 
-function AlertItem({
-  alert,
-  index,
-}: {
-  alert: DashboardData["alerts"][0];
-  index: number;
-}) {
-  const typeLabels = {
-    warning: "Atención",
-    error: "Crítico",
-    success: "Listo",
-    info: "Info",
-  };
-  
-  const typeColors = {
-    warning: "var(--color-warning)",
-    error: "var(--color-error)",
-    success: "var(--color-success)",
-    info: "var(--color-wine)",
-  };
-
-  const label = typeLabels[alert.type as keyof typeof typeLabels] || "Aviso";
-  const textColor = typeColors[alert.type as keyof typeof typeColors] || "var(--color-text)";
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.2 + index * 0.05 }}
-      style={{
-        borderBottom: "1px solid var(--color-border)",
-        padding: "12px 0",
-      }}
-    >
-      <Link
-        href={alert.link}
-        style={{
-          display: "flex",
-          alignItems: "baseline",
-          justifyContent: "space-between",
-          textDecoration: "none",
-          gap: 12,
-        }}
-      >
-        <div style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
-          <span style={{
-            fontSize: 9,
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            color: textColor,
-            border: `1px solid ${textColor}`,
-            padding: "2px 6px",
-            lineHeight: 1,
-            display: "inline-block",
-          }}>
-            {label}
-          </span>
-          <span style={{
-            fontSize: 13,
-            color: "var(--color-text)",
-            fontFamily: "var(--font-sans)",
-            fontWeight: 500
-          }}>
-            {alert.message}
-          </span>
-        </div>
-        <ChevronRight size={12} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
-      </Link>
-    </motion.div>
-  );
-}
-
-// ── Dashboard Principal ───────────────────────────────────────
-
-const periods = ["Hoy", "Ayer", "Esta semana", "Este mes", "Este año"];
-
-export function DashboardClient({ data = demoDashboardData }: { data?: DashboardData }) {
-  const [selectedPeriod, setSelectedPeriod] = useState("Esta semana");
-
+export function DashboardClient({ data = demoDashboardData }: DashboardClientProps) {
   const resolvedData = data || demoDashboardData;
+  const { kpis, recentSales, topProducts } = resolvedData;
 
-  const {
-    salesByDay,
-    salesByChannel,
-    topProducts,
-    alerts,
-    upcomingEvents,
-    recentSales,
-    kpis,
-    monthlyGoal,
-  } = resolvedData;
+  // Local state for interactive UI controls
+  const [selectedFilter, setSelectedFilter] = useState("Suscripciones");
+  const [toggleInsumos, setToggleInsumos] = useState(true);
+  const [toggleReserva, setToggleReserva] = useState(true);
+  const [selectedPlan, setSelectedPlan] = useState("Volumen");
+
+  // Format financial KPI data dynamically
+  const totalSalesVal = kpis.totalSales.current;
+  const estimatedProfitVal = kpis.estimatedProfit.current;
+  const expensesVal = kpis.expenses.current;
+
+  // Format numbers for layout
+  const formattedSales = formatNumber(totalSalesVal);
+  const formattedProfit = formatNumber(estimatedProfitVal);
+  const formattedExpenses = formatNumber(expensesVal);
+
+  // Math for progress ring: Goal completion
+  const goalPercent = Math.round((resolvedData.monthlyGoal.current / resolvedData.monthlyGoal.goal) * 100);
+
+  // Generate calendar days (1-31)
+  const calendarDays = Array.from({ length: 31 }, (_, i) => i + 1);
 
   return (
-    <div style={{ maxWidth: 1400, margin: "0 auto" }}>
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 36,
-          gap: 20,
-          flexWrap: "wrap",
-          borderBottom: "1px solid var(--color-wine)",
-          paddingBottom: 20,
-        }}
-      >
-        <div>
-          <h1
-            style={{
-              fontFamily: "var(--font-editorial)",
-              fontStyle: "italic",
-              fontWeight: 400,
-              fontSize: 32,
-              color: "var(--color-text)",
-              letterSpacing: "-0.01em",
-              marginBottom: 4,
-            }}
-          >
-            Buenos días<span style={{ fontFamily: "var(--font-sans)", fontStyle: "normal", fontWeight: 700, color: "var(--color-wine)" }}>.</span>
-          </h1>
-          <p style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>
-            Resumen operativo y comercial de ANTOJO. para el periodo seleccionado.
-          </p>
-        </div>
-
-        {/* Selector de periodo editorial: botones separados por barra inclinada (/) */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 2,
-          }}
-        >
-          {periods.map((p, idx) => (
-            <span key={p} style={{ display: "inline-flex", alignItems: "center" }}>
-              {idx > 0 && (
-                <span style={{ color: "var(--color-border)", margin: "0 8px", fontSize: 12 }}>/</span>
-              )}
-              <button
-                onClick={() => setSelectedPeriod(p)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                  fontFamily: "var(--font-sans)",
-                  fontSize: 10,
-                  fontWeight: selectedPeriod === p ? 700 : 500,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.15em",
-                  color: selectedPeriod === p ? "var(--color-wine)" : "var(--color-text-secondary)",
-                  textDecoration: selectedPeriod === p ? "underline" : "none",
-                  textUnderlineOffset: "6px",
-                  transition: "color 0.15s ease",
-                }}
-              >
-                {p}
-              </button>
-            </span>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* KPI Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          gap: 12,
-          marginBottom: 16,
-        }}
-      >
-        <KPICard
-          label="Ventas totales"
-          value={kpis.totalSales.current}
-          previous={kpis.totalSales.previous}
-          miniData={kpis.totalSales.miniData}
-          delay={0}
-        />
-        <KPICard
-          label="Utilidad estimada"
-          value={kpis.estimatedProfit.current}
-          previous={kpis.estimatedProfit.previous}
-          miniData={kpis.estimatedProfit.miniData}
-          delay={0.06}
-        />
-        <KPICard
-          label="Margen promedio"
-          value={kpis.avgMargin.current}
-          previous={kpis.avgMargin.previous}
-          format="percent"
-          miniData={kpis.avgMargin.miniData}
-          delay={0.12}
-        />
-        <KPICard
-          label="Unidades vendidas"
-          value={kpis.unitsSold.current}
-          previous={kpis.unitsSold.previous}
-          format="number"
-          miniData={kpis.unitsSold.miniData}
-          delay={0.18}
-        />
-        <KPICard
-          label="Ticket promedio"
-          value={kpis.avgTicket.current}
-          previous={kpis.avgTicket.previous}
-          delay={0.24}
-        />
-        <KPICard
-          label="Gastos"
-          value={kpis.expenses.current}
-          previous={kpis.expenses.previous}
-          delay={0.3}
-        />
-      </div>
-
-      {/* Bento Grid Principal */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(12, 1fr)",
-          gap: 12,
-        }}
-      >
-        {/* Ventas por día — 8 cols */}
-        <motion.div
-          className="card"
-          initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          style={{ gridColumn: "span 8" }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 20,
-            }}
-          >
-            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Ventas por día</h2>
-            <span style={{ fontSize: 11, fontWeight: 600, color: "var(--color-wine)" }}>
-              ↑ +19.5% <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>vs anterior</span>
-            </span>
+    <div className="max-w-6xl mx-auto space-y-8 select-none">
+      {/* ── Top Section: Title & Progress Ring & 3 Major Metrics ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 pb-6 border-b border-white/5">
+        
+        {/* Left Side: Title & Circular Goal Progress (Segmented Arc Mockup) */}
+        <div className="flex items-center gap-6">
+          <div className="space-y-1">
+            <h1 className="hero-title">Operación ANTOJO</h1>
+            <p className="text-[11px] font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+              Centro de Cobros & Rendimiento Comercial
+            </p>
           </div>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart
-              data={salesByDay}
-              margin={{ top: 0, right: 0, bottom: 0, left: -20 }}
-              barGap={3}
-            >
-              <XAxis
-                dataKey="dia"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 10, fill: "var(--color-text-muted)" }}
-                tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: "var(--color-white)",
-                  border: "1px solid var(--color-wine)",
-                  borderRadius: 0,
-                  boxShadow: "none",
-                  fontSize: 12,
-                }}
-                formatter={(value, name) => [
-                  formatCurrency(Number(value)),
-                  String(name) === "ventas" ? "Ventas" : "Costo",
-                ]}
-                cursor={{ fill: "var(--color-surface)" }}
-              />
-              <Bar dataKey="ventas" fill="var(--color-wine)" radius={0} maxBarSize={24} />
-              <Bar dataKey="costo" fill="var(--color-border)" radius={0} maxBarSize={24} />
-            </BarChart>
-          </ResponsiveContainer>
-        </motion.div>
 
-        {/* Canal — 4 cols */}
-        <motion.div
-          className="card"
-          initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-          style={{ gridColumn: "span 4" }}
-        >
-          <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 16 }}>Por canal</h2>
-          <ResponsiveContainer width="100%" height={140}>
-            <PieChart>
-              <Pie
-                data={salesByChannel}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={60}
-                paddingAngle={2}
-                dataKey="value"
-                animationBegin={400}
-                animationDuration={800}
-              >
-                {salesByChannel.map((entry, i) => (
-                  <Cell key={i} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  background: "var(--color-white)",
-                  border: "1px solid var(--color-wine)",
-                  borderRadius: 0,
-                  boxShadow: "none",
-                  fontSize: 12,
-                }}
-                formatter={(v) => [`${v}%`, ""]}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
-            {salesByChannel.slice(0, 3).map((c) => (
-              <div key={c.name} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    background: c.color,
-                    flexShrink: 0,
-                  }}
+          {/* Segmented Progress Ring (Matches progress-ring from mockup) */}
+          <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-3 py-2 rounded-2xl">
+            <div className="relative w-14 h-14 flex items-center justify-center">
+              <svg width="56" height="56" viewBox="0 0 100 100" className="transform -rotate-[100deg]">
+                {/* Underlay segment */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  fill="none"
+                  stroke="rgba(255, 255, 255, 0.08)"
+                  strokeWidth="11"
+                  strokeDasharray="251"
+                  strokeDashoffset="60"
+                  strokeLinecap="round"
                 />
-                <span style={{ fontSize: 12, color: "var(--color-text-secondary)", flex: 1 }}>
-                  {c.name}
-                </span>
-                <span style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text)" }}>
-                  {c.value}%
-                </span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Productos más vendidos — 5 cols */}
-        <motion.div
-          className="card"
-          initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          style={{ gridColumn: "span 5" }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 16,
-            }}
-          >
-            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Más vendidos</h2>
-            <Link href="/products" style={{ fontSize: 11, fontFamily: "var(--font-editorial)", fontStyle: "italic", color: "var(--color-wine)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
-              Catálogo completo
-            </Link>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {topProducts.map((p, i) => (
-              <div
-                key={p.name}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  padding: "12px 0",
-                  borderBottom: "1px solid var(--color-border)",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "var(--font-editorial)",
-                    fontStyle: "italic",
-                    fontSize: 13,
-                    color: "var(--color-wine)",
-                    width: 20,
-                    flexShrink: 0,
-                  }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: "var(--color-text)" }}>{p.name}</span>
-                <span style={{ fontSize: 11, color: "var(--color-text-secondary)", marginRight: 8 }}>
-                  {p.units} uds
-                </span>
-                <span
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: "var(--color-success)",
-                    border: "1px solid rgba(71,120,90,0.3)",
-                    padding: "1px 5px",
-                    lineHeight: 1,
-                    marginRight: 10,
-                  }}
-                >
-                  {p.margin}%
-                </span>
-                <span
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: "var(--color-text)",
-                    minWidth: 64,
-                    textAlign: "right",
-                    fontVariantNumeric: "tabular-nums",
-                  }}
-                >
-                  {formatCurrency(p.revenue, { compact: true })}
-                </span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Alertas — 4 cols */}
-        <motion.div
-          className="card"
-          initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.5, delay: 0.35 }}
-          style={{ gridColumn: "span 4" }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 14,
-            }}
-          >
-            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Atención requerida</h2>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--color-wine)" }}>({alerts.length})</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {alerts.map((a, i) => (
-              <AlertItem key={i} alert={a} index={i} />
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Meta mensual — 3 cols */}
-        <motion.div
-          className="card"
-          initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.5, delay: 0.38 }}
-          style={{ gridColumn: "span 3" }}
-        >
-          <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Meta del mes</h2>
-          <p style={{ fontSize: 11, fontFamily: "var(--font-editorial)", fontStyle: "italic", color: "var(--color-text-secondary)", marginBottom: 20 }}>
-            Progreso de facturación mensual
-          </p>
-          {/* Progress ring editorial (líneas muy delgadas y números elegantes) */}
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
-            <svg width={110} height={110} viewBox="0 0 120 120">
-              <circle cx={60} cy={60} r={52} fill="none" stroke="var(--color-border)" strokeWidth={1.5} />
-              <circle
-                cx={60}
-                cy={60}
-                r={52}
-                fill="none"
-                stroke="var(--color-wine)"
-                strokeWidth={2.5}
-                strokeDasharray={`${2 * Math.PI * 52}`}
-                strokeDashoffset={`${2 * Math.PI * 52 * (1 - (monthlyGoal.current / monthlyGoal.goal))}`}
-                strokeLinecap="square"
-                transform="rotate(-90 60 60)"
-              />
-              <text x={60} y={58} textAnchor="middle" style={{ fontSize: 24, fontFamily: "var(--font-editorial)", fontStyle: "italic", fill: "var(--color-wine)" }}>
-                {Math.round((monthlyGoal.current / monthlyGoal.goal) * 100)}%
-              </text>
-              <text x={60} y={76} textAnchor="middle" style={{ fontSize: 8, fontFamily: "var(--font-sans)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, fill: "var(--color-text-muted)" }}>
-                completado
-              </text>
-            </svg>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid var(--color-border)", paddingTop: 12 }}>
-            <div>
-              <div style={{ color: "var(--color-text-secondary)", fontFamily: "var(--font-sans)", fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Actual</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--color-wine)", fontVariantNumeric: "tabular-nums" }}>
-                {formatCurrency(monthlyGoal.current, { compact: true })}
+                {/* Progress arc */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  fill="none"
+                  stroke="var(--color-accent)"
+                  strokeWidth="11"
+                  strokeDasharray="251"
+                  strokeDashoffset={251 - (251 * 0.75 * (goalPercent / 100))}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="font-bold text-xs text-white tabular-nums">{goalPercent}%</span>
               </div>
             </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ color: "var(--color-text-secondary)", fontFamily: "var(--font-sans)", fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Objetivo</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)", fontVariantNumeric: "tabular-nums" }}>
-                {formatCurrency(monthlyGoal.goal, { compact: true })}
-              </div>
+            <div className="flex flex-col text-left">
+              <span className="text-[9px] font-bold uppercase text-[var(--color-text-muted)] tracking-wider leading-none">Meta Mes</span>
+              <span className="text-xs font-bold text-white mt-1 tabular-nums">
+                {formatCurrency(resolvedData.monthlyGoal.current, { compact: true })}
+              </span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Ventas recientes — 5 cols */}
-        <motion.div
-          className="card"
-          initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          style={{ gridColumn: "span 5" }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 16,
-            }}
-          >
-            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Ventas recientes</h2>
-            <Link href="/sales" style={{ fontSize: 11, fontFamily: "var(--font-editorial)", fontStyle: "italic", color: "var(--color-wine)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
-              Ver historial
-            </Link>
+        {/* Right Side: Three Large Financial Numbers (Matches metrics block from mockup) */}
+        <div className="flex items-center gap-10 lg:gap-14 flex-wrap">
+          {/* Metric 1 */}
+          <div>
+            <span className="text-[10px] font-bold uppercase text-[var(--color-text-muted)] tracking-widest block mb-1">
+              Ventas del Periodo
+            </span>
+            <div className="metric-value font-medium text-[var(--color-text-primary)]">
+              {formattedSales}
+              <span className="currency">$</span>
+            </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {recentSales.map((sale) => (
-              <div
-                key={sale.folio}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "12px 0",
-                  borderBottom: "1px solid var(--color-border)",
-                  gap: 12,
-                }}
-              >
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {sale.customer}
-                  </div>
-                  <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginTop: 2 }}>
-                    <span style={{ fontFamily: "monospace" }}>{sale.folio}</span>
-                    <span style={{ margin: "0 6px", color: "var(--color-border)" }}>|</span>
-                    <span style={{ fontFamily: "var(--font-editorial)", fontStyle: "italic" }}>{sale.channel}</span>
-                  </div>
-                </div>
-                <div style={{ textAlign: "right", flexShrink: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--color-wine)", fontVariantNumeric: "tabular-nums" }}>
-                    {formatCurrency(sale.total)}
-                  </div>
-                  <div style={{ fontSize: 10, color: "var(--color-text-secondary)", marginTop: 2 }}>
-                    {sale.time}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
 
-        {/* Próximos eventos — 4 cols */}
-        <motion.div
-          className="card"
-          initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.5, delay: 0.42 }}
-          style={{ gridColumn: "span 4" }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 16,
-            }}
-          >
-            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Próximos eventos</h2>
-            <Link href="/events" style={{ fontSize: 11, fontFamily: "var(--font-editorial)", fontStyle: "italic", color: "var(--color-wine)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
-              Agenda
-            </Link>
+          {/* Metric 2 */}
+          <div>
+            <span className="text-[10px] font-bold uppercase text-[var(--color-text-muted)] tracking-widest block mb-1">
+              Utilidad Estimada
+            </span>
+            <div className="metric-value font-medium text-[var(--color-text-primary)]">
+              {formattedProfit}
+              <span className="currency">$</span>
+            </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {upcomingEvents.map((event, i) => (
-              <div
-                key={i}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "12px 0",
-                  borderBottom: "1px solid var(--color-border)",
-                  gap: 12,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    color: "var(--color-wine)",
-                    letterSpacing: "0.05em",
-                    minWidth: 48,
-                    flexShrink: 0,
-                  }}
-                >
-                  {event.date}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {event.name}
-                  </div>
-                  {event.guests > 0 && (
-                    <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginTop: 2 }}>
-                      {event.guests} invitados
-                    </div>
-                  )}
-                </div>
-                <span
-                  style={{
-                    fontSize: 8,
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                    color: event.status === "confirmed" ? "var(--color-success)" : "var(--color-text-muted)",
-                    border: `1px solid ${event.status === "confirmed" ? "rgba(71,120,90,0.3)" : "var(--color-border)"}`,
-                    padding: "2px 6px",
-                    lineHeight: 1,
-                  }}
-                >
-                  {event.status === "confirmed" ? "Confirmado" : "Prospecto"}
-                </span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
 
-        {/* Acciones rápidas — 3 cols */}
-        <motion.div
-          className="card"
-          initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.5, delay: 0.45 }}
-          style={{ gridColumn: "span 3" }}
-        >
-          <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 14 }}>Acciones rápidas</h2>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {[
-              { label: "Registrar venta", href: "/sales/new", primary: true },
-              { label: "Crear lote producción", href: "/production/new" },
-              { label: "Registrar compra", href: "/purchases/new" },
-              { label: "Registrar gasto", href: "/finance/expenses/new" },
-              { label: "Crear cotización", href: "/quotes/new" },
-              { label: "Crear contenido", href: "/marketing/content/new" },
-            ].map((action) => {
-              return (
-                <Link
-                  key={action.href}
-                  href={action.href}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "11px 0",
-                    borderBottom: "1px solid var(--color-border)",
-                    color: action.primary ? "var(--color-wine)" : "var(--color-text)",
-                    textDecoration: "none",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    transition: "all 0.15s ease",
-                  }}
-                  className="quick-action-link"
-                >
-                  <span>{action.label}</span>
-                  <ArrowRight size={13} style={{ opacity: 0.6 }} />
-                </Link>
-              );
-            })}
+          {/* Metric 3 */}
+          <div>
+            <span className="text-[10px] font-bold uppercase text-[var(--color-text-muted)] tracking-widest block mb-1">
+              Gastos Totales
+            </span>
+            <div className="metric-value font-medium text-[var(--color-text-primary)]">
+              {formattedExpenses}
+              <span className="currency">$</span>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
+
+      {/* ── Filter Capsule Chips (Matches chips & filters block from mockup) ── */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {["Todos", "Ventas", "Gastos", "Suscripciones", "Producción", "Compras"].map((filter) => {
+          const isSelected = selectedFilter === filter;
+          return (
+            <button
+              key={filter}
+              onClick={() => setSelectedFilter(filter)}
+              className={`chip transition-all duration-160 ${
+                isSelected ? "chip--selected" : ""
+              }`}
+            >
+              {filter}
+            </button>
+          );
+        })}
+        <button 
+          className="w-9 h-9 flex items-center justify-center rounded-full bg-[var(--color-accent)] text-[var(--color-ink)] hover:bg-[var(--color-accent-hover)] active:scale-95 transition-all duration-160"
+          title="Agregar Filtro"
+        >
+          <span className="text-lg font-bold leading-none">+</span>
+        </button>
+      </div>
+
+      {/* ── Bento Grid: Main Transaction Block & Right Info Columns ── */}
+      <div className="bento-grid">
+        
+        {/* LEFT COMPONENT: Large Operation Card (8 columns) */}
+        <div className="bento-8 bento-xl-span-12 card flex flex-col justify-between space-y-8">
+          
+          {/* Card Header (Matches Matcha latte info header) */}
+          <div className="flex items-center justify-between pb-4 border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[var(--color-accent)] flex items-center justify-center text-[var(--color-ink)]">
+                <Compass size={18} strokeWidth={2} />
+              </div>
+              <div className="text-left">
+                <h3 className="text-sm font-bold text-white">Matcha Latte Cream</h3>
+                <p className="text-[10px] text-[var(--color-text-muted)] font-medium">
+                  Producto Estrella de Suscripción recurrente
+                </p>
+              </div>
+            </div>
+
+            {/* Overlapping User Avatars (Matches mockup) */}
+            <div className="flex items-center -space-x-2">
+              {["☕", "🥛", "🍯", "🍵", "🧊"].map((emoji, i) => (
+                <div
+                  key={i}
+                  className="w-8 h-8 rounded-full border-[2px] border-[#3C3A39] bg-[var(--color-surface-dark)] flex items-center justify-center text-xs select-none shadow-md"
+                >
+                  {emoji}
+                </div>
+              ))}
+              <div className="w-8 h-8 rounded-full border-[2px] border-[#3C3A39] bg-[var(--color-accent)] text-[var(--color-ink)] flex items-center justify-center text-xs font-bold shadow-md cursor-pointer">
+                +
+              </div>
+            </div>
+          </div>
+
+          {/* Timeline Process Line (Matches timeline nodes from mockup) */}
+          <div className="relative py-2 select-none">
+            <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-white/10 -translate-y-1/2" />
+            <div className="absolute top-1/2 left-[15%] w-2 h-2 rounded-full bg-white -translate-y-1/2" />
+            <div className="absolute top-1/2 left-[50%] w-2.5 h-2.5 rounded-full bg-white -translate-y-1/2 border border-black/40" />
+            <div className="absolute top-1/2 left-[85%] w-3 h-3 rounded-full bg-[var(--color-accent)] -translate-y-1/2 border border-black/20 flex items-center justify-center" />
+          </div>
+
+          {/* Grid of Subcards (Matches the 3 internal subpanels of mockup card) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            {/* Subcard 1: Delivery calendar */}
+            <div className="surface-card-dark flex flex-col justify-between min-h-[220px]">
+              <div>
+                <span className="text-[9px] font-bold uppercase text-[var(--color-text-muted)] tracking-wider block mb-2 text-left">
+                  Calendario de Cobros
+                </span>
+                
+                {/* 7x5 Day Grid */}
+                <div className="grid grid-cols-7 gap-1 text-center">
+                  {calendarDays.map((day) => {
+                    const isActive = day === 18; // Highlights day 18 like mockup
+                    return (
+                      <span
+                        key={day}
+                        className={`text-[9px] font-medium h-4 w-4 rounded-full flex items-center justify-center leading-none ${
+                          isActive
+                            ? "bg-[var(--color-accent)] text-[var(--color-ink)] font-bold"
+                            : "text-[var(--color-text-secondary)] hover:bg-white/5 cursor-pointer"
+                        }`}
+                      >
+                        {day}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Subcard Metrics footer */}
+              <div className="border-t border-white/5 pt-2 mt-2 space-y-1 text-left">
+                <div className="flex justify-between text-[10px]">
+                  <span className="text-[var(--color-text-muted)]">Frecuencia:</span>
+                  <span className="text-white font-bold">18 / mes</span>
+                </div>
+                <div className="flex justify-between text-[10px]">
+                  <span className="text-[var(--color-text-muted)]">Confirmados:</span>
+                  <span className="text-white font-bold">5</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Subcard 2: Plan selector */}
+            <div className="surface-card-dark flex flex-col justify-between min-h-[220px] text-left">
+              <div>
+                <span className="text-[9px] font-bold uppercase text-[var(--color-text-muted)] tracking-wider block mb-3">
+                  Plan de Despacho
+                </span>
+
+                {/* Subcard Plan pills */}
+                <div className="flex flex-col gap-1.5">
+                  {["Individual", "Paquete", "Volumen"].map((plan) => {
+                    const isSelected = selectedPlan === plan;
+                    return (
+                      <button
+                        key={plan}
+                        onClick={() => setSelectedPlan(plan)}
+                        className={`text-left px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all duration-160 ${
+                          isSelected
+                            ? "bg-[var(--color-accent)] text-[var(--color-ink)]"
+                            : "border border-white/10 text-[var(--color-text-secondary)] hover:bg-white/5"
+                        }`}
+                      >
+                        {plan}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="border-t border-white/5 pt-2">
+                <div className="metric-value font-medium text-lg leading-none">
+                  75<span className="text-[10px] currency">$</span>
+                  <span className="text-[9px] text-[var(--color-text-muted)] font-normal ml-1">/ lote</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Subcard 3: Vertical bar chart */}
+            <div className="surface-card-dark flex flex-col justify-between min-h-[220px] text-left">
+              <div>
+                <span className="text-[9px] font-bold uppercase text-[var(--color-text-muted)] tracking-wider block mb-4">
+                  Canales de Venta
+                </span>
+
+                {/* Rounded vertical bars (Direct, Event, Delivery) */}
+                <div className="flex items-end justify-around h-24 pb-2 relative">
+                  {/* Bar 1: Direct */}
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-4 h-16 bg-white/10 rounded-t-lg transition-all duration-300 hover:bg-white/20 cursor-pointer" title="Directo: 60%" />
+                    <span className="text-[8px] text-[var(--color-text-muted)] font-semibold">Dir</span>
+                  </div>
+                  {/* Bar 2: Event */}
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-4 h-24 bg-[var(--color-accent)] rounded-t-lg transition-all duration-300 hover:bg-[var(--color-accent-hover)] cursor-pointer" title="Eventos: 100%" />
+                    <span className="text-[8px] text-[var(--color-accent)] font-bold">Eve</span>
+                  </div>
+                  {/* Bar 3: Delivery */}
+                  <div className="flex flex-col items-center gap-1.5">
+                    <div className="w-4.5 h-12 bg-white/30 rounded-t-lg transition-all duration-300 hover:bg-white/40 cursor-pointer" title="Delivery: 45%" />
+                    <span className="text-[8px] text-[var(--color-text-muted)] font-semibold">Del</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-white/5 pt-2 text-center text-[10px] text-[var(--color-text-muted)]">
+                Proporción de demanda semanal
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom stats row (Summarizes key metrics at the foot) */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-white/5 pt-4">
+            <div className="text-left">
+              <span className="text-[9px] text-[var(--color-text-muted)] uppercase block">Detalles Cobro</span>
+              <span className="text-sm font-bold text-white tabular-nums">18 <span className="text-[10px] font-normal text-[var(--color-text-muted)]">/ mes</span></span>
+            </div>
+            <div className="text-left">
+              <span className="text-[9px] text-[var(--color-text-muted)] uppercase block">Lotes Creados</span>
+              <span className="text-sm font-bold text-white tabular-nums">5 🥛</span>
+            </div>
+            <div className="text-left">
+              <span className="text-[9px] text-[var(--color-text-muted)] uppercase block">Monto Lote</span>
+              <span className="text-sm font-bold text-white tabular-nums">375$</span>
+            </div>
+            <div className="text-left">
+              <span className="text-[9px] text-[var(--color-text-muted)] uppercase block">Método Activo</span>
+              <span className="text-sm font-bold text-white">Wise</span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* RIGHT COLUMN COMPONENT: Toggles & Stats (4 columns) */}
+        <div className="bento-4 bento-xl-span-12 flex flex-col gap-4">
+          
+          {/* Card 1: Insuficientes / Límite Insumos (Dark glass theme) */}
+          <div className="surface-card flex flex-col justify-between p-6 min-h-[175px]">
+            <div className="flex items-center justify-between text-left">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white">
+                  <Package size={14} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">Límite Insumos</h4>
+                  <p className="text-[9px] text-[var(--color-text-muted)] font-medium">Tope operativo diario</p>
+                </div>
+              </div>
+              
+              {/* Edit button */}
+              <button className="w-7 h-7 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:border-white/20 text-white transition-all duration-160">
+                <Edit2 size={11} />
+              </button>
+            </div>
+
+            <div className="flex items-end justify-between mt-4">
+              <div className="metric-value font-medium text-3xl leading-none text-left">
+                200<span className="text-sm currency">$</span>
+              </div>
+
+              {/* Interactive Glass Toggle Switch */}
+              <button
+                onClick={() => setToggleInsumos(!toggleInsumos)}
+                className={`w-14 h-8 rounded-full p-1 transition-all duration-200 border ${
+                  toggleInsumos
+                    ? "bg-white/15 border-white/20"
+                    : "bg-black/20 border-white/5"
+                } flex items-center justify-between`}
+              >
+                <span className={`text-[8px] font-bold ml-1.5 ${toggleInsumos ? "opacity-0" : "text-white/60"}`}>x</span>
+                <span
+                  className={`w-6 h-6 rounded-full bg-white flex items-center justify-center text-[8px] font-bold text-black transition-all duration-200 transform ${
+                    toggleInsumos ? "translate-x-5" : "translate-x-0"
+                  }`}
+                >
+                  {toggleInsumos ? <Check size={10} strokeWidth={3} /> : ""}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Card 2: Fondo Reserva / Caja Chica (Ivory solid accent theme) */}
+          <div className="surface-card-accent flex flex-col justify-between p-6 min-h-[175px]">
+            <div className="flex items-center justify-between text-left">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-[var(--color-ink)]/5 flex items-center justify-center text-[var(--color-ink)]">
+                  <Layers size={14} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-[var(--color-ink)]">Fondo Reserva</h4>
+                  <p className="text-[9px] text-[var(--color-ink)]/70 font-medium">Resguardo para contingencia</p>
+                </div>
+              </div>
+
+              {/* Edit button */}
+              <button className="w-7 h-7 flex items-center justify-center rounded-full bg-black/5 border border-black/10 hover:border-black/20 text-[var(--color-ink)] transition-all duration-160">
+                <Edit2 size={11} />
+              </button>
+            </div>
+
+            <div className="flex items-end justify-between mt-4">
+              <div className="metric-value font-medium text-3xl leading-none text-left text-[var(--color-ink)]">
+                2,999<span className="text-sm currency text-[var(--color-ink)]">$</span>
+              </div>
+
+              {/* Interactive Black Toggle Switch */}
+              <button
+                onClick={() => setToggleReserva(!toggleReserva)}
+                className={`w-14 h-8 rounded-full p-1 transition-all duration-200 border ${
+                  toggleReserva
+                    ? "bg-[var(--color-ink)] border-[var(--color-ink)]"
+                    : "bg-transparent border-[var(--color-ink)]/20"
+                } flex items-center justify-between`}
+              >
+                <span className={`text-[8px] font-bold ml-1.5 ${toggleReserva ? "opacity-0" : "text-[var(--color-ink)]/60"}`}>x</span>
+                <span
+                  className={`w-6 h-6 rounded-full bg-white flex items-center justify-center text-[8px] font-bold text-black transition-all duration-200 transform ${
+                    toggleReserva ? "translate-x-5" : "translate-x-0"
+                  }`}
+                >
+                  {toggleReserva ? <Check size={10} strokeWidth={3} /> : ""}
+                </span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* ── Auxiliary Grid: Recent History & Actions ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* Recent Transactions List */}
+        <div className="card space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-white/5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-white">Historial de Ventas</h3>
+            <span className="text-[10px] text-[var(--color-text-muted)] font-medium">Recientes</span>
+          </div>
+
+          <div className="divide-y divide-white/5">
+            {recentSales.slice(0, 4).map((sale) => (
+              <div key={sale.folio} className="flex items-center justify-between py-3 gap-4">
+                <div className="text-left">
+                  <h4 className="text-xs font-bold text-white">{sale.customer}</h4>
+                  <p className="text-[10px] text-[var(--color-text-muted)] mt-0.5">
+                    {sale.folio} • <span className="editorial text-[var(--color-accent)]">{sale.channel}</span>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-bold text-white tabular-nums">
+                    {formatCurrency(sale.total)}
+                  </span>
+                  <p className="text-[9px] text-[var(--color-text-muted)] mt-0.5">{sale.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Top selling beverage products catalog summary */}
+        <div className="card space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-white/5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-white">Bebidas Populares</h3>
+            <span className="text-[10px] text-[var(--color-text-muted)] font-medium">Rentabilidad</span>
+          </div>
+
+          <div className="divide-y divide-white/5">
+            {topProducts.slice(0, 4).map((p, i) => (
+              <div key={p.name} className="flex items-center justify-between py-3 gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="editorial text-xs text-[var(--color-accent)] font-medium">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-xs font-bold text-white">{p.name}</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-[10px] text-[var(--color-text-muted)]">{p.units} uds</span>
+                  <span className="text-[10px] font-bold text-[var(--color-success)] bg-[var(--color-success-bg)] px-2 py-0.5 rounded">
+                    {p.margin}% marg.
+                  </span>
+                  <span className="text-xs font-bold text-white min-w-[50px] text-right tabular-nums">
+                    {formatCurrency(p.revenue, { compact: true })}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+
     </div>
   );
 }

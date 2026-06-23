@@ -21,27 +21,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         />
       </div>
 
-      {/* Main */}
-      <main
-        className={`app-main ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}
-        style={{
-          marginLeft: sidebarCollapsed
-            ? "var(--sidebar-collapsed-width)"
-            : "var(--sidebar-width)",
-        }}
-      >
-        <Topbar onMenuToggle={() => setMobileMenuOpen(true)} />
+      {/* Dashboard Glass Shell */}
+      <div className="dashboard-shell">
+        <main className="app-main">
+          <Topbar onMenuToggle={() => setMobileMenuOpen(true)} />
 
-        <motion.div
-          className="app-content"
-          key={pathname}
-          initial={{ opacity: 0, filter: "blur(8px)", y: 12 }}
-          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-          transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
-        >
-          {children}
-        </motion.div>
-      </main>
+          <motion.div
+            className="app-content"
+            key={pathname}
+            initial={{ opacity: 0, filter: "blur(8px)", y: 12 }}
+            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+            transition={{ duration: 0.45, ease: [0.22, 0.8, 0.2, 1] }}
+          >
+            {children}
+          </motion.div>
+        </main>
+      </div>
 
       {/* Mobile Bottom Nav */}
       <div className="visible-mobile">
