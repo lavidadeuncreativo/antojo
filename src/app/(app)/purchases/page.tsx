@@ -8,16 +8,16 @@ export default function PurchasesPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 select-none text-left pt-6">
-      <div className="border-b border-[#E5E5E5] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="pt-8 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
         <div>
-          <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-black uppercase" style={{ letterSpacing: "-0.04em" }}>
-            COMPRAS
-          </h1>
-          <p className="text-sm text-black/60 mt-4 uppercase tracking-widest font-medium">
-            Órdenes y Proveedores
+          <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
+            Abastecimiento
           </p>
+          <h1 className="hero-title">
+            COMPRAS <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">& órdenes.</span>
+          </h1>
         </div>
-        <button className="bg-black text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-black/80 transition-colors w-fit">
+        <button className="btn btn-primary w-fit md:self-end">
           Nueva Orden
         </button>
       </div>
@@ -31,8 +31,12 @@ export default function PurchasesPage() {
         </div>
 
         {purchases.length === 0 ? (
-          <div className="py-12 text-center text-xs font-bold text-[#999999] uppercase tracking-widest">
-            No hay órdenes de compra registradas
+          <div className="py-16 text-center border border-[var(--color-border)] border-dashed rounded-2xl bg-[var(--color-canvas)] mt-8 shadow-sm">
+            <div className="flex flex-col items-center justify-center space-y-3">
+              <ShoppingBag size={32} className="text-[var(--color-border)] mb-2" />
+              <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Sin órdenes</span>
+              <p className="text-sm font-medium text-[var(--color-text-secondary)]">No hay compras u órdenes registradas.</p>
+            </div>
           </div>
         ) : (
           purchases.map((purchase) => (

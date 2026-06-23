@@ -62,11 +62,12 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`block text-3xl md:text-4xl tracking-tight transition-all ${
-                isActive ? "text-black font-semibold" : "text-black/70 hover:text-black font-normal"
+              className={`block text-3xl md:text-4xl tracking-tight transition-all duration-300 ease-out flex items-center gap-3 group ${
+                isActive ? "text-black font-semibold" : "text-black/50 hover:text-black font-normal hover:translate-x-1"
               }`}
               style={{ letterSpacing: "-0.03em" }}
             >
+              <span className={`w-1 h-6 rounded-r-full transition-all duration-300 ${isActive ? 'bg-black opacity-100' : 'bg-transparent opacity-0'} -ml-8 absolute`}></span>
               {item.label}
             </Link>
           );
@@ -77,7 +78,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Secondary Navigation */}
       <nav className="p-8 space-y-3 flex-1">
-        <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest block mb-4">
+        <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest block mb-4">
           SISTEMA
         </span>
         {secondaryItems.map((item) => {
@@ -86,8 +87,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`block text-sm transition-all ${
-                isActive ? "text-black font-semibold" : "text-black/70 hover:text-black font-normal"
+              className={`block text-sm transition-all duration-300 ${
+                isActive ? "text-black font-semibold" : "text-[var(--color-text-secondary)] hover:text-black font-medium hover:translate-x-1"
               }`}
             >
               {item.label}

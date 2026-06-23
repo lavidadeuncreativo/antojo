@@ -10,31 +10,34 @@ export default function MarketingPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-12 select-none text-left">
       {/* Header */}
-      <div className="py-6 border-b border-[var(--color-border)] flex flex-col md:flex-row md:items-baseline justify-between gap-4">
+      <div className="pt-8 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
         <div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-black uppercase">
-            ESTRATEGIA <span className="font-light italic text-[var(--color-text-secondary)]">marketing.</span>
-          </h1>
-          <p className="text-xs text-[var(--color-text-secondary)] mt-1 font-semibold uppercase tracking-wider">
+          <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
             Campañas, ROI y Fidelización
           </p>
+          <h1 className="hero-title">
+            ESTRATEGIA <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">marketing.</span>
+          </h1>
         </div>
+        <button className="btn btn-primary self-start md:self-end">
+          <Megaphone size={14} /> Nueva Campaña
+        </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-[var(--color-border)] pb-2">
+      <div className="flex border-b border-[var(--color-border)]">
         <button
           onClick={() => setActiveTab("campanas")}
-          className={`text-xs font-bold uppercase tracking-wider pb-2 border-b-2 transition-all ${
-            activeTab === "campanas" ? "border-black text-black" : "border-transparent text-black/50 hover:text-black"
+          className={`px-6 py-3 text-[11px] font-bold border-b-2 uppercase tracking-widest transition-all duration-300 ${
+            activeTab === "campanas" ? "border-black text-black" : "border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
           }`}
         >
           Campañas Activas
         </button>
         <button
           onClick={() => setActiveTab("metricas")}
-          className={`text-xs font-bold uppercase tracking-wider pb-2 border-b-2 transition-all ${
-            activeTab === "metricas" ? "border-black text-black" : "border-transparent text-black/50 hover:text-black"
+          className={`px-6 py-3 text-[11px] font-bold border-b-2 uppercase tracking-widest transition-all duration-300 ${
+            activeTab === "metricas" ? "border-black text-black" : "border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
           }`}
         >
           Métricas y RRSS
@@ -59,8 +62,12 @@ export default function MarketingPage() {
               </thead>
               <tbody>
                 <tr>
-                  <td colSpan={4} className="text-center py-12 text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-widest">
-                    No hay campañas activas
+                  <td colSpan={4} className="text-center py-16 px-4">
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                      <Megaphone size={32} className="text-[var(--color-border)] mb-2" />
+                      <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Sin campañas</span>
+                      <p className="text-sm font-medium text-[var(--color-text-secondary)]">No hay campañas activas registradas.</p>
+                    </div>
                   </td>
                 </tr>
               </tbody>

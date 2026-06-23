@@ -92,17 +92,17 @@ export default function ProductosPage() {
     <div className="space-y-8 text-left select-none max-w-7xl mx-auto">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
+      <div className="pt-8 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
         <div>
-          <h1 className="text-3xl font-black tracking-tighter text-black uppercase">
-            CATÁLOGO DE <span className="font-light italic text-[var(--color-text-secondary)]">bebidas.</span>
-          </h1>
-          <p className="text-xs text-[var(--color-text-secondary)] mt-1 font-medium">
-            Define las bebidas de ANTOJO, sus recetas operativas, costos y rentabilidad.
+          <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
+            Administración de Menú
           </p>
+          <h1 className="hero-title">
+            CATÁLOGO DE <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">bebidas.</span>
+          </h1>
         </div>
 
-        <button onClick={handleCreateClick} className="btn btn-primary self-start">
+        <button onClick={handleCreateClick} className="btn btn-primary self-start md:self-end">
           <Plus size={14} />
           Crear Producto
         </button>
@@ -110,114 +110,124 @@ export default function ProductosPage() {
 
       {/* Metrics (Grid style) */}
       <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--color-border)] bg-[var(--color-border)] gap-[1px]">
-        <div className="bg-white p-6">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Productos Activos</span>
-          <span className="text-3xl font-extrabold text-black tabular-nums">{products.length}</span>
+        <div className="bg-white p-8">
+          <span className="kpi-label">Productos Activos</span>
+          <div className="kpi-value tabular-nums">{products.length}</div>
         </div>
-        <div className="bg-white p-6">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Margen Promedio</span>
-          <span className="text-3xl font-extrabold text-black tabular-nums">
+        <div className="bg-white p-8">
+          <span className="kpi-label">Margen Promedio</span>
+          <div className="kpi-value tabular-nums">
             {products.length > 0
               ? Math.round(products.reduce((acc, p) => acc + p.margin, 0) / products.length)
               : 0}
-            %
-          </span>
+            <span className="text-xl">%</span>
+          </div>
         </div>
       </div>
 
       {/* Grid Bento of Products */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {products.map((product) => (
-          <div key={product.id} className="card p-6 flex flex-col justify-between space-y-4 border border-[var(--color-border)] bg-white rounded-none">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)]">
-                  Bebida Terminado
-                </span>
-                <button
-                  onClick={() => handleEditClick(product)}
-                  className="w-7 h-7 flex items-center justify-center rounded-full border border-[var(--color-border)] hover:border-black text-black transition-all bg-white"
-                  title="Editar Receta"
-                >
-                  <Edit3 size={11} />
-                </button>
-              </div>
-
-              <h3 className="text-lg font-extrabold text-black mt-2 leading-tight tracking-tight">{product.name}</h3>
-
-              {/* Costing values */}
-              <div className="flex items-center gap-4 mt-3 pb-3 border-b border-[var(--color-border)]">
-                <div className="text-left">
-                  <span className="text-[10px] text-[var(--color-text-muted)] block uppercase font-extrabold tracking-widest">Precio</span>
-                  <span className="text-sm font-extrabold text-black tabular-nums">{formatCurrency(product.price)}</span>
-                </div>
-                <div className="text-left">
-                  <span className="text-[10px] text-[var(--color-text-muted)] block uppercase font-extrabold tracking-widest">Costo Receta</span>
-                  <span className="text-sm font-bold text-[var(--color-text-secondary)] tabular-nums">{formatCurrency(product.cost)}</span>
-                </div>
-                <div className="text-left">
-                  <span className="text-[10px] text-[var(--color-text-muted)] block uppercase font-extrabold tracking-widest">Margen</span>
-                  <span className="text-sm font-extrabold text-black tabular-nums">{product.margin}%</span>
-                </div>
-              </div>
-
-              {/* Recipe Ingredients list */}
-              <div className="mt-4 text-left">
-                <span className="text-[9px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider block mb-2">
-                  Receta / Composición
-                </span>
-                <div className="space-y-1">
-                  {product.recipe.map((r, idx) => {
-                    const ing = inventory.find((i) => i.id === r.ingredientId);
-                    return (
-                      <div key={idx} className="flex justify-between text-xs text-[var(--color-text-secondary)] font-medium">
-                        <span>{ing ? ing.name : "Ingrediente"}</span>
-                        <span className="font-bold text-black tabular-nums">
-                          {r.qty} {ing ? ing.unit : ""}
-                        </span>
-                      </div>
-                    );
-                  })}
-                  {product.recipe.length === 0 && (
-                    <span className="text-xs text-[var(--color-text-muted)] italic">
-                      Sin receta definida.
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="text-[10px] text-[var(--color-text-muted)] text-right pt-2 border-t border-[var(--color-border)] font-bold uppercase tracking-wider">
-              Vasos y empaques integrados.
+        {products.length === 0 ? (
+          <div className="col-span-full py-16 text-center border border-[var(--color-border)] border-dashed rounded-2xl bg-[var(--color-canvas)] mt-4 shadow-sm">
+            <div className="flex flex-col items-center justify-center space-y-3">
+              <Package size={32} className="text-[var(--color-border)] mb-2" />
+              <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Catálogo Vacío</span>
+              <p className="text-sm font-medium text-[var(--color-text-secondary)] max-w-md mx-auto">Aún no hay productos configurados. Agrega nuevas bebidas a tu catálogo.</p>
             </div>
           </div>
-        ))}
+        ) : (
+          products.map((product) => (
+            <div key={product.id} className="card p-6 flex flex-col justify-between space-y-4">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)]">
+                    Bebida Terminado
+                  </span>
+                  <button
+                    onClick={() => handleEditClick(product)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--color-border)] hover:border-black text-black transition-all bg-white"
+                    title="Editar Receta"
+                  >
+                    <Edit3 size={14} strokeWidth={2} />
+                  </button>
+                </div>
+
+                <h3 className="text-lg font-extrabold text-black mt-2 leading-tight tracking-tight">{product.name}</h3>
+
+                {/* Costing values */}
+                <div className="flex items-center gap-4 mt-3 pb-3 border-b border-[var(--color-border)]">
+                  <div className="text-left">
+                    <span className="text-[10px] text-[var(--color-text-muted)] block uppercase font-extrabold tracking-widest">Precio</span>
+                    <span className="text-sm font-extrabold text-black tabular-nums">{formatCurrency(product.price)}</span>
+                  </div>
+                  <div className="text-left">
+                    <span className="text-[10px] text-[var(--color-text-muted)] block uppercase font-extrabold tracking-widest">Costo</span>
+                    <span className="text-sm font-bold text-[var(--color-text-secondary)] tabular-nums">{formatCurrency(product.cost)}</span>
+                  </div>
+                  <div className="text-left">
+                    <span className="text-[10px] text-[var(--color-text-muted)] block uppercase font-extrabold tracking-widest">Margen</span>
+                    <span className="text-sm font-extrabold text-black tabular-nums">{product.margin}%</span>
+                  </div>
+                </div>
+
+                {/* Recipe Ingredients list */}
+                <div className="mt-4 text-left">
+                  <span className="text-[9px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider block mb-2">
+                    Receta / Composición
+                  </span>
+                  <div className="space-y-1">
+                    {product.recipe.map((r, idx) => {
+                      const ing = inventory.find((i) => i.id === r.ingredientId);
+                      return (
+                        <div key={idx} className="flex justify-between text-xs text-[var(--color-text-secondary)] font-medium">
+                          <span>{ing ? ing.name : "Ingrediente"}</span>
+                          <span className="font-bold text-black tabular-nums">
+                            {r.qty} {ing ? ing.unit : ""}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    {product.recipe.length === 0 && (
+                      <span className="text-xs text-[var(--color-text-muted)] italic">
+                        Sin receta definida.
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-[10px] text-[var(--color-text-muted)] text-right pt-2 border-t border-[var(--color-border)] font-bold uppercase tracking-wider">
+                Vasos y empaques integrados.
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Modal Recipe Form */}
       {modalOpen && (
-        <div className="modal-overlay flex items-center justify-center p-4">
-          <div className="modal-content relative text-left max-w-lg">
+        <div className="modal-overlay flex items-center justify-center p-4 z-[100] animate-fade-in">
+          <div className="modal-content relative text-left max-w-lg animate-slide-up bg-white">
             <button
               onClick={() => setModalOpen(false)}
-              className="absolute top-4 right-4 text-[var(--color-text-secondary)] hover:text-black"
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)] hover:text-black transition-colors"
             >
-              <X size={18} />
+              <X size={16} strokeWidth={2} />
             </button>
 
-            <h3 className="text-lg font-bold text-black mb-6 uppercase tracking-tight">
+            <h3 className="text-xl font-bold text-black mb-6 uppercase tracking-tight">
               {editingId ? "Editar Producto" : "Crear Nuevo Producto"}
             </h3>
 
             {successMsg ? (
-              <div className="flex flex-col items-center justify-center py-8 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-[var(--color-success-bg)] text-[var(--color-success)] flex items-center justify-center">
-                  <Check size={20} />
+              <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-slide-up">
+                <div className="w-16 h-16 rounded-full bg-[var(--color-success-bg)] text-[var(--color-success)] flex items-center justify-center ring-8 ring-[var(--color-success-bg)]/30">
+                  <Check size={28} strokeWidth={3} />
                 </div>
-                <p className="text-sm font-bold text-black">{successMsg}</p>
+                <p className="text-base font-bold text-black tracking-tight">{successMsg}</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="form-group">
                   <label className="label">Nombre del Producto</label>
                   <input
@@ -259,7 +269,7 @@ export default function ProductosPage() {
                 {/* Recipe builder section */}
                 <div className="space-y-3">
                   <label className="label">Composición de Receta (Deducción Automática)</label>
-                  <div className="max-h-[160px] overflow-y-auto border border-[var(--color-border)] p-3 space-y-2.5 bg-[var(--color-surface)]">
+                  <div className="max-h-[160px] overflow-y-auto border border-[var(--color-border)] p-3 space-y-2.5 bg-[var(--color-surface)] rounded-md">
                     {inventory.map((ing) => {
                       const currentQty = selectedIngredients[ing.id] || "";
                       return (
@@ -270,7 +280,7 @@ export default function ProductosPage() {
                             placeholder="Cantidad"
                             value={currentQty}
                             onChange={(e) => handleIngredientQtyChange(ing.id, e.target.value)}
-                            className="input-base py-1 px-2 text-xs w-24 text-right bg-white"
+                            className="input-base py-1.5 px-3 text-xs w-28 text-right bg-white"
                             min={0}
                           />
                         </div>
@@ -282,7 +292,7 @@ export default function ProductosPage() {
                   </span>
                 </div>
 
-                <div className="pt-4 border-t border-[var(--color-border)] flex justify-end gap-2">
+                <div className="pt-4 border-t border-[var(--color-border)] flex justify-end gap-3 mt-6">
                   <button
                     type="button"
                     onClick={() => setModalOpen(false)}

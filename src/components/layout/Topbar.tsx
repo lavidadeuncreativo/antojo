@@ -84,36 +84,44 @@ export function Topbar({ onMenuToggle }: TopbarProps) {
         </Link>
       </div>
 
-      {/* Redundant Navigation Removed (handled by Sidebar) */}
-      <div className="hidden md:block mx-auto"></div>
+      {/* Dynamic Breadcrumbs */}
+      <div className="hidden md:flex items-center mx-auto flex-1 px-8">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#999999]">
+          <span>Antojo OS</span>
+          <span className="text-[#E5E5E5] px-1">/</span>
+          <span className="text-black">{pathname.split('/')[1] || 'Dashboard'}</span>
+        </div>
+      </div>
 
       {/* Right elements: search, notifications, settings */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <button
-          className="p-1.5 text-[var(--color-text-secondary)] hover:text-black transition-all"
+          className="p-2 text-[#999999] hover:text-black hover:bg-[#F9F9F9] rounded-full transition-all duration-300"
           title="Buscar"
         >
           <Search size={15} />
         </button>
 
         <button
-          className="p-1.5 relative text-[var(--color-text-secondary)] hover:text-black transition-all"
+          className="p-2 relative text-[#999999] hover:text-black hover:bg-[#F9F9F9] rounded-full transition-all duration-300"
           title="Notificaciones"
         >
           <Bell size={15} />
-          <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-black" />
+          <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-black ring-2 ring-white" />
         </button>
 
         <Link
           href="/settings"
-          className="p-1.5 text-[var(--color-text-secondary)] hover:text-black transition-all"
+          className="p-2 text-[#999999] hover:text-black hover:bg-[#F9F9F9] rounded-full transition-all duration-300"
           title="Configuración"
         >
           <Settings size={15} />
         </Link>
 
+        <div className="w-px h-6 bg-[#E5E5E5] mx-2"></div>
+
         {/* User initials badge */}
-        <div className="w-8 h-8 rounded-full border border-black/10 flex items-center justify-center font-bold text-xs bg-[var(--color-surface)] text-black select-none">
+        <div className="w-8 h-8 rounded-full border border-[#E5E5E5] flex items-center justify-center font-bold text-xs bg-white text-black select-none hover:border-black cursor-pointer transition-all duration-300 shadow-sm">
           A
         </div>
       </div>

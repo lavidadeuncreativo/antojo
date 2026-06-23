@@ -4,46 +4,54 @@
 :root {
   /* Color */
   --color-canvas: #FFFFFF;
-  --color-surface: #F9F9F9;
-  --color-border: #E5E5E5;
+  --color-surface: #FAFAFA;
+  --color-surface-hover: #F2F2F2;
+  --color-border: #EAEAEA;
+  --color-border-hover: #D4D4D4;
   --color-accent: #000000;
   --color-ink: #FFFFFF;
 
-  --color-text-primary: #000000;
-  --color-text-secondary: #555555;
-  --color-text-muted: #999999;
+  --color-text-primary: #111111;
+  --color-text-secondary: #666666;
+  --color-text-muted: #A0A0A0;
 
   /* Pastels matching flavor profiles */
-  --color-pastel-green: #EAF6EE;   /* Matcha */
-  --color-pastel-pink: #FDF1F2;    /* Fresa */
-  --color-pastel-yellow: #FEFBEA;  /* Cold Brew */
-  --color-pastel-purple: #F5F2FF;  /* Mojito */
-  --color-pastel-blue: #EEF6FC;    /* Agua Mineral */
-  --color-pastel-orange: #FCF3EB;  /* Jengibre / Naranja */
-  --color-pastel-grey: #F3F3F3;    /* Original */
+  --color-pastel-green: #E8F5EE;   /* Matcha */
+  --color-pastel-pink: #FDF0F2;    /* Fresa */
+  --color-pastel-yellow: #FEFAEB;  /* Cold Brew */
+  --color-pastel-purple: #F6F4FC;  /* Mojito */
+  --color-pastel-blue: #EEF5FC;    /* Agua Mineral */
+  --color-pastel-orange: #FCF4EB;  /* Jengibre / Naranja */
+  --color-pastel-grey: #F5F5F5;    /* Original */
 
   /* Radius */
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
   --radius-card: 28px;
-  --radius-pill: 999px;
+  --radius-pill: 9999px;
 
   /* Font */
-  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   /* Status Colors */
-  --color-success: #1E6B35;
-  --color-success-bg: #E6F4EA;
-  --color-warning: #B06000;
-  --color-warning-bg: #FEF3E6;
-  --color-error: #A21F24;
-  --color-error-bg: #FCE8E6;
+  --color-success: #176532;
+  --color-success-bg: #EBF7EE;
+  --color-warning: #995500;
+  --color-warning-bg: #FFF5E6;
+  --color-error: #B91C1C;
+  --color-error-bg: #FEE2E2;
+
+  /* Transitions */
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
 
   /* Legacy alignment dimensions */
-  --sidebar-width: 200px;
-  --sidebar-collapsed-width: 68px;
-  --topbar-height: 60px;
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 80px;
+  --topbar-height: 64px;
 }
 
 /* ── Reset & Base ─────────────────────────────────────────── */
@@ -79,13 +87,13 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-sans);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.1;
   letter-spacing: -0.03em;
   color: var(--color-text-primary);
 }
 
 .editorial {
-  font-weight: 500;
+  font-weight: 400;
   font-style: italic;
   color: var(--color-text-secondary);
 }
@@ -97,15 +105,15 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Scrollbar ────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--radius-pill);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
@@ -113,8 +121,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Selección y Foco ───────────────────────────────────────── */
 ::selection {
-  background: var(--color-accent);
-  color: var(--color-ink);
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--color-text-primary);
 }
 
 :focus-visible {
@@ -203,7 +211,8 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--color-canvas);
   border-radius: var(--radius-sm);
   padding: 24px;
-  transition: border-color var(--duration-fast) var(--ease-premium);
+  transition: all var(--duration-normal) var(--ease-premium);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.01);
 }
 
 .card-interactive {
@@ -211,6 +220,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 .card-interactive:hover {
   border-color: var(--color-accent);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
 /* Pastel beverage flavor cards */
@@ -227,16 +238,16 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 700;
-  height: 38px;
-  padding: 0 16px;
+  height: 40px;
+  padding: 0 18px;
   border-radius: var(--radius-pill);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all 120ms ease;
+  transition: all var(--duration-normal) var(--ease-premium);
   white-space: nowrap;
   user-select: none;
   outline: none;
@@ -245,15 +256,18 @@ h1, h2, h3, h4, h5, h6 {
 .btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+  transform: none !important;
 }
 
 .btn-primary {
   background-color: var(--color-accent);
   color: var(--color-ink);
   border-color: var(--color-accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .btn-primary:hover:not(:disabled) {
-  opacity: 0.85;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .btn-primary:active:not(:disabled) {
   transform: scale(0.98);
@@ -262,10 +276,11 @@ h1, h2, h3, h4, h5, h6 {
 .btn-secondary {
   background-color: var(--color-canvas);
   color: var(--color-text-primary);
-  border-color: var(--color-text-primary);
+  border-color: var(--color-border);
 }
 .btn-secondary:hover:not(:disabled) {
   background-color: var(--color-surface);
+  border-color: var(--color-text-muted);
 }
 
 .btn-ghost {
@@ -287,13 +302,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-sm {
-  height: 30px;
+  height: 32px;
   font-size: 11px;
-  padding: 0 12px;
+  padding: 0 14px;
 }
 
 .btn-icon {
-  width: 36px;
+  width: 40px;
   padding: 0;
   border-radius: var(--radius-pill);
 }
@@ -302,15 +317,15 @@ h1, h2, h3, h4, h5, h6 {
 .input-base {
   width: 100%;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--color-text-primary);
-  background-color: var(--color-canvas);
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xs);
-  padding: 8px 12px;
+  padding: 10px 14px;
   outline: none;
-  transition: border-color 100ms ease;
+  transition: all var(--duration-fast) var(--ease-premium);
 }
 
 .input-base::placeholder {
@@ -318,7 +333,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .input-base:focus {
+  background-color: var(--color-canvas);
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
 }
 
 .input-base:disabled {
@@ -333,7 +350,7 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-text-secondary);
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .form-group {
@@ -352,15 +369,16 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-pill);
   color: var(--color-text-secondary);
   background-color: var(--color-canvas);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 120ms ease;
+  transition: all var(--duration-fast) var(--ease-premium);
 }
 
 .chip:hover {
-  border-color: var(--color-text-primary);
+  border-color: var(--color-text-muted);
   color: var(--color-text-primary);
+  background-color: var(--color-surface);
 }
 
 .chip--selected {
@@ -373,58 +391,59 @@ h1, h2, h3, h4, h5, h6 {
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  padding: 2px 6px;
+  padding: 4px 8px;
   border-radius: var(--radius-xs);
-  line-height: 1.3;
+  line-height: 1.2;
+  letter-spacing: 0.05em;
 }
 
 .badge-wine { background-color: var(--color-surface); color: var(--color-text-primary); }
 .badge-success { background-color: var(--color-success-bg); color: var(--color-success); }
 .badge-warning { background-color: var(--color-warning-bg); color: var(--color-warning); }
 .badge-error { background-color: var(--color-error-bg); color: var(--color-error); }
-.badge-neutral { background-color: var(--color-surface); color: var(--color-text-secondary); }
+.badge-neutral { background-color: var(--color-surface); color: var(--color-text-secondary); border: 1px solid var(--color-border); }
 
 /* ── Hero & Metrics Typography ─────────────────────────────── */
 .hero-title {
   font-family: var(--font-sans);
-  font-size: clamp(36px, 4.5vw, 54px);
-  line-height: 0.95;
-  font-weight: 700;
-  letter-spacing: -0.04em;
+  font-size: clamp(36px, 4vw, 48px);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.05em;
   color: var(--color-text-primary);
 }
 
 .metric-value {
   font-family: var(--font-sans);
-  font-size: 44px;
+  font-size: 48px;
   line-height: 1;
-  font-weight: 700;
-  letter-spacing: -0.04em;
+  font-weight: 800;
+  letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
   position: relative;
   display: inline-block;
 }
 
 .currency {
-  font-size: 0.45em;
+  font-size: 0.5em;
   vertical-align: top;
   position: relative;
-  top: 0.08em;
+  top: 0.1em;
   margin-left: 2px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .kpi-value {
   font-family: var(--font-sans);
   font-size: 32px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-text-primary);
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
 
 .kpi-label {
@@ -433,7 +452,7 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.1em;
   font-weight: 700;
   color: var(--color-text-secondary);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 /* ── Table Grid Dividers ──────────────────────────────────── */
@@ -441,6 +460,8 @@ h1, h2, h3, h4, h5, h6 {
   overflow-x: auto;
   border: 1px solid var(--color-border);
   background-color: var(--color-canvas);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.01);
 }
 
 .antojo-table {
@@ -452,21 +473,22 @@ h1, h2, h3, h4, h5, h6 {
 
 .antojo-table th {
   background-color: var(--color-surface);
-  color: var(--color-text-primary);
-  font-size: 11px;
-  font-weight: 700;
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  padding: 14px 18px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--color-border);
   white-space: nowrap;
 }
 
 .antojo-table td {
-  padding: 14px 18px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--color-border);
   color: var(--color-text-primary);
   vertical-align: middle;
+  transition: background-color var(--duration-fast) var(--ease-premium);
 }
 
 .antojo-table tr:last-child td {
@@ -474,7 +496,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .antojo-table tr:hover td {
-  background-color: var(--color-surface);
+  background-color: var(--color-surface-hover);
 }
 
 /* ── Bento Grid Layouts ────────────────────────────────────── */

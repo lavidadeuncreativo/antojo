@@ -87,18 +87,18 @@ export function DashboardClient({ data }: { data?: any }) {
   return (
     <div className="max-w-7xl mx-auto space-y-12 select-none text-left">
       {/* ── Title Header ── */}
-      <div className="py-6 border-b border-[var(--color-border)] flex flex-col md:flex-row md:items-baseline justify-between gap-4">
+      <div className="pt-8 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-black uppercase">
-            OPERACIÓN <span className="font-light italic text-[var(--color-text-secondary)]">diaria.</span>
-          </h1>
-          <p className="text-xs text-[var(--color-text-secondary)] mt-1 font-semibold uppercase tracking-wider">
+          <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
             ERP de Cobros & Bebidas Frías • ANTOJO OS
           </p>
+          <h1 className="hero-title">
+            OPERACIÓN <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">diaria.</span>
+          </h1>
         </div>
-        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text-secondary)]">
-          <span>Progreso Meta:</span>
-          <span className="text-black tabular-nums">{goalPercent}% ({formatCurrency(totalSalesVal, { compact: true })} / {formatCurrency(monthlyGoal.goal, { compact: true })})</span>
+        <div className="flex flex-col items-end gap-1 text-xs font-bold uppercase tracking-wider text-[var(--color-text-secondary)] bg-[var(--color-surface)] px-4 py-3 border border-[var(--color-border)] rounded-lg">
+          <span className="text-[10px] tracking-widest text-[var(--color-text-muted)]">Progreso Meta</span>
+          <span className="text-black tabular-nums text-sm">{goalPercent}% <span className="font-normal text-[var(--color-text-muted)] ml-1">({formatCurrency(totalSalesVal, { compact: true })} / {formatCurrency(monthlyGoal.goal, { compact: true })})</span></span>
         </div>
       </div>
 
@@ -155,62 +155,64 @@ export function DashboardClient({ data }: { data?: any }) {
             <h3 className="text-[10px] font-extrabold tracking-widest text-[var(--color-text-secondary)] uppercase block mb-4">
               Ventas de la semana
             </h3>
-            <div className="h-[250px] w-full">
+            <div className="h-[280px] w-full mt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={salesData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <AreaChart data={salesData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#000000" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="#000000" stopOpacity={0}/>
+                      <stop offset="0%" stopColor="#000000" stopOpacity={0.08}/>
+                      <stop offset="100%" stopColor="#000000" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" strokeOpacity={0.5} />
                   <XAxis 
                     dataKey="day" 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fill: "var(--color-text-secondary)", fontWeight: "bold" }} 
-                    dy={10}
+                    tick={{ fontSize: 10, fill: "var(--color-text-muted)", fontWeight: "600", letterSpacing: "0.05em" }} 
+                    dy={15}
                   />
                   <YAxis 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fill: "var(--color-text-secondary)", fontWeight: "bold" }}
+                    tick={{ fontSize: 10, fill: "var(--color-text-muted)", fontWeight: "600" }}
                     tickFormatter={(value) => `$${value}`}
+                    dx={-10}
                   />
                   <Tooltip 
-                    contentStyle={{ borderRadius: '0', border: '1px solid var(--color-border)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', fontSize: '12px', fontWeight: 'bold' }}
+                    contentStyle={{ borderRadius: '8px', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-card-hover)', fontSize: '12px', fontWeight: 'bold', padding: '12px' }}
                     itemStyle={{ color: '#000' }}
+                    cursor={{ stroke: 'var(--color-border)', strokeWidth: 1, strokeDasharray: '4 4' }}
                   />
-                  <Area type="monotone" dataKey="ventas" stroke="#000000" strokeWidth={2} fillOpacity={1} fill="url(#colorVentas)" />
+                  <Area type="monotone" dataKey="ventas" stroke="#000000" strokeWidth={2} fillOpacity={1} fill="url(#colorVentas)" animationDuration={1000} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* Secondary Bar Chart */}
-          <div className="border border-[var(--color-border)] p-6 bg-white">
+          <div className="border border-[var(--color-border)] p-8 bg-white rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
             <h3 className="text-[10px] font-extrabold tracking-widest text-[var(--color-text-secondary)] uppercase block mb-4">
               Distribución de Sabores
             </h3>
-            <div className="h-[250px] w-full">
+            <div className="h-[280px] w-full mt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={categoryData} layout="vertical" margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="var(--color-border)" />
+                <BarChart data={categoryData} layout="vertical" margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="var(--color-border)" strokeOpacity={0.5} />
                   <XAxis type="number" hide />
                   <YAxis 
                     dataKey="name" 
                     type="category" 
                     axisLine={false} 
                     tickLine={false}
-                    tick={{ fontSize: 10, fill: "var(--color-text-secondary)", fontWeight: "bold" }}
-                    width={70}
+                    tick={{ fontSize: 10, fill: "var(--color-text-muted)", fontWeight: "600" }}
+                    width={80}
                   />
                   <Tooltip 
-                    cursor={{fill: 'transparent'}}
-                    contentStyle={{ borderRadius: '0', border: '1px solid var(--color-border)', fontSize: '12px', fontWeight: 'bold' }}
+                    cursor={{fill: 'var(--color-surface)'}}
+                    contentStyle={{ borderRadius: '8px', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-card-hover)', fontSize: '12px', fontWeight: 'bold', padding: '12px' }}
                   />
-                  <Bar dataKey="valor" fill="#000000" radius={[0, 4, 4, 0]} barSize={20} />
+                  <Bar dataKey="valor" fill="#000000" radius={[0, 4, 4, 0]} barSize={16} animationDuration={1000} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -231,9 +233,10 @@ export function DashboardClient({ data }: { data?: any }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.length === 0 ? (
-            <div className="col-span-full py-20 text-center border border-[var(--color-border)] rounded-[28px] bg-[#F9F9F9]">
-              <span className="text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-widest block mb-4">Aún no tienes productos</span>
-              <Link href="/products" className="bg-black text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-black/80 transition-colors inline-block">
+            <div className="col-span-full py-24 text-center border border-[var(--color-border)] border-dashed rounded-2xl bg-[var(--color-canvas)] shadow-sm">
+              <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest block mb-4">Catálogo Vacío</span>
+              <p className="text-sm font-medium text-[var(--color-text-secondary)] mb-8 max-w-md mx-auto">No has registrado ningún producto. Agrega tus bebidas y recetas para comenzar a generar métricas.</p>
+              <Link href="/products" className="bg-black text-white px-6 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-black/80 hover:shadow-lg transition-all inline-block hover:-translate-y-0.5">
                 Crear mi primer producto
               </Link>
             </div>

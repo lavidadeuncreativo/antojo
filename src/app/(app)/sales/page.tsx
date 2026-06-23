@@ -61,19 +61,18 @@ export default function VentasPage() {
     <div className="space-y-8 text-left select-none max-w-7xl mx-auto">
       
       {/* Header section with clean flat stats */}
-      <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
+      <div className="pt-8 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black tracking-tighter text-black uppercase">
-            REGISTRO DE <span className="font-light italic text-[var(--color-text-secondary)]">ventas.</span>
-          </h1>
-          <p className="text-xs text-[var(--color-text-secondary)] mt-1 font-medium">
-            Visualiza y genera las ventas de bebidas y despachos diarios.
+          <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
+            Gestión Operativa
           </p>
+          <h1 className="hero-title">
+            REGISTRO DE <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">ventas.</span>
+          </h1>
         </div>
-
         <button
           onClick={() => setModalOpen(true)}
-          className="btn btn-primary self-start"
+          className="btn btn-primary self-start md:self-end"
         >
           <Plus size={14} />
           Registrar Venta
@@ -82,19 +81,19 @@ export default function VentasPage() {
 
       {/* Mini metric bar (Editorial Flat Cells) */}
       <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--color-border)] bg-[var(--color-border)] gap-[1px]">
-        <div className="bg-white p-6">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Total Transacciones</span>
-          <span className="text-3xl font-extrabold text-black tabular-nums">{sales.length}</span>
+        <div className="bg-white p-8">
+          <span className="kpi-label">Total Transacciones</span>
+          <div className="kpi-value tabular-nums">{sales.length}</div>
         </div>
-        <div className="bg-white p-6">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Ticket Promedio</span>
-          <span className="text-3xl font-extrabold text-black tabular-nums">
+        <div className="bg-white p-8">
+          <span className="kpi-label">Ticket Promedio</span>
+          <div className="kpi-value tabular-nums">
             {formatCurrency(
               sales.length > 0
                 ? sales.reduce((acc, s) => acc + s.total, 0) / sales.length
                 : 0
             )}
-          </span>
+          </div>
         </div>
       </div>
 
@@ -130,8 +129,12 @@ export default function VentasPage() {
             <tbody>
               {filteredSales.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 text-[var(--color-text-muted)] font-medium">
-                    No se encontraron transacciones registradas.
+                  <td colSpan={6} className="text-center py-16 px-4">
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                      <ShoppingCart size={32} className="text-[var(--color-border)] mb-2" />
+                      <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Sin transacciones</span>
+                      <p className="text-sm font-medium text-[var(--color-text-secondary)]">No hay ventas que coincidan con la búsqueda actual.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -165,26 +168,26 @@ export default function VentasPage() {
 
       {/* New Sale Modal */}
       {modalOpen && (
-        <div className="modal-overlay flex items-center justify-center p-4">
-          <div className="modal-content relative text-left">
+        <div className="modal-overlay flex items-center justify-center p-4 z-[100] animate-fade-in">
+          <div className="modal-content relative text-left animate-slide-up bg-white">
             <button
               onClick={() => setModalOpen(false)}
-              className="absolute top-4 right-4 text-[var(--color-text-secondary)] hover:text-black"
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)] hover:text-black transition-colors"
             >
-              <X size={18} />
+              <X size={16} strokeWidth={2} />
             </button>
 
-            <h3 className="text-lg font-bold text-black mb-6 uppercase tracking-tight">Registrar Nueva Venta</h3>
+            <h3 className="text-xl font-bold text-black mb-6 uppercase tracking-tight">Registrar Nueva Venta</h3>
 
             {successMsg ? (
-              <div className="flex flex-col items-center justify-center py-8 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-[var(--color-success-bg)] text-[var(--color-success)] flex items-center justify-center">
-                  <Check size={20} />
+              <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-slide-up">
+                <div className="w-16 h-16 rounded-full bg-[var(--color-success-bg)] text-[var(--color-success)] flex items-center justify-center ring-8 ring-[var(--color-success-bg)]/30">
+                  <Check size={28} strokeWidth={3} />
                 </div>
-                <p className="text-sm font-bold text-black">{successMsg}</p>
+                <p className="text-base font-bold text-black tracking-tight">{successMsg}</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="form-group">
                   <label className="label">Nombre del Cliente</label>
                   <input
