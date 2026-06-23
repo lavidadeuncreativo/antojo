@@ -2,8 +2,19 @@
 
 import { useGlobalState } from "@/lib/state";
 import { formatCurrency, formatNumber } from "@/lib/utils";
-import { ArrowRight, AlertCircle } from "lucide-react";
+import { ArrowRight, AlertCircle, TrendingUp, TrendingDown } from "lucide-react";
 import Link from "next/link";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar
+} from "recharts";
 
 export function DashboardClient({ data }: { data?: any }) {
   const { products, sales, purchases, inventory, monthlyGoal } = useGlobalState();
@@ -23,6 +34,24 @@ export function DashboardClient({ data }: { data?: any }) {
   }, 0);
 
   const goalPercent = Math.min(100, Math.round((totalSalesVal / monthlyGoal.goal) * 100));
+
+  // Mock data for charts
+  const salesData = [
+    { day: "Lun", ventas: 1200, margen: 800 },
+    { day: "Mar", ventas: 1900, margen: 1200 },
+    { day: "Mié", ventas: 1500, margen: 900 },
+    { day: "Jue", ventas: 2100, margen: 1400 },
+    { day: "Vie", ventas: 3200, margen: 2100 },
+    { day: "Sáb", ventas: 4500, margen: 3000 },
+    { day: "Dom", ventas: 3800, margen: 2600 },
+  ];
+
+  const categoryData = [
+    { name: "Matcha", valor: 35 },
+    { name: "Pócima", valor: 25 },
+    { name: "Cold Brew", valor: 20 },
+    { name: "Mojito", valor: 20 },
+  ];
 
   // Helper component for flavor can
   const BeverageCan = ({ productId }: { productId: string }) => {
@@ -81,7 +110,9 @@ export function DashboardClient({ data }: { data?: any }) {
             {formatNumber(totalSalesVal, 2)}
             <span className="currency">$</span>
           </div>
-          <span className="text-[10px] text-green-700 font-bold mt-1 block">↑ flujo de entrada activo</span>
+          <span className="text-[10px] text-green-700 font-bold mt-1 block flex items-center gap-1">
+            <TrendingUp size={12} /> flujo de entrada activo
+          </span>
         </div>
         
         <div className="bg-white p-8 text-left">
@@ -90,7 +121,9 @@ export function DashboardClient({ data }: { data?: any }) {
             {formatNumber(totalExpensesVal, 2)}
             <span className="currency">$</span>
           </div>
-          <span className="text-[10px] text-red-600 font-bold mt-1 block">↓ egreso de insumos</span>
+          <span className="text-[10px] text-red-600 font-bold mt-1 block flex items-center gap-1">
+            <TrendingDown size={12} /> egreso de insumos
+          </span>
         </div>
 
         <div className="bg-white p-8 text-left">
@@ -99,7 +132,89 @@ export function DashboardClient({ data }: { data?: any }) {
             {formatNumber(estimatedProfitVal, 2)}
             <span className="currency">$</span>
           </div>
-          <span className="text-[10px] text-black font-bold mt-1 block">★ margen operativo positivo</span>
+          <span className="text-[10px] text-black font-bold mt-1 block flex items-center gap-1">
+            ★ margen operativo positivo
+          </span>
+        </div>
+      </div>
+
+      {/* ── Charts Section ── */}
+      <div className="space-y-6">
+        <div className="flex items-baseline justify-between border-b border-[var(--color-border)] pb-3">
+          <h2 className="text-xl font-bold uppercase tracking-tighter text-black">
+            Métricas de <span className="font-light italic text-[var(--color-text-secondary)]">rendimiento.</span>
+          </h2>
+          <Link href="/reports" className="text-xs font-bold text-black hover:underline uppercase tracking-wider flex items-center gap-1">
+            Ver Todos los Reportes <ArrowRight size={12} />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Area Chart */}
+          <div className="lg:col-span-2 border border-[var(--color-border)] p-6 bg-white">
+            <h3 className="text-[10px] font-extrabold tracking-widest text-[var(--color-text-secondary)] uppercase block mb-4">
+              Ventas de la semana
+            </h3>
+            <div className="h-[250px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={salesData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#000000" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#000000" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                  <XAxis 
+                    dataKey="day" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 10, fill: "var(--color-text-secondary)", fontWeight: "bold" }} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 10, fill: "var(--color-text-secondary)", fontWeight: "bold" }}
+                    tickFormatter={(value) => `$${value}`}
+                  />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '0', border: '1px solid var(--color-border)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', fontSize: '12px', fontWeight: 'bold' }}
+                    itemStyle={{ color: '#000' }}
+                  />
+                  <Area type="monotone" dataKey="ventas" stroke="#000000" strokeWidth={2} fillOpacity={1} fill="url(#colorVentas)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Secondary Bar Chart */}
+          <div className="border border-[var(--color-border)] p-6 bg-white">
+            <h3 className="text-[10px] font-extrabold tracking-widest text-[var(--color-text-secondary)] uppercase block mb-4">
+              Distribución de Sabores
+            </h3>
+            <div className="h-[250px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={categoryData} layout="vertical" margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="var(--color-border)" />
+                  <XAxis type="number" hide />
+                  <YAxis 
+                    dataKey="name" 
+                    type="category" 
+                    axisLine={false} 
+                    tickLine={false}
+                    tick={{ fontSize: 10, fill: "var(--color-text-secondary)", fontWeight: "bold" }}
+                    width={70}
+                  />
+                  <Tooltip 
+                    cursor={{fill: 'transparent'}}
+                    contentStyle={{ borderRadius: '0', border: '1px solid var(--color-border)', fontSize: '12px', fontWeight: 'bold' }}
+                  />
+                  <Bar dataKey="valor" fill="#000000" radius={[0, 4, 4, 0]} barSize={20} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -129,7 +244,7 @@ export function DashboardClient({ data }: { data?: any }) {
               bgClass = "card-passion"; // Cold Brew Light Yellow
               flavorName = "COLD BREW";
             } else if (prod.id === "p4") {
-              bgClass = "card-ginger"; // Mojito Light Purple/Blue (ginger/orange token in globals.css)
+              bgClass = "card-ginger"; // Mojito Light Purple/Blue
               flavorName = "MOJITO MEZCAL";
             }
 

@@ -57,10 +57,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Sidebar Header Brand (Clean text logo) */}
       <div className="p-6 border-b border-[var(--color-border)] flex items-center justify-between">
         <Link href="/dashboard" className="decoration-none">
-          <span className="font-extrabold text-lg text-black tracking-tighter block leading-none">
+          <span className="font-extrabold text-2xl text-black tracking-tighter block leading-none">
             ANTOJO<span className="text-black">.</span>
           </span>
-          <span className="text-[9px] font-bold text-[var(--color-text-muted)] tracking-widest uppercase block mt-1">
+          <span className="text-[11px] font-bold text-[var(--color-text-muted)] tracking-widest uppercase block mt-1.5">
             control erp
           </span>
         </Link>
@@ -69,8 +69,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Navigation List */}
       <nav className="flex-1 p-4 space-y-6">
         {Object.entries(groups).map(([group, items]) => (
-          <div key={group} className="space-y-2">
-            <span className="text-[10px] font-extrabold text-[var(--color-text-muted)] uppercase tracking-widest block px-3 mb-1">
+          <div key={group} className="space-y-2 mb-6">
+            <span className="text-xs font-extrabold text-[var(--color-text-muted)] uppercase tracking-widest block px-4 mb-2">
               {groupLabels[group]}
             </span>
             <div className="space-y-0.5">
@@ -83,7 +83,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`block px-3 py-2 text-[13px] font-bold rounded transition-all leading-none ${
+                    className={`block px-4 py-2.5 text-[15px] font-bold rounded-lg transition-all leading-tight ${
                       isActive
                         ? "bg-black text-white"
                         : "text-[var(--color-text-secondary)] hover:text-black hover:bg-black/5"
@@ -106,9 +106,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               window.location.href = "/";
             }
           }}
-          className="flex items-center gap-2 px-3 py-2 w-full text-left text-[13px] font-bold text-[var(--color-text-secondary)] hover:text-black transition-all"
+          className="flex items-center gap-3 px-4 py-3 w-full text-left text-[15px] font-bold text-[var(--color-text-secondary)] hover:text-black transition-all"
         >
-          <LogOut size={14} />
+          <LogOut size={16} />
           Salir del ERP
         </button>
       </div>
@@ -217,8 +217,8 @@ export function MobileMenuDrawer({
 
             <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border)] mb-6">
               <div>
-                <h3 className="font-extrabold text-base text-black">ANTOJO.</h3>
-                <p className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
+                <h3 className="font-extrabold text-xl text-black">ANTOJO.</h3>
+                <p className="text-[11px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
                   Navegación del Negocio
                 </p>
               </div>
@@ -233,7 +233,7 @@ export function MobileMenuDrawer({
             <div className="space-y-6">
               {Object.entries(grouped).map(([group, items]) => (
                 <div key={group}>
-                  <h4 className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-2 px-1 text-left">
+                  <h4 className="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-3 px-1 text-left">
                     {groupLabels[group]}
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
@@ -244,7 +244,7 @@ export function MobileMenuDrawer({
                           key={item.href}
                           href={item.href}
                           onClick={onClose}
-                          className={`flex items-center px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                          className={`flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-all ${
                             isActive
                               ? "bg-black text-white"
                               : "bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:bg-black/5 hover:text-black"
