@@ -7,12 +7,10 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 select-none text-left">
-      <div className="pt-8 pb-8 border-b border-[var(--color-border)]">
-        <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
-          Ajustes del Sistema y Cuenta
-        </p>
+      <div className="pt-14 pb-12 border-b border-[var(--color-border)]">
+        <span className="label-micro block mb-3">Ajustes del Sistema y Cuenta</span>
         <h1 className="hero-title">
-          CONFIGURACIÓN <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">& sistema.</span>
+          CONFIGURACIÓN <span className="italic-light">& sistema.</span>
         </h1>
       </div>
 
@@ -36,7 +34,7 @@ export default function SettingsPage() {
         <div className="w-full md:w-3/4">
           {activeTab === 'general' && (
             <div className="space-y-8">
-              <h2 className="text-lg font-bold text-black border-b border-[var(--color-border)] pb-4 uppercase tracking-tight">Ajustes Generales</h2>
+              <h2 className="section-title border-b border-[var(--color-border)] pb-4">Ajustes Generales</h2>
               
               <div className="space-y-5">
                 <div className="form-group">
@@ -70,9 +68,9 @@ export default function SettingsPage() {
           )}
           
           {activeTab !== 'general' && (
-            <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-[var(--color-border)] rounded-2xl">
-              <div className="text-3xl font-black text-[var(--color-border)] mb-4 tracking-tighter">PRÓXIMAMENTE</div>
-              <p className="text-sm font-medium text-[var(--color-text-secondary)] max-w-xs">Esta sección de configuración estará disponible en la versión 1.2.</p>
+            <div className="empty-state border border-[var(--color-border)] mt-0">
+              <span className="empty-state__label">PRÓXIMAMENTE</span>
+              <p className="empty-state__text max-w-xs mx-auto">Esta sección de configuración estará disponible en la versión 1.2.</p>
             </div>
           )}
         </div>

@@ -54,18 +54,16 @@ export default function InventarioPage() {
     <div className="space-y-8 text-left select-none max-w-7xl mx-auto">
       
       {/* Header */}
-      <div className="pt-8 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
+      <div className="pt-14 pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
         <div>
-          <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
-            Supervisión
-          </p>
+          <span className="label-micro block mb-3">Supervisión</span>
           <h1 className="hero-title">
-            ALMACÉN <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">& inventario.</span>
+            ALMACÉN <span className="italic-light">& inventario.</span>
           </h1>
         </div>
 
         <button onClick={() => setModalOpen(true)} className="btn btn-primary self-start md:self-end">
-          <Plus size={14} />
+          <Plus size={14} strokeWidth={2.5} />
           Ajustar Existencia
         </button>
       </div>
@@ -108,14 +106,14 @@ export default function InventarioPage() {
           )}
 
           {/* Grid Bento of raw materials */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bento-grid">
             {inventory.map((item) => {
               const isLow = item.stock <= item.min_stock;
               return (
-                <div key={item.id} className="card p-5 text-left flex flex-col justify-between min-h-[140px] border border-[var(--color-border)] bg-white rounded-none">
+                <div key={item.id} className="bento-3 card text-left flex flex-col justify-between min-h-[140px]">
                   <div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-extrabold text-[var(--color-text-muted)] uppercase tracking-widest">
+                      <span className="label-micro">
                         Insumo Base
                       </span>
                       {isLow && (
@@ -124,7 +122,7 @@ export default function InventarioPage() {
                         </span>
                       )}
                     </div>
-                    <h3 className="text-base font-extrabold text-black mt-2 leading-tight tracking-tight">{item.name}</h3>
+                    <h3 className="display-title mt-2">{item.name}</h3>
                   </div>
 
                   <div className="flex items-baseline justify-between border-t border-[var(--color-border)] pt-3 mt-3">
@@ -176,11 +174,11 @@ export default function InventarioPage() {
               ))}
               {movements.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-center py-16 px-4">
-                    <div className="flex flex-col items-center justify-center space-y-3">
-                      <History size={32} className="text-[var(--color-border)] mb-2" />
-                      <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Sin historial</span>
-                      <p className="text-sm font-medium text-[var(--color-text-secondary)]">No se registran movimientos en la bitácora de auditoría.</p>
+                  <td colSpan={5} style={{ padding: 0, border: 'none' }}>
+                    <div className="empty-state border-0 border-b border-[var(--color-border)]">
+                      <History size={32} className="empty-state__icon" strokeWidth={1.5} />
+                      <span className="empty-state__label">Sin historial</span>
+                      <p className="empty-state__text">No se registran movimientos en la bitácora de auditoría.</p>
                     </div>
                   </td>
                 </tr>
@@ -201,7 +199,7 @@ export default function InventarioPage() {
               <X size={16} strokeWidth={2} />
             </button>
 
-            <h3 className="text-xl font-bold text-black mb-6 uppercase tracking-tight">Ajustar Existencia Manual</h3>
+            <h3 className="section-title">Ajustar Existencia Manual</h3>
 
             {successMsg ? (
               <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-slide-up">

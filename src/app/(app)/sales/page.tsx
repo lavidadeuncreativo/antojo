@@ -61,31 +61,29 @@ export default function VentasPage() {
     <div className="space-y-8 text-left select-none max-w-7xl mx-auto">
       
       {/* Header section with clean flat stats */}
-      <div className="pt-8 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="pt-14 pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
         <div>
-          <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
-            Gestión Operativa
-          </p>
+          <span className="label-micro block mb-3">Gestión Operativa</span>
           <h1 className="hero-title">
-            REGISTRO DE <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">ventas.</span>
+            REGISTRO DE <span className="italic-light">ventas.</span>
           </h1>
         </div>
         <button
           onClick={() => setModalOpen(true)}
           className="btn btn-primary self-start md:self-end"
         >
-          <Plus size={14} />
+          <Plus size={14} strokeWidth={2.5} />
           Registrar Venta
         </button>
       </div>
 
       {/* Mini metric bar (Editorial Flat Cells) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--color-border)] bg-[var(--color-border)] gap-[1px]">
-        <div className="bg-white p-8">
+      <div className="editorial-grid editorial-grid-2">
+        <div className="editorial-cell">
           <span className="kpi-label">Total Transacciones</span>
           <div className="kpi-value tabular-nums">{sales.length}</div>
         </div>
-        <div className="bg-white p-8">
+        <div className="editorial-cell">
           <span className="kpi-label">Ticket Promedio</span>
           <div className="kpi-value tabular-nums">
             {formatCurrency(
@@ -129,11 +127,11 @@ export default function VentasPage() {
             <tbody>
               {filteredSales.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-16 px-4">
-                    <div className="flex flex-col items-center justify-center space-y-3">
-                      <ShoppingCart size={32} className="text-[var(--color-border)] mb-2" />
-                      <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Sin transacciones</span>
-                      <p className="text-sm font-medium text-[var(--color-text-secondary)]">No hay ventas que coincidan con la búsqueda actual.</p>
+                  <td colSpan={6} style={{ padding: 0, border: 'none' }}>
+                    <div className="empty-state border-0 border-b border-[var(--color-border)]">
+                      <ShoppingCart size={32} className="empty-state__icon" strokeWidth={1.5} />
+                      <span className="empty-state__label">Sin transacciones</span>
+                      <p className="empty-state__text">No hay ventas que coincidan con la búsqueda actual.</p>
                     </div>
                   </td>
                 </tr>
@@ -177,7 +175,7 @@ export default function VentasPage() {
               <X size={16} strokeWidth={2} />
             </button>
 
-            <h3 className="text-xl font-bold text-black mb-6 uppercase tracking-tight">Registrar Nueva Venta</h3>
+            <h3 className="section-title">Registrar Nueva Venta</h3>
 
             {successMsg ? (
               <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-slide-up">

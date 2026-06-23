@@ -10,17 +10,15 @@ export default function MarketingPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-12 select-none text-left">
       {/* Header */}
-      <div className="pt-8 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
+      <div className="pt-14 pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
         <div>
-          <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
-            Campañas, ROI y Fidelización
-          </p>
+          <span className="label-micro block mb-3">Campañas, ROI y Fidelización</span>
           <h1 className="hero-title">
-            ESTRATEGIA <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">marketing.</span>
+            ESTRATEGIA <span className="italic-light">marketing.</span>
           </h1>
         </div>
         <button className="btn btn-primary self-start md:self-end">
-          <Megaphone size={14} /> Nueva Campaña
+          <Megaphone size={14} strokeWidth={2.5} /> Nueva Campaña
         </button>
       </div>
 
@@ -46,8 +44,8 @@ export default function MarketingPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-black border-b border-[var(--color-border)] pb-2">
-            Campañas <span className="font-light italic text-[var(--color-text-secondary)]">en curso.</span>
+          <h3 className="section-title border-b border-[var(--color-border)] pb-2">
+            Campañas en curso
           </h3>
           
           <div className="table-container border border-[var(--color-border)]">
@@ -62,11 +60,11 @@ export default function MarketingPage() {
               </thead>
               <tbody>
                 <tr>
-                  <td colSpan={4} className="text-center py-16 px-4">
-                    <div className="flex flex-col items-center justify-center space-y-3">
-                      <Megaphone size={32} className="text-[var(--color-border)] mb-2" />
-                      <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Sin campañas</span>
-                      <p className="text-sm font-medium text-[var(--color-text-secondary)]">No hay campañas activas registradas.</p>
+                  <td colSpan={4} style={{ padding: 0, border: 'none' }}>
+                    <div className="empty-state border-0 border-b border-[var(--color-border)]">
+                      <Megaphone size={32} className="empty-state__icon" strokeWidth={1.5} />
+                      <span className="empty-state__label">Sin campañas</span>
+                      <p className="empty-state__text">No hay campañas activas registradas.</p>
                     </div>
                   </td>
                 </tr>
@@ -76,11 +74,11 @@ export default function MarketingPage() {
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-black border-b border-[var(--color-border)] pb-2">
-            Métricas <span className="font-light italic text-[var(--color-text-secondary)]">clave.</span>
+          <h3 className="section-title border-b border-[var(--color-border)] pb-2">
+            Métricas clave
           </h3>
 
-          <div className="border border-[var(--color-border)] p-6 bg-white">
+          <div className="card">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-10 h-10 bg-black/5 rounded-full flex items-center justify-center">
                 <Megaphone size={16} className="text-black" />

@@ -2,126 +2,208 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Settings, Bell, Search } from "lucide-react";
+import { Menu, Bell, Search, Settings } from "lucide-react";
 
 interface TopbarProps {
   onMenuToggle?: () => void;
 }
 
-interface CapsuleItem {
-  href: string;
-  label: string;
-}
+const routeLabels: Record<string, string> = {
+  "/dashboard":   "Resumen General",
+  "/sales":       "Ventas",
+  "/products":    "Catálogo de Bebidas",
+  "/finance":     "Estados Financieros",
+  "/commercial":  "Área Comercial",
+  "/marketing":   "Estrategia Marketing",
+  "/production":  "Producción",
+  "/inventory":   "Almacén e Inventario",
+  "/purchases":   "Compras & Órdenes",
+  "/events":      "Eventos & Activaciones",
+  "/quotes":      "Cotizaciones",
+  "/calendar":    "Calendario",
+  "/growth":      "Crecimiento & Metas",
+  "/reports":     "Reportes",
+  "/settings":    "Configuración & Sistema",
+};
 
 export function Topbar({ onMenuToggle }: TopbarProps) {
   const pathname = usePathname();
 
-  // Determine subpages navigation list based on path groups
-  let navItems: CapsuleItem[] = [];
-  
-  if (pathname === "/dashboard") {
-    navItems = [
-      { href: "/dashboard", label: "resumen" },
-      { href: "/sales", label: "ventas" },
-      { href: "/products", label: "productos" },
-      { href: "/inventory", label: "inventario" },
-      { href: "/finance", label: "finanzas" },
-      { href: "/calendar", label: "calendario" },
-    ];
-  } else if (
-    pathname.startsWith("/sales") ||
-    pathname.startsWith("/products") ||
-    pathname.startsWith("/inventory") ||
-    pathname.startsWith("/production") ||
-    pathname.startsWith("/purchases")
-  ) {
-    navItems = [
-      { href: "/sales", label: "ventas" },
-      { href: "/products", label: "productos" },
-      { href: "/inventory", label: "inventario" },
-      { href: "/production", label: "producción" },
-      { href: "/purchases", label: "compras" },
-    ];
-  } else if (
-    pathname.startsWith("/finance") ||
-    pathname.startsWith("/commercial") ||
-    pathname.startsWith("/events") ||
-    pathname.startsWith("/quotes")
-  ) {
-    navItems = [
-      { href: "/finance", label: "finanzas" },
-      { href: "/commercial", label: "comercial" },
-      { href: "/events", label: "eventos" },
-      { href: "/quotes", label: "cotizaciones" },
-    ];
-  } else {
-    navItems = [
-      { href: "/marketing", label: "marketing" },
-      { href: "/calendar", label: "calendario" },
-      { href: "/growth", label: "crecimiento" },
-      { href: "/reports", label: "reportes" },
-      { href: "/settings", label: "configuración" },
-    ];
-  }
+  const currentLabel =
+    Object.entries(routeLabels).find(([key]) => pathname.startsWith(key))?.[1] ?? "Dashboard";
+
+  const iconBtn: React.CSSProperties = {
+    width: "34px",
+    height: "34px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    border: "1px solid rgba(17,17,17,0.10)",
+    background: "transparent",
+    cursor: "pointer",
+    color: "rgba(17,17,17,0.50)",
+    transition: "all 0.2s ease",
+  };
 
   return (
-    <header className="app-topbar select-none">
-      {/* Brand logo & mobile trigger */}
-      <div className="flex items-center gap-4">
+    <header
+      className="app-topbar select-none"
+      style={{
+        fontFamily: "\"Helvetica Neue\", Helvetica, Arial, sans-serif",
+        justifyContent: "space-between",
+      }}
+    >
+      {/* Left: Mobile toggle + Breadcrumb */}
+      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        {/* Mobile hamburger */}
         <button
           onClick={onMenuToggle}
-          className="md:hidden p-1 text-black hover:bg-black/5 rounded"
+          className="md:hidden"
+          style={{ ...iconBtn, border: "none" }}
           aria-label="Menú principal"
         >
-          <Menu size={18} />
+          <Menu size={17} strokeWidth={2} />
         </button>
 
-        <Link href="/dashboard" className="flex items-col text-left group decoration-none">
-          <span className="font-bold text-lg leading-tight tracking-tight text-black flex flex-col">
-            <span className="font-extrabold uppercase text-xs tracking-widest text-[var(--color-text-secondary)]">Antojo</span>
-            <span className="font-black text-lg tracking-tighter -mt-1 select-none">OS.</span>
+        {/* Breadcrumb al estilo Brivé bottom bar */}
+        <div
+          className="hidden md:flex"
+          style={{
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <Link
+            href="/dashboard"
+            style={{
+              fontSize: "12px",
+              fontWeight: 800,
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              color: "rgba(17,17,17,0.35)",
+              textDecoration: "none",
+              transition: "color 0.2s ease",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = "#111111")}
+            onMouseLeave={e => (e.currentTarget.style.color = "rgba(17,17,17,0.35)")}
+          >
+            Antojo OS
+          </Link>
+          <span
+            style={{
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "rgba(17,17,17,0.22)",
+            }}
+          >
+            /
           </span>
-        </Link>
-      </div>
-
-      {/* Dynamic Breadcrumbs */}
-      <div className="hidden md:flex items-center mx-auto flex-1 px-8">
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#999999]">
-          <span>Antojo OS</span>
-          <span className="text-[#E5E5E5] px-1">/</span>
-          <span className="text-black">{pathname.split('/')[1] || 'Dashboard'}</span>
+          <span
+            style={{
+              fontSize: "12px",
+              fontWeight: 900,
+              letterSpacing: "-0.015em",
+              color: "#111111",
+              textTransform: "uppercase",
+            }}
+          >
+            {currentLabel}
+          </span>
         </div>
       </div>
 
-      {/* Right elements: search, notifications, settings */}
-      <div className="flex items-center gap-4">
+      {/* Right: Actions */}
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         <button
-          className="p-2 text-[#999999] hover:text-black hover:bg-[#F9F9F9] rounded-full transition-all duration-300"
+          style={iconBtn}
           title="Buscar"
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.background = "rgba(17,17,17,0.04)";
+            (e.currentTarget as HTMLElement).style.color = "#111111";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.background = "transparent";
+            (e.currentTarget as HTMLElement).style.color = "rgba(17,17,17,0.50)";
+          }}
         >
-          <Search size={15} />
+          <Search size={14} strokeWidth={2.5} />
         </button>
 
         <button
-          className="p-2 relative text-[#999999] hover:text-black hover:bg-[#F9F9F9] rounded-full transition-all duration-300"
+          style={{ ...iconBtn, position: "relative" }}
           title="Notificaciones"
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.background = "rgba(17,17,17,0.04)";
+            (e.currentTarget as HTMLElement).style.color = "#111111";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.background = "transparent";
+            (e.currentTarget as HTMLElement).style.color = "rgba(17,17,17,0.50)";
+          }}
         >
-          <Bell size={15} />
-          <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-black ring-2 ring-white" />
+          <Bell size={14} strokeWidth={2.5} />
+          <span
+            style={{
+              position: "absolute",
+              top: "7px",
+              right: "7px",
+              width: "5px",
+              height: "5px",
+              borderRadius: "50%",
+              background: "#111111",
+              border: "1.5px solid #ffffff",
+            }}
+          />
         </button>
 
         <Link
           href="/settings"
-          className="p-2 text-[#999999] hover:text-black hover:bg-[#F9F9F9] rounded-full transition-all duration-300"
+          style={{ ...iconBtn }}
           title="Configuración"
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.background = "rgba(17,17,17,0.04)";
+            (e.currentTarget as HTMLElement).style.color = "#111111";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.background = "transparent";
+            (e.currentTarget as HTMLElement).style.color = "rgba(17,17,17,0.50)";
+          }}
         >
-          <Settings size={15} />
+          <Settings size={14} strokeWidth={2} />
         </Link>
 
-        <div className="w-px h-6 bg-[#E5E5E5] mx-2"></div>
+        {/* Divider */}
+        <div
+          style={{
+            width: "1px",
+            height: "24px",
+            background: "rgba(17,17,17,0.10)",
+            margin: "0 4px",
+          }}
+        />
 
-        {/* User initials badge */}
-        <div className="w-8 h-8 rounded-full border border-[#E5E5E5] flex items-center justify-center font-bold text-xs bg-white text-black select-none hover:border-black cursor-pointer transition-all duration-300 shadow-sm">
+        {/* User avatar — Brivé style social link */}
+        <div
+          style={{
+            width: "34px",
+            height: "34px",
+            borderRadius: "50%",
+            border: "1.5px solid rgba(17,17,17,0.15)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "11px",
+            fontWeight: 900,
+            letterSpacing: "0.02em",
+            color: "#111111",
+            cursor: "pointer",
+            transition: "border-color 0.2s ease",
+            userSelect: "none",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.borderColor = "#111111")}
+          onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(17,17,17,0.15)")}
+        >
           A
         </div>
       </div>

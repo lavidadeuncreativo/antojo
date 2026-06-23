@@ -7,21 +7,21 @@ export default function CalendarPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 select-none text-left pt-6">
-      <div className="border-b border-[#E5E5E5] pb-8">
-        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-black uppercase" style={{ letterSpacing: "-0.04em" }}>
-          CALENDARIO
-        </h1>
-        <p className="text-sm text-black/60 mt-4 uppercase tracking-widest font-medium">
-          Agenda y Programación
-        </p>
+      <div className="pt-14 pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
+        <div>
+          <span className="label-micro block mb-3">Agenda y Programación</span>
+          <h1 className="hero-title">
+            CALENDARIO <span className="italic-light">diario.</span>
+          </h1>
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-12">
         <div className="w-full md:w-1/3">
-          <div className="p-8 border border-[#E5E5E5]">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-black mb-6">Julio 2026</h2>
+          <div className="card">
+            <h2 className="section-title border-none mb-6">Julio 2026</h2>
             {/* Simple mock calendar grid */}
-            <div className="grid grid-cols-7 gap-y-4 text-center text-xs mb-2 text-[#999999] font-bold">
+            <div className="grid grid-cols-7 gap-y-4 text-center text-[10px] mb-2 text-[var(--color-text-muted)] font-extrabold uppercase tracking-widest">
               <div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div><div>D</div>
             </div>
             <div className="grid grid-cols-7 gap-y-4 text-center text-sm">
@@ -36,21 +36,22 @@ export default function CalendarPage() {
         </div>
 
         <div className="w-full md:w-2/3 space-y-0">
-          <h2 className="text-xs font-bold text-[#999999] uppercase tracking-widest border-b border-black pb-4 mb-4">Agenda del Día</h2>
+          <h2 className="section-title border-b border-[var(--color-border)] pb-4 mb-4">Agenda del Día</h2>
           
           {schedule.length === 0 ? (
-            <div className="py-12 text-xs font-bold text-[#999999] uppercase tracking-widest text-center">
-              No hay eventos para hoy
+            <div className="empty-state border-0">
+              <CalendarIcon size={32} className="empty-state__icon" strokeWidth={1.5} />
+              <span className="empty-state__label">Sin eventos para hoy</span>
             </div>
           ) : (
             schedule.map((item, idx) => (
-              <div key={idx} className="flex gap-6 py-6 border-b border-[#E5E5E5] group cursor-pointer hover:pl-2 transition-all">
-                <div className="text-sm font-bold text-[#999999] w-20 flex-shrink-0 pt-1">
+              <div key={idx} className="flex gap-6 py-6 border-b border-[var(--color-border)] group cursor-pointer hover:pl-2 transition-all">
+                <div className="text-sm font-bold text-[var(--color-text-muted)] w-20 flex-shrink-0 pt-1">
                   {item.time}
                 </div>
                 <div>
                   <div className="text-xl font-bold text-black mb-1">{item.task}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-[#999999]">{item.type}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)]">{item.type}</div>
                 </div>
               </div>
             ))

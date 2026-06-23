@@ -7,43 +7,43 @@ export default function ProductionPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 select-none text-left pt-6">
-      <div className="border-b border-[#E5E5E5] pb-8">
-        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-black uppercase" style={{ letterSpacing: "-0.04em" }}>
-          PRODUCCIÓN
-        </h1>
-        <p className="text-sm text-black/60 mt-4 uppercase tracking-widest font-medium">
-          Control de Lotes y Procesos
-        </p>
+      <div className="pt-14 pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
+        <div>
+          <span className="label-micro block mb-3">Control de Lotes y Procesos</span>
+          <h1 className="hero-title">
+            PRODUCCIÓN <span className="italic-light">activa.</span>
+          </h1>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div className="p-6 border border-[#E5E5E5] flex flex-col justify-between h-32">
-          <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest">En Proceso</span>
-          <span className="text-4xl font-black tracking-tighter">0</span>
+      <div className="editorial-grid editorial-grid-3 mb-12">
+        <div className="editorial-cell">
+          <span className="kpi-label">En Proceso</span>
+          <span className="kpi-value">0</span>
         </div>
-        <div className="p-6 border border-[#E5E5E5] flex flex-col justify-between h-32">
-          <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest">Litros Hoy</span>
-          <span className="text-4xl font-black tracking-tighter">0</span>
+        <div className="editorial-cell">
+          <span className="kpi-label">Litros Hoy</span>
+          <span className="kpi-value">0</span>
         </div>
-        <div className="p-6 border border-black bg-black text-white flex flex-col justify-between h-32">
-          <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Alertas QC</span>
-          <span className="text-4xl font-black tracking-tighter">0</span>
+        <div className="editorial-cell editorial-cell--dark">
+          <span className="kpi-label opacity-50">Alertas QC</span>
+          <span className="kpi-value text-white">0</span>
         </div>
       </div>
 
       <div>
-        <h2 className="text-xs font-bold text-[#999999] uppercase tracking-widest border-b border-black pb-4 mb-4">Lotes Activos</h2>
+        <h2 className="section-title border-b border-[var(--color-border)] pb-4 mb-4">Lotes Activos</h2>
         <div className="space-y-4">
           {batches.length === 0 ? (
-            <div className="text-center py-12 text-xs font-bold text-[#999999] uppercase tracking-widest">
-              No hay lotes activos en producción
+            <div className="empty-state border-0">
+              <span className="empty-state__label">No hay lotes activos en producción</span>
             </div>
           ) : (
             batches.map((batch) => (
-              <div key={batch.id} className="p-6 border border-[#E5E5E5] flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div key={batch.id} className="card flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest block mb-1">{batch.id}</span>
-                  <h3 className="text-xl font-bold text-black">{batch.product}</h3>
+                  <span className="label-micro block mb-1">{batch.id}</span>
+                  <h3 className="display-title">{batch.product}</h3>
                 </div>
                 <div className="flex gap-8 items-center">
                   <div className="text-center">

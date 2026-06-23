@@ -92,67 +92,65 @@ export default function ProductosPage() {
     <div className="space-y-8 text-left select-none max-w-7xl mx-auto">
       
       {/* Header */}
-      <div className="pt-8 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
+      <div className="pt-14 pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
         <div>
-          <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
-            Administración de Menú
-          </p>
+          <span className="label-micro block mb-3">Administración de Menú</span>
           <h1 className="hero-title">
-            CATÁLOGO DE <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">bebidas.</span>
+            CATÁLOGO DE <span className="italic-light">bebidas.</span>
           </h1>
         </div>
 
         <button onClick={handleCreateClick} className="btn btn-primary self-start md:self-end">
-          <Plus size={14} />
+          <Plus size={14} strokeWidth={2.5} />
           Crear Producto
         </button>
       </div>
 
       {/* Metrics (Grid style) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--color-border)] bg-[var(--color-border)] gap-[1px]">
-        <div className="bg-white p-8">
+      <div className="editorial-grid editorial-grid-2">
+        <div className="editorial-cell">
           <span className="kpi-label">Productos Activos</span>
           <div className="kpi-value tabular-nums">{products.length}</div>
         </div>
-        <div className="bg-white p-8">
+        <div className="editorial-cell">
           <span className="kpi-label">Margen Promedio</span>
           <div className="kpi-value tabular-nums">
             {products.length > 0
               ? Math.round(products.reduce((acc, p) => acc + p.margin, 0) / products.length)
               : 0}
-            <span className="text-xl">%</span>
+            <span className="text-[0.6em] ml-1">%</span>
           </div>
         </div>
       </div>
 
       {/* Grid Bento of Products */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="bento-grid">
         {products.length === 0 ? (
-          <div className="col-span-full py-16 text-center border border-[var(--color-border)] border-dashed rounded-2xl bg-[var(--color-canvas)] mt-4 shadow-sm">
-            <div className="flex flex-col items-center justify-center space-y-3">
-              <Package size={32} className="text-[var(--color-border)] mb-2" />
-              <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Catálogo Vacío</span>
-              <p className="text-sm font-medium text-[var(--color-text-secondary)] max-w-md mx-auto">Aún no hay productos configurados. Agrega nuevas bebidas a tu catálogo.</p>
+          <div className="bento-12 mt-4">
+            <div className="empty-state">
+              <Package size={32} className="empty-state__icon" strokeWidth={1.5} />
+              <span className="empty-state__label">Catálogo Vacío</span>
+              <p className="empty-state__text">Aún no hay productos configurados. Agrega nuevas bebidas a tu catálogo.</p>
             </div>
           </div>
         ) : (
           products.map((product) => (
-            <div key={product.id} className="card p-6 flex flex-col justify-between space-y-4">
+            <div key={product.id} className="bento-4 card flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)]">
+                  <span className="label-micro">
                     Bebida Terminado
                   </span>
                   <button
                     onClick={() => handleEditClick(product)}
-                    className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--color-border)] hover:border-black text-black transition-all bg-white"
+                    className="btn-icon btn-ghost"
                     title="Editar Receta"
                   >
-                    <Edit3 size={14} strokeWidth={2} />
+                    <Edit3 size={15} strokeWidth={2} />
                   </button>
                 </div>
 
-                <h3 className="text-lg font-extrabold text-black mt-2 leading-tight tracking-tight">{product.name}</h3>
+                <h3 className="display-title mt-2">{product.name}</h3>
 
                 {/* Costing values */}
                 <div className="flex items-center gap-4 mt-3 pb-3 border-b border-[var(--color-border)]">
@@ -215,7 +213,7 @@ export default function ProductosPage() {
               <X size={16} strokeWidth={2} />
             </button>
 
-            <h3 className="text-xl font-bold text-black mb-6 uppercase tracking-tight">
+            <h3 className="section-title">
               {editingId ? "Editar Producto" : "Crear Nuevo Producto"}
             </h3>
 

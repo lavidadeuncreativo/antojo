@@ -10,17 +10,15 @@ export default function CommercialPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-12 select-none text-left">
       {/* Header */}
-      <div className="pt-8 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
+      <div className="pt-14 pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border)]">
         <div>
-          <p className="text-[10px] text-[var(--color-text-secondary)] mb-2 font-bold uppercase tracking-[0.2em]">
-            Gestión B2B, Clientes Corporativos y Eventos
-          </p>
+          <span className="label-micro block mb-3">Gestión B2B, Clientes Corporativos y Eventos</span>
           <h1 className="hero-title">
-            ÁREA <span className="font-light italic text-[var(--color-text-secondary)] tracking-normal">comercial.</span>
+            ÁREA <span className="italic-light">comercial.</span>
           </h1>
         </div>
         <button className="btn btn-primary self-start md:self-end">
-          <Users size={14} /> Nuevo Cliente
+          <Users size={14} strokeWidth={2.5} /> Nuevo Cliente
         </button>
       </div>
 
@@ -44,24 +42,23 @@ export default function CommercialPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--color-border)] bg-[var(--color-border)] gap-[1px]">
-        <div className="bg-white p-8 relative overflow-hidden group transition-all duration-300 hover:bg-[var(--color-surface)]">
-          <Users size={20} className="absolute top-6 right-6 text-[var(--color-border)] group-hover:text-[var(--color-text-muted)] transition-colors" />
+      <div className="editorial-grid editorial-grid-2">
+        <div className="editorial-cell">
           <span className="kpi-label">Clientes Activos (B2B)</span>
           <div className="kpi-value tabular-nums">0</div>
 
-          <div className="mt-6 py-8 text-center border border-dashed border-[var(--color-border)] rounded-xl">
-            <span className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest">Sin clientes B2B registrados</span>
+          <div className="empty-state mt-8 border-0 p-0 text-left items-start">
+            <span className="empty-state__label">Sin clientes B2B registrados</span>
           </div>
         </div>
 
-        <div className="bg-black p-8 relative overflow-hidden">
-          <Target size={20} className="absolute top-6 right-6 text-white/20" />
-          <span className="kpi-label" style={{ color: 'rgba(255,255,255,0.5)' }}>Pipeline B2B</span>
-          <div className="kpi-value tabular-nums" style={{ color: '#fff' }}>{formatCurrency(0)}<span className="text-sm font-normal ml-2" style={{ color: 'rgba(255,255,255,0.6)' }}>en negociación</span></div>
+        <div className="editorial-cell editorial-cell--dark">
+          <span className="kpi-label">Pipeline B2B</span>
+          <div className="kpi-value tabular-nums">{formatCurrency(0)}</div>
+          <span className="text-[13px] font-bold mt-2 block opacity-80 text-white">en negociación</span>
 
-          <div className="mt-6 py-8 text-center border border-dashed border-white/10 rounded-xl">
-            <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Pipeline vacío</span>
+          <div className="empty-state mt-8 border-0 p-0 text-left items-start bg-transparent">
+            <span className="empty-state__label opacity-50 text-white">Pipeline vacío</span>
           </div>
         </div>
       </div>
