@@ -3,11 +3,7 @@
 import { Calendar, MapPin, ArrowRight } from "lucide-react";
 
 export default function EventsPage() {
-  const events = [
-    { date: "15 Ago", name: "Festival Gourmet", location: "Parque Fundidora", status: "Confirmado" },
-    { date: "22 Ago", name: "Bazar Emprendedores", location: "Centro de Convenciones", status: "Pendiente" },
-    { date: "05 Sep", name: "Aniversario WeWork", location: "Torre WeWork", status: "Confirmado" },
-  ];
+  const events: any[] = [];
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 select-none text-left pt-6">
@@ -21,7 +17,12 @@ export default function EventsPage() {
       </div>
 
       <div className="space-y-6">
-        {events.map((evt, idx) => (
+        {events.length === 0 ? (
+          <div className="text-center py-12 text-xs font-bold text-[#999999] uppercase tracking-widest">
+            No hay eventos programados
+          </div>
+        ) : (
+          events.map((evt, idx) => (
           <div key={idx} className="group border-b border-[#E5E5E5] pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer">
             <div className="flex items-start md:items-center gap-6">
               <div className="w-16 h-16 bg-[#F5F5F5] rounded-xl flex items-center justify-center flex-col">
@@ -45,7 +46,7 @@ export default function EventsPage() {
               </button>
             </div>
           </div>
-        ))}
+        )))}
       </div>
     </div>
   );

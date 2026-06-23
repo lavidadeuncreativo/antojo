@@ -128,29 +128,7 @@ export default function VentasPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredSales.map((sale) => (
-                <tr key={sale.id}>
-                  <td className="font-bold tracking-tight text-black">{sale.folio}</td>
-                  <td>
-                    <span className="font-bold text-black">{sale.customer}</span>
-                  </td>
-                  <td>
-                    <span className="badge badge-neutral">{sale.channel}</span>
-                  </td>
-                  <td>
-                    {sale.items.map((it, idx) => (
-                      <div key={idx} className="text-sm font-bold text-black py-0.5">
-                        {it.qty}x {it.name}
-                      </div>
-                    ))}
-                  </td>
-                  <td className="text-right font-black text-black tabular-nums">
-                    {formatCurrency(sale.total)}
-                  </td>
-                  <td className="text-[var(--color-text-secondary)] font-bold text-xs">{sale.time}</td>
-                </tr>
-              ))}
-              {filteredSales.length === 0 && (
+              {sales.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="text-center py-8 text-[var(--color-text-muted)] font-medium">
                     No se encontraron transacciones registradas.

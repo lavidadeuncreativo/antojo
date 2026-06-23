@@ -3,12 +3,7 @@
 import { Calendar as CalendarIcon, Clock } from "lucide-react";
 
 export default function CalendarPage() {
-  const schedule = [
-    { time: "09:00 AM", task: "Reunión Equipo Comercial", type: "Interno" },
-    { time: "11:30 AM", task: "Entrega Barriles Cold Brew", type: "Logística" },
-    { time: "14:00 PM", task: "Cata de Nuevos Sabores", type: "Producto" },
-    { time: "16:00 PM", task: "Revisión de Inventario Semanal", type: "Operaciones" },
-  ];
+  const schedule: any[] = [];
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 select-none text-left pt-6">
@@ -43,17 +38,23 @@ export default function CalendarPage() {
         <div className="w-full md:w-2/3 space-y-0">
           <h2 className="text-xs font-bold text-[#999999] uppercase tracking-widest border-b border-black pb-4 mb-4">Agenda del Día</h2>
           
-          {schedule.map((item, idx) => (
-            <div key={idx} className="flex gap-6 py-6 border-b border-[#E5E5E5] group cursor-pointer hover:pl-2 transition-all">
-              <div className="text-sm font-bold text-[#999999] w-20 flex-shrink-0 pt-1">
-                {item.time}
-              </div>
-              <div>
-                <div className="text-xl font-bold text-black mb-1">{item.task}</div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-[#999999]">{item.type}</div>
-              </div>
+          {schedule.length === 0 ? (
+            <div className="py-12 text-xs font-bold text-[#999999] uppercase tracking-widest text-center">
+              No hay eventos para hoy
             </div>
-          ))}
+          ) : (
+            schedule.map((item, idx) => (
+              <div key={idx} className="flex gap-6 py-6 border-b border-[#E5E5E5] group cursor-pointer hover:pl-2 transition-all">
+                <div className="text-sm font-bold text-[#999999] w-20 flex-shrink-0 pt-1">
+                  {item.time}
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-black mb-1">{item.task}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-[#999999]">{item.type}</div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

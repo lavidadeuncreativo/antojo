@@ -35,8 +35,8 @@ export function DashboardClient({ data }: { data?: any }) {
 
   const goalPercent = Math.min(100, Math.round((totalSalesVal / monthlyGoal.goal) * 100));
 
-  // Mock data for charts
-  const salesData = [
+  // Mock data for charts - empty state if no sales
+  const salesData = sales.length === 0 ? [] : [
     { day: "Lun", ventas: 1200, margen: 800 },
     { day: "Mar", ventas: 1900, margen: 1200 },
     { day: "Mié", ventas: 1500, margen: 900 },
@@ -46,7 +46,7 @@ export function DashboardClient({ data }: { data?: any }) {
     { day: "Dom", ventas: 3800, margen: 2600 },
   ];
 
-  const categoryData = [
+  const categoryData = sales.length === 0 ? [] : [
     { name: "Matcha", valor: 35 },
     { name: "Pócima", valor: 25 },
     { name: "Cold Brew", valor: 20 },
@@ -230,62 +230,71 @@ export function DashboardClient({ data }: { data?: any }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((prod) => {
-            // Map backgrounds
-            let bgClass = "card-original"; // default
-            let flavorName = "Bebida";
-            if (prod.id === "p1") {
-              bgClass = "card-mint"; // Matcha Light Green
-              flavorName = "MATCHA LATTE";
-            } else if (prod.id === "p2") {
-              bgClass = "card-hibiscus"; // Pócima Fresa Light Pink
-              flavorName = "PÓCIMA FRESA";
-            } else if (prod.id === "p3") {
-              bgClass = "card-passion"; // Cold Brew Light Yellow
-              flavorName = "COLD BREW";
-            } else if (prod.id === "p4") {
-              bgClass = "card-ginger"; // Mojito Light Purple/Blue
-              flavorName = "MOJITO MEZCAL";
-            }
+          {products.length === 0 ? (
+            <div className="col-span-full py-20 text-center border border-[var(--color-border)] rounded-[28px] bg-[#F9F9F9]">
+              <span className="text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-widest block mb-4">Aún no tienes productos</span>
+              <Link href="/products" className="bg-black text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-black/80 transition-colors inline-block">
+                Crear mi primer producto
+              </Link>
+            </div>
+          ) : (
+            products.map((prod) => {
+              // Map backgrounds
+              let bgClass = "card-original"; // default
+              let flavorName = "Bebida";
+              if (prod.id === "p1") {
+                bgClass = "card-mint"; // Matcha Light Green
+                flavorName = "MATCHA LATTE";
+              } else if (prod.id === "p2") {
+                bgClass = "card-hibiscus"; // Pócima Fresa Light Pink
+                flavorName = "PÓCIMA FRESA";
+              } else if (prod.id === "p3") {
+                bgClass = "card-passion"; // Cold Brew Light Yellow
+                flavorName = "COLD BREW";
+              } else if (prod.id === "p4") {
+                bgClass = "card-ginger"; // Mojito Light Purple/Blue
+                flavorName = "MOJITO MEZCAL";
+              }
 
-            return (
-              <div
-                key={prod.id}
-                className={`card-interactive relative flex flex-col justify-between p-6 overflow-hidden rounded-[28px] ${bgClass} transition-all duration-300 hover:-translate-y-1 h-[320px] border border-black/5`}
-              >
-                <div className="text-left">
-                  <span className="text-[10px] font-extrabold tracking-widest text-black/50 uppercase block mb-1">
-                    {flavorName}
-                  </span>
-                  <h3 className="text-[17px] font-black text-black leading-tight tracking-tight">
-                    {prod.name}
-                  </h3>
-                  <div className="text-sm font-bold text-black/80 mt-1">
-                    {formatCurrency(prod.price)}
+              return (
+                <div
+                  key={prod.id}
+                  className={`card-interactive relative flex flex-col justify-between p-6 overflow-hidden rounded-[28px] ${bgClass} transition-all duration-300 hover:-translate-y-1 h-[320px] border border-black/5`}
+                >
+                  <div className="text-left">
+                    <span className="text-[10px] font-extrabold tracking-widest text-black/50 uppercase block mb-1">
+                      {flavorName}
+                    </span>
+                    <h3 className="text-[17px] font-black text-black leading-tight tracking-tight">
+                      {prod.name}
+                    </h3>
+                    <div className="text-sm font-bold text-black/80 mt-1">
+                      {formatCurrency(prod.price)}
+                    </div>
+                  </div>
+
+                  {/* Render Can Illustration */}
+                  <BeverageCan productId={prod.id} />
+
+                  {/* Bottom row containing recipe summary and circular arrow link */}
+                  <div className="flex items-end justify-between mt-auto">
+                    <div className="text-[10px] font-bold text-black/70 uppercase tracking-wider leading-tight text-left">
+                      Receta: {prod.recipe.length} ingredientes <br />
+                      Costo: {formatCurrency(prod.cost)}
+                    </div>
+                    
+                    <Link
+                      href={`/products?id=${prod.id}`}
+                      className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center transition-transform duration-200 hover:scale-105"
+                      title="Editar Receta"
+                    >
+                      <ArrowRight size={14} />
+                    </Link>
                   </div>
                 </div>
-
-                {/* Render Can Illustration */}
-                <BeverageCan productId={prod.id} />
-
-                {/* Bottom row containing recipe summary and circular arrow link */}
-                <div className="flex items-end justify-between mt-auto">
-                  <div className="text-[10px] font-bold text-black/70 uppercase tracking-wider leading-tight text-left">
-                    Receta: {prod.recipe.length} ingredientes <br />
-                    Costo: {formatCurrency(prod.cost)}
-                  </div>
-                  
-                  <Link
-                    href={`/products?id=${prod.id}`}
-                    className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center transition-transform duration-200 hover:scale-105"
-                    title="Editar Receta"
-                  >
-                    <ArrowRight size={14} />
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -314,21 +323,29 @@ export function DashboardClient({ data }: { data?: any }) {
                 </tr>
               </thead>
               <tbody>
-                {sales.slice(0, 5).map((sale) => (
-                  <tr key={sale.id}>
-                    <td className="font-bold tracking-tight">{sale.folio}</td>
-                    <td>
-                      <span className="font-bold text-black">{sale.customer}</span>
-                      <span className="text-[10px] text-[var(--color-text-secondary)] block mt-0.5">{sale.time}</span>
-                    </td>
-                    <td>
-                      <span className="badge badge-neutral">{sale.channel}</span>
-                    </td>
-                    <td className="text-right font-bold text-green-700 tabular-nums">
-                      +{formatCurrency(sale.total)}
+                {sales.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="text-center py-12 text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-widest">
+                      Aún no hay ventas registradas
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  sales.slice(0, 5).map((sale) => (
+                    <tr key={sale.id}>
+                      <td className="font-bold tracking-tight">{sale.folio}</td>
+                      <td>
+                        <span className="font-bold text-black">{sale.customer}</span>
+                        <span className="text-[10px] text-[var(--color-text-secondary)] block mt-0.5">{sale.time}</span>
+                      </td>
+                      <td>
+                        <span className="badge badge-neutral">{sale.channel}</span>
+                      </td>
+                      <td className="text-right font-bold text-green-700 tabular-nums">
+                        +{formatCurrency(sale.total)}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -355,26 +372,34 @@ export function DashboardClient({ data }: { data?: any }) {
                 </tr>
               </thead>
               <tbody>
-                {inventory.slice(0, 5).map((item) => {
-                  const isLow = item.stock <= item.min_stock;
-                  return (
-                    <tr key={item.id}>
-                      <td className="font-bold">{item.name}</td>
-                      <td className="text-right font-semibold tabular-nums">
-                        {formatNumber(item.stock)} {item.unit}
-                      </td>
-                      <td>
-                        {isLow ? (
-                          <span className="badge badge-error flex items-center gap-1 w-fit">
-                            <AlertCircle size={10} /> bajo stock
-                          </span>
-                        ) : (
-                          <span className="badge badge-success w-fit">ok</span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                {inventory.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="text-center py-12 text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-widest">
+                      Inventario vacío
+                    </td>
+                  </tr>
+                ) : (
+                  inventory.slice(0, 5).map((item) => {
+                    const isLow = item.stock <= item.min_stock;
+                    return (
+                      <tr key={item.id}>
+                        <td className="font-bold">{item.name}</td>
+                        <td className="text-right font-semibold tabular-nums">
+                          {formatNumber(item.stock)} {item.unit}
+                        </td>
+                        <td>
+                          {isLow ? (
+                            <span className="badge badge-error flex items-center gap-1 w-fit">
+                              <AlertCircle size={10} /> bajo stock
+                            </span>
+                          ) : (
+                            <span className="badge badge-success w-fit">ok</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>

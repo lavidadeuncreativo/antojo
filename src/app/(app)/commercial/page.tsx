@@ -50,40 +50,12 @@ export default function CommercialPage() {
             Clientes Activos (B2B)
           </span>
           <div className="text-3xl font-black text-black tracking-tighter mb-4">
-            18
+            0
           </div>
           
-          <div className="space-y-3 mt-6">
-            <div className="flex items-center justify-between p-3 border border-[var(--color-border)] rounded-lg">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center font-bold text-xs">CS</div>
-                <div>
-                  <div className="text-xs font-bold text-black">Cafetería Sinergia</div>
-                  <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider">Recurrente • Semanal</div>
-                </div>
-              </div>
-              <div className="text-xs font-bold text-black">
-                {formatCurrency(12500)} / mes
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between p-3 border border-[var(--color-border)] rounded-lg">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center font-bold text-xs">OW</div>
-                <div>
-                  <div className="text-xs font-bold text-black">Oficinas WeWork</div>
-                  <div className="text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider">Barril Cold Brew</div>
-                </div>
-              </div>
-              <div className="text-xs font-bold text-black">
-                {formatCurrency(8400)} / mes
-              </div>
-            </div>
+          <div className="py-12 text-center text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-widest">
+            No hay clientes B2B registrados
           </div>
-          
-          <button className="w-full mt-4 text-xs font-bold uppercase tracking-widest text-black hover:underline flex items-center justify-center gap-1">
-            Ver Todos <ArrowRight size={12} />
-          </button>
         </div>
 
         <div className="border border-black p-6 bg-black text-white relative">
@@ -94,35 +66,11 @@ export default function CommercialPage() {
             Pipeline B2B
           </span>
           <div className="text-3xl font-black text-white tracking-tighter mb-6">
-            {formatCurrency(45000)} <span className="text-sm font-normal text-white/70 tracking-normal">en negociación</span>
+            {formatCurrency(0)} <span className="text-sm font-normal text-white/70 tracking-normal">en negociación</span>
           </div>
           
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 size={16} className="text-white/50" />
-              <div className="flex-1">
-                <div className="flex justify-between">
-                  <span className="text-xs font-bold">Corporativo Santa Fe</span>
-                  <span className="text-xs font-bold">{formatCurrency(18000)}</span>
-                </div>
-                <div className="w-full bg-white/20 h-1 mt-1.5 rounded-full overflow-hidden">
-                  <div className="bg-white h-full w-[80%] rounded-full"></div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <CheckCircle2 size={16} className="text-white/50" />
-              <div className="flex-1">
-                <div className="flex justify-between">
-                  <span className="text-xs font-bold">Gimnasio Fit</span>
-                  <span className="text-xs font-bold">{formatCurrency(12000)}</span>
-                </div>
-                <div className="w-full bg-white/20 h-1 mt-1.5 rounded-full overflow-hidden">
-                  <div className="bg-white h-full w-[40%] rounded-full"></div>
-                </div>
-              </div>
-            </div>
+          <div className="py-12 text-center text-xs font-bold text-white/50 uppercase tracking-widest">
+            Pipeline vacío
           </div>
         </div>
       </div>

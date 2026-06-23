@@ -84,25 +84,8 @@ export function Topbar({ onMenuToggle }: TopbarProps) {
         </Link>
       </div>
 
-      {/* Navigation (Swiss Minimalist Text Links) */}
-      <nav className="hidden md:flex items-center gap-6 mx-auto">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`text-xs font-bold transition-all uppercase tracking-wider ${
-                isActive
-                  ? "text-black border-b-[2px] border-black pb-0.5"
-                  : "text-[var(--color-text-secondary)] hover:text-black"
-              }`}
-            >
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+      {/* Redundant Navigation Removed (handled by Sidebar) */}
+      <div className="hidden md:block mx-auto"></div>
 
       {/* Right elements: search, notifications, settings */}
       <div className="flex items-center gap-3">

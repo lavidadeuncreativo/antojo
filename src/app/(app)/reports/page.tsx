@@ -3,12 +3,7 @@
 import { Download } from "lucide-react";
 
 export default function ReportsPage() {
-  const reports = [
-    { title: "Cierre Mensual Junio 2026", type: "Financiero", date: "01 Jul 2026", size: "2.4 MB" },
-    { title: "Análisis de Ventas Q2", type: "Comercial", date: "28 Jun 2026", size: "4.1 MB" },
-    { title: "Inventario Físico Semestral", type: "Operativo", date: "25 Jun 2026", size: "1.8 MB" },
-    { title: "Rendimiento Campañas Ads", type: "Marketing", date: "15 Jun 2026", size: "5.2 MB" },
-  ];
+  const reports: any[] = [];
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 select-none text-left pt-6">
@@ -34,27 +29,33 @@ export default function ReportsPage() {
           <div className="col-span-1 text-right"></div>
         </div>
 
-        {reports.map((report, idx) => (
-          <div key={idx} className="grid grid-cols-12 gap-4 py-6 border-b border-[#E5E5E5] items-center hover:bg-[#F9F9F9] transition-colors -mx-4 px-4 cursor-pointer">
-            <div className="col-span-5">
-              <div className="text-base font-bold text-black">{report.title}</div>
-              <div className="text-[10px] text-[#999999] font-bold uppercase tracking-widest mt-1">{report.size} • PDF</div>
-            </div>
-            <div className="col-span-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-black bg-[#F5F5F5] px-2 py-1">
-                {report.type}
-              </span>
-            </div>
-            <div className="col-span-3 text-right font-bold text-[#999999] text-sm">
-              {report.date}
-            </div>
-            <div className="col-span-1 flex justify-end">
-              <button className="w-10 h-10 rounded-full border border-[#E5E5E5] flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-colors">
-                <Download size={16} />
-              </button>
-            </div>
+        {reports.length === 0 ? (
+          <div className="py-12 text-center text-xs font-bold text-[#999999] uppercase tracking-widest">
+            Aún no hay reportes generados
           </div>
-        ))}
+        ) : (
+          reports.map((report, idx) => (
+            <div key={idx} className="grid grid-cols-12 gap-4 py-6 border-b border-[#E5E5E5] items-center hover:bg-[#F9F9F9] transition-colors -mx-4 px-4 cursor-pointer">
+              <div className="col-span-5">
+                <div className="text-base font-bold text-black">{report.title}</div>
+                <div className="text-[10px] text-[#999999] font-bold uppercase tracking-widest mt-1">{report.size} • PDF</div>
+              </div>
+              <div className="col-span-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-black bg-[#F5F5F5] px-2 py-1">
+                  {report.type}
+                </span>
+              </div>
+              <div className="col-span-3 text-right font-bold text-[#999999] text-sm">
+                {report.date}
+              </div>
+              <div className="col-span-1 flex justify-end">
+                <button className="w-10 h-10 rounded-full border border-[#E5E5E5] flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-colors">
+                  <Download size={16} />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

@@ -88,118 +88,12 @@ interface StateContextType {
 const StateContext = createContext<StateContextType | undefined>(undefined);
 
 // ── Initial Demo Data ──────────────────────────────────────
-const initialInventory: InventoryItem[] = [
-  { id: "i1", name: "Matcha Orgánico", unit: "g", stock: 1500, min_stock: 500 },
-  { id: "i2", name: "Leche de Coco", unit: "ml", stock: 12000, min_stock: 4000 },
-  { id: "i3", name: "Concentrado de Fresa", unit: "ml", stock: 3000, min_stock: 1000 },
-  { id: "i4", name: "Agua Gasificada", unit: "ml", stock: 15000, min_stock: 5000 },
-  { id: "i5", name: "Vasos Biodegradables", unit: "ud", stock: 350, min_stock: 100 },
-  { id: "i6", name: "Cold Brew Base", unit: "ml", stock: 8000, min_stock: 2000 },
-  { id: "i7", name: "Leche de Avena", unit: "ml", stock: 10000, min_stock: 3000 },
-  { id: "i8", name: "Jarabe de Vainilla", unit: "ml", stock: 2000, min_stock: 500 },
-  { id: "i9", name: "Mezcal Artesanal", unit: "ml", stock: 3000, min_stock: 1000 },
-  { id: "i10", name: "Menta Fresca", unit: "g", stock: 300, min_stock: 100 },
-];
-
-const initialProducts: Product[] = [
-  {
-    id: "p1",
-    name: "Matcha Latte Cream",
-    price: 75,
-    cost: 32,
-    margin: 57,
-    recipe: [
-      { ingredientId: "i1", qty: 10 },
-      { ingredientId: "i2", qty: 200 },
-      { ingredientId: "i5", qty: 1 },
-    ],
-  },
-  {
-    id: "p2",
-    name: "PÓCIMA Fresa",
-    price: 65,
-    cost: 22,
-    margin: 66,
-    recipe: [
-      { ingredientId: "i3", qty: 30 },
-      { ingredientId: "i4", qty: 250 },
-      { ingredientId: "i5", qty: 1 },
-    ],
-  },
-  {
-    id: "p3",
-    name: "El Mañanero Cold Brew",
-    price: 60,
-    cost: 23,
-    margin: 62,
-    recipe: [
-      { ingredientId: "i6", qty: 150 },
-      { ingredientId: "i7", qty: 150 },
-      { ingredientId: "i8", qty: 15 },
-      { ingredientId: "i5", qty: 1 },
-    ],
-  },
-  {
-    id: "p4",
-    name: "Mojito Mezcal",
-    price: 75,
-    cost: 35,
-    margin: 53,
-    recipe: [
-      { ingredientId: "i9", qty: 45 },
-      { ingredientId: "i10", qty: 5 },
-      { ingredientId: "i5", qty: 1 },
-    ],
-  },
-];
-
-const initialSales: Sale[] = [
-  {
-    id: "s1",
-    folio: "VTA-00089",
-    customer: "Sofía Ramírez",
-    total: 650,
-    channel: "Instagram",
-    time: "hace 12 min",
-    items: [{ productId: "p1", name: "Matcha Latte Cream", qty: 8, price: 75 }],
-  },
-  {
-    id: "s2",
-    folio: "VTA-00088",
-    customer: "Cliente General",
-    total: 390,
-    channel: "Calle directa",
-    time: "hace 38 min",
-    items: [{ productId: "p2", name: "PÓCIMA Fresa", qty: 6, price: 65 }],
-  },
-  {
-    id: "s3",
-    folio: "VTA-00087",
-    customer: "Café Delicias",
-    total: 2400,
-    channel: "Mayoreo",
-    time: "hace 2 horas",
-    items: [
-      { productId: "p1", name: "Matcha Latte Cream", qty: 20, price: 75 },
-      { productId: "p3", name: "El Mañanero Cold Brew", qty: 15, price: 60 },
-    ],
-  },
-];
-
-const initialPurchases: Purchase[] = [
-  { id: "pr1", date: "2026-06-20", itemName: "Matcha Orgánico", qty: 1000, cost: 800, provider: "Matcha House" },
-  { id: "pr2", date: "2026-06-21", itemName: "Vasos Biodegradables", qty: 500, cost: 450, provider: "EcoPack" },
-];
-
-const initialProduction: ProductionBatch[] = [
-  { id: "pb1", date: "2026-06-22", productName: "Matcha Latte Cream", qty: 50, status: "confirmado" },
-  { id: "pb2", date: "2026-06-23", productName: "PÓCIMA Fresa", qty: 30, status: "confirmado" },
-];
-
-const initialMovements: InventoryMovement[] = [
-  { id: "m1", date: "2026-06-22", itemName: "Leche de Coco", type: "salida", qty: 1000, reason: "Merma por caducidad" },
-  { id: "m2", date: "2026-06-23", itemName: "Matcha Orgánico", type: "entrada", qty: 1000, reason: "Compra de insumo" },
-];
+const initialInventory: InventoryItem[] = [];
+const initialProducts: Product[] = [];
+const initialSales: Sale[] = [];
+const initialPurchases: Purchase[] = [];
+const initialProduction: ProductionBatch[] = [];
+const initialMovements: InventoryMovement[] = [];
 
 export function StateProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -208,7 +102,7 @@ export function StateProvider({ children }: { children: React.ReactNode }) {
   const [purchases, setPurchases] = useState<Purchase[]>(initialPurchases);
   const [production, setProduction] = useState<ProductionBatch[]>(initialProduction);
   const [movements, setMovements] = useState<InventoryMovement[]>(initialMovements);
-  const [monthlyGoal, setMonthlyGoal] = useState({ current: 54800, goal: 75000 });
+  const [monthlyGoal, setMonthlyGoal] = useState({ current: 0, goal: 75000 });
 
   const [hydrated, setHydrated] = useState(false);
 
@@ -423,7 +317,7 @@ export function StateProvider({ children }: { children: React.ReactNode }) {
     setPurchases(initialPurchases);
     setProduction(initialProduction);
     setMovements(initialMovements);
-    setMonthlyGoal({ current: 54800, goal: 75000 });
+    setMonthlyGoal({ current: 0, goal: 75000 });
   };
 
   return (

@@ -59,31 +59,9 @@ export default function MarketingPage() {
               </thead>
               <tbody>
                 <tr>
-                  <td>
-                    <span className="font-bold text-black">Promo Verano Cold Brew</span>
-                    <span className="text-[10px] text-[var(--color-text-secondary)] block mt-0.5">Válido hasta Ago 31</span>
+                  <td colSpan={4} className="text-center py-12 text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-widest">
+                    No hay campañas activas
                   </td>
-                  <td><span className="badge badge-neutral">Instagram</span></td>
-                  <td className="text-right font-bold tabular-nums">{formatCurrency(1500)}</td>
-                  <td className="text-right font-bold text-green-700 tabular-nums">3.2x</td>
-                </tr>
-                <tr>
-                  <td>
-                    <span className="font-bold text-black">Lanzamiento Pócima Fresa</span>
-                    <span className="text-[10px] text-[var(--color-text-secondary)] block mt-0.5">Válido hasta Jul 15</span>
-                  </td>
-                  <td><span className="badge badge-neutral">TikTok Ads</span></td>
-                  <td className="text-right font-bold tabular-nums">{formatCurrency(2200)}</td>
-                  <td className="text-right font-bold text-green-700 tabular-nums">4.5x</td>
-                </tr>
-                <tr>
-                  <td>
-                    <span className="font-bold text-black">Programa Lealtad B2B</span>
-                    <span className="text-[10px] text-[var(--color-text-secondary)] block mt-0.5">Continuo</span>
-                  </td>
-                  <td><span className="badge badge-neutral">Emailing</span></td>
-                  <td className="text-right font-bold tabular-nums">{formatCurrency(500)}</td>
-                  <td className="text-right font-bold text-green-700 tabular-nums">8.0x</td>
                 </tr>
               </tbody>
             </table>
@@ -102,7 +80,7 @@ export default function MarketingPage() {
               </div>
               <div>
                 <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)]">Costo Adquisición (CAC)</div>
-                <div className="text-xl font-black text-black">{formatCurrency(120)}</div>
+                <div className="text-xl font-black text-black">{formatCurrency(0)}</div>
               </div>
             </div>
             
@@ -112,15 +90,15 @@ export default function MarketingPage() {
               </div>
               <div>
                 <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)]">Valor Vida Cliente (LTV)</div>
-                <div className="text-xl font-black text-black">{formatCurrency(4500)}</div>
+                <div className="text-xl font-black text-black">{formatCurrency(0)}</div>
               </div>
             </div>
             
             <div className="mt-6 pt-4 border-t border-[var(--color-border)]">
               <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] mb-2">Crecimiento RRSS</div>
               <div className="flex justify-between items-end">
-                <span className="text-2xl font-black">12.4k</span>
-                <span className="text-[10px] text-green-700 font-bold flex items-center gap-1"><ArrowUpRight size={10} /> +2% esta semana</span>
+                <span className="text-2xl font-black">0</span>
+                <span className="text-[10px] text-[var(--color-text-secondary)] font-bold flex items-center gap-1">Sin datos</span>
               </div>
             </div>
           </div>

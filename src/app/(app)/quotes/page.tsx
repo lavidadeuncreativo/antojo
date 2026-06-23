@@ -4,11 +4,7 @@ import { FileText, Plus, Download } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
 export default function QuotesPage() {
-  const quotes = [
-    { id: "COT-042", client: "Agencia Azul", date: "10 Jul 2026", amount: 15400, status: "Aprobada" },
-    { id: "COT-043", client: "Boda M&J", date: "12 Jul 2026", amount: 32000, status: "Enviada" },
-    { id: "COT-044", client: "Corporativo B", date: "15 Jul 2026", amount: 8900, status: "Borrador" },
-  ];
+  const quotes: any[] = [];
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 select-none text-left pt-6">
@@ -34,30 +30,36 @@ export default function QuotesPage() {
           <div className="col-span-3 text-right">Estado</div>
         </div>
 
-        {quotes.map((quote) => (
-          <div key={quote.id} className="grid grid-cols-12 gap-4 py-6 border-b border-[#E5E5E5] items-center hover:bg-[#F9F9F9] transition-colors -mx-4 px-4 cursor-pointer">
-            <div className="col-span-2 text-sm font-bold text-black">{quote.id}</div>
-            <div className="col-span-4">
-              <div className="text-base font-bold text-black">{quote.client}</div>
-              <div className="text-xs text-[#999999] mt-1">{quote.date}</div>
-            </div>
-            <div className="col-span-3 text-right font-bold text-black tabular-nums">
-              {formatCurrency(quote.amount)}
-            </div>
-            <div className="col-span-3 flex justify-end items-center gap-4">
-              <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm
-                ${quote.status === 'Aprobada' ? 'bg-[#E5F2E5] text-green-800' : 
-                  quote.status === 'Enviada' ? 'bg-[#E5F0FF] text-blue-800' : 
-                  'bg-[#F5F5F5] text-[#666666]'}`}
-              >
-                {quote.status}
-              </span>
-              <button className="text-[#999999] hover:text-black transition-colors">
-                <Download size={16} />
-              </button>
-            </div>
+        {quotes.length === 0 ? (
+          <div className="py-12 text-center text-xs font-bold text-[#999999] uppercase tracking-widest">
+            No hay cotizaciones registradas
           </div>
-        ))}
+        ) : (
+          quotes.map((quote) => (
+            <div key={quote.id} className="grid grid-cols-12 gap-4 py-6 border-b border-[#E5E5E5] items-center hover:bg-[#F9F9F9] transition-colors -mx-4 px-4 cursor-pointer">
+              <div className="col-span-2 text-sm font-bold text-black">{quote.id}</div>
+              <div className="col-span-4">
+                <div className="text-base font-bold text-black">{quote.client}</div>
+                <div className="text-xs text-[#999999] mt-1">{quote.date}</div>
+              </div>
+              <div className="col-span-3 text-right font-bold text-black tabular-nums">
+                {formatCurrency(quote.amount)}
+              </div>
+              <div className="col-span-3 flex justify-end items-center gap-4">
+                <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm
+                  ${quote.status === 'Aprobada' ? 'bg-[#E5F2E5] text-green-800' : 
+                    quote.status === 'Enviada' ? 'bg-[#E5F0FF] text-blue-800' : 
+                    'bg-[#F5F5F5] text-[#666666]'}`}
+                >
+                  {quote.status}
+                </span>
+                <button className="text-[#999999] hover:text-black transition-colors">
+                  <Download size={16} />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
