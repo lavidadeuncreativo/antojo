@@ -35,6 +35,7 @@ import { formatCurrency, formatNumber, formatPercent, percentChange } from "@/li
 import Link from "next/link";
 
 import { DashboardData } from "@/types/dashboard";
+import { demoDashboardData } from "@/lib/demo-data";
 
 // Mapeo de strings a componentes de icono
 const iconMap = {
@@ -177,8 +178,10 @@ function AlertItem({
 
 const periods = ["Hoy", "Ayer", "Esta semana", "Este mes", "Este año"];
 
-export function DashboardClient({ data }: { data: DashboardData }) {
+export function DashboardClient({ data = demoDashboardData }: { data?: DashboardData }) {
   const [selectedPeriod, setSelectedPeriod] = useState("Esta semana");
+
+  const resolvedData = data || demoDashboardData;
 
   const {
     salesByDay,
@@ -189,7 +192,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
     recentSales,
     kpis,
     monthlyGoal,
-  } = data;
+  } = resolvedData;
 
   return (
     <div style={{ maxWidth: 1400, margin: "0 auto" }}>
