@@ -3,8 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "ANTOJO OS",
-    template: "%s — ANTOJO OS",
+    default: "ANTOJO",
+    template: "%s — ANTOJO",
   },
   description:
     "Centro operativo y estratégico de ANTOJO. Gestiona ventas, inventario, producción, finanzas y crecimiento de tu negocio de bebidas frías.",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "ANTOJO OS",
+    title: "ANTOJO",
   },
 };
 

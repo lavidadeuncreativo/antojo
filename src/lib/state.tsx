@@ -57,6 +57,7 @@ export interface ProductionBatch {
   productName: string;
   qty: number;
   status: "confirmado" | "pendiente";
+  expirationDate?: string;
 }
 
 export interface InventoryMovement {
@@ -88,7 +89,15 @@ interface StateContextType {
 const StateContext = createContext<StateContextType | undefined>(undefined);
 
 // ── Initial Demo Data ──────────────────────────────────────
-const initialInventory: InventoryItem[] = [];
+const initialInventory: InventoryItem[] = [
+  { id: "inv_1", name: "Leche Entera", unit: "L", stock: 0, min_stock: 10 },
+  { id: "inv_2", name: "Café de Especialidad", unit: "kg", stock: 0, min_stock: 5 },
+  { id: "inv_3", name: "Azúcar Morena", unit: "kg", stock: 0, min_stock: 5 },
+  { id: "inv_4", name: "Matcha Premium", unit: "kg", stock: 0, min_stock: 2 },
+  { id: "inv_5", name: "Fresa Fresca", unit: "kg", stock: 0, min_stock: 3 },
+  { id: "inv_6", name: "Botellas Transparentes", unit: "pza", stock: 0, min_stock: 50 },
+  { id: "inv_7", name: "Etiquetas", unit: "pza", stock: 0, min_stock: 100 },
+];
 const initialProducts: Product[] = [];
 const initialSales: Sale[] = [];
 const initialPurchases: Purchase[] = [];

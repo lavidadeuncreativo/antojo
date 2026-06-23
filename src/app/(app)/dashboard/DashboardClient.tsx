@@ -25,7 +25,25 @@ const S = {
 };
 
 export function DashboardClient({ data }: { data?: any }) {
-  const { products, sales, purchases, inventory, monthlyGoal } = useGlobalState();
+  const { products, sales, purchases, inventory, production, monthlyGoal } = useGlobalState();
+
+  let bestDrink = { name: "N/A", qty: 0 };
+  const productSales: Record<string, number> = {};
+  sales.forEach(s => s.items.forEach(i => {
+    productSales[i.name] = (productSales[i.name] || 0) + i.qty;
+  }));
+  Object.entries(productSales).forEach(([name, qty]) => {
+    if (qty > bestDrink.qty) bestDrink = { name, qty };
+  });
+
+  const nearExpiration = production.filter(b => {
+    if(!b.expirationDate) return false;
+    const expDate = new Date(b.expirationDate);
+    const today = new Date();
+    const diffTime = expDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays >= 0 && diffDays <= 7;
+  });
 
   const totalSalesVal    = sales.reduce((acc, s) => acc + s.total, 0);
   const totalExpensesVal = purchases.reduce((acc, p) => acc + p.cost, 0);
@@ -158,6 +176,29 @@ export function DashboardClient({ data }: { data?: any }) {
           </span>
           <span style={{ fontSize: "11px", fontWeight: 700, color: "rgba(17,17,17,0.50)", letterSpacing: "-0.01em" }}>
             {formatCurrency(totalSalesVal)} / {formatCurrency(monthlyGoal.goal)}
+          </span>
+        </div>
+
+        {/* Bebida Estrella badge */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+            padding: "16px 24px",
+            border: S.border,
+            background: "#ffffff",
+            minWidth: "180px",
+          }}
+        >
+          <span style={{ fontSize: "10px", fontWeight: 900, letterSpacing: "0.10em", textTransform: "uppercase", color: "rgba(17,17,17,0.38)" }}>
+            Bebida Estrella
+          </span>
+          <span style={{ fontSize: "22px", fontWeight: 900, letterSpacing: "-0.04em", color: "#111111", lineHeight: 1, textTransform: "uppercase" }}>
+            {bestDrink.name.substring(0, 10)}{bestDrink.name.length > 10 ? '.' : ''}
+          </span>
+          <span style={{ fontSize: "11px", fontWeight: 700, color: "rgba(17,17,17,0.50)", letterSpacing: "-0.01em" }}>
+            {bestDrink.qty} uds vendidas
           </span>
         </div>
       </div>
@@ -604,6 +645,22 @@ export function DashboardClient({ data }: { data?: any }) {
               </tbody>
             </table>
           </div>
+          
+          {nearExpiration.length > 0 && (
+            <div style={{ marginTop: "16px", border: S.border, background: "#fef2f2", padding: "16px 20px" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(153,27,27,0.90)", marginBottom: "8px" }}>
+                <AlertCircle size={12} /> Lotes Próximos a Caducar
+              </span>
+              <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "6px" }}>
+                {nearExpiration.map(b => (
+                  <li key={b.id} style={{ fontSize: "12px", fontWeight: 800, color: "#111111", display: "flex", justifyContent: "space-between" }}>
+                    <span>{b.productName} (Lote {b.id.slice(-4)})</span>
+                    <span style={{ color: "rgba(153,27,27,0.8)" }}>{b.expirationDate}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
 

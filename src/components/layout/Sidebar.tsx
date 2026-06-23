@@ -81,7 +81,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               marginTop: "6px",
             }}
           >
-            OS — PLATAFORMA
+            PLATAFORMA
           </span>
         </Link>
       </div>
@@ -334,7 +334,7 @@ export function MobileMenuDrawer({ open, onClose }: { open: boolean; onClose: ()
                   textTransform: "uppercase",
                 }}
               >
-                ANTOJO OS
+                ANTOJO
               </span>
               <button
                 onClick={onClose}
