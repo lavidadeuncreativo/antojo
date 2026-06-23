@@ -194,24 +194,38 @@ h6 {
   padding: 28px 24px;
 }
 
-/* ── Tarjetas ─────────────────────────────────────────────── */
+/* ── Tarjetas Editoriales ──────────────────────────────────── */
 .card {
   background: var(--color-white);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  padding: 24px;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease,
-    transform 0.2s ease;
+  border-radius: 0px; /* Completamente rectos para estilo editorial */
+  box-shadow: none;
+  padding: 28px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .card:hover {
-  box-shadow: var(--shadow-card-hover);
+  box-shadow: none;
+  border-color: var(--color-wine);
+}
+
+.card-interactive {
+  cursor: pointer;
 }
 
 .card-interactive:hover {
-  border-color: rgba(112, 31, 45, 0.2);
-  transform: translateY(-2px);
+  border-color: var(--color-wine);
+  background-color: #faf9f6; /* Cambio de fondo muy sutil */
+}
+
+/* Tarjeta minimalista sin fondo, solo línea separadora */
+.card-flat {
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  border-radius: 0px;
+  padding: 24px 0;
+  box-shadow: none;
 }
 
 /* ── Bento Grid ───────────────────────────────────────────── */
@@ -415,48 +429,52 @@ h6 {
   100% { background-position: -200% 0; }
 }
 
-/* ── KPI Cards ────────────────────────────────────────────── */
+/* ── KPI Cards Editoriales ────────────────────────────────── */
 .kpi-value {
-  font-size: 32px;
+  font-family: var(--font-sans);
+  font-size: 38px;
   font-weight: 700;
-  color: var(--color-text);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
+  color: var(--color-wine);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
 }
 
 .kpi-label {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
   color: var(--color-text-secondary);
+  margin-bottom: 8px;
 }
 
 .kpi-change-positive {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--color-success);
-  background: var(--color-success-bg);
-  padding: 2px 7px;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .kpi-change-negative {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--color-error);
-  background: var(--color-error-bg);
-  padding: 2px 7px;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
 }
 
 /* ── Navegación del Sidebar ───────────────────────────────── */
+/* ── Navegación del Sidebar Editoriales ────────────────────── */
 .nav-item {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
-  border-radius: var(--radius-md);
-  font-size: 14px;
+  border-radius: 0px; /* Sin esquinas redondeadas */
+  font-size: 13px;
   font-weight: 500;
   color: var(--color-text-secondary);
   text-decoration: none;
@@ -466,16 +484,20 @@ h6 {
   background: transparent;
   width: 100%;
   text-align: left;
+  border-left: 2px solid transparent;
 }
 
 .nav-item:hover {
-  background: var(--color-surface);
+  border-left: 2px solid var(--color-border);
   color: var(--color-text);
+  background: transparent;
 }
 
 .nav-item.active {
-  background: var(--color-wine-bg);
+  border-left: 2px solid var(--color-wine);
   color: var(--color-wine);
+  font-weight: 700;
+  background: transparent;
 }
 
 .nav-item .nav-icon {
@@ -485,9 +507,9 @@ h6 {
 }
 
 .nav-group-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-text-muted);
   padding: 0 12px;
@@ -495,34 +517,35 @@ h6 {
   margin-top: 16px;
 }
 
-/* ── Tablas ───────────────────────────────────────────────── */
+/* ── Tablas Editoriales ────────────────────────────────────── */
 .table-container {
   overflow-x: auto;
-  border-radius: var(--radius-lg);
+  border-radius: 0px;
   border: 1px solid var(--color-border);
 }
 
 .antojo-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .antojo-table th {
-  background: var(--color-surface);
+  background: var(--color-white);
   color: var(--color-text-secondary);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  padding: 12px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 14px 16px;
   text-align: left;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--color-wine);
   white-space: nowrap;
 }
 
 .antojo-table td {
-  padding: 13px 16px;
-  border-bottom: 1px solid rgba(232, 226, 220, 0.6);
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border);
   color: var(--color-text);
   vertical-align: middle;
 }
@@ -532,10 +555,10 @@ h6 {
 }
 
 .antojo-table tr:hover td {
-  background: rgba(241, 238, 233, 0.5);
+  background: #faf9f6;
 }
 
-/* ── Modales ──────────────────────────────────────────────── */
+/* ── Modales Editoriales ──────────────────────────────────── */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -547,9 +570,10 @@ h6 {
 
 .modal-content {
   background: var(--color-white);
-  border-radius: var(--radius-xl);
+  border-radius: 0px;
+  border: 1px solid var(--color-wine);
   box-shadow: var(--shadow-lg);
-  padding: 28px;
+  padding: 32px;
   width: 100%;
   max-width: 560px;
   max-height: 90dvh;

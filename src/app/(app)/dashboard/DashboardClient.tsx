@@ -85,31 +85,31 @@ function KPICard({
       initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       transition={{ duration: 0.45, delay, ease: [0.4, 0, 0.2, 1] }}
-      style={{ display: "flex", flexDirection: "column", gap: 12, minHeight: 110 }}
+      style={{ display: "flex", flexDirection: "column", gap: 8, minHeight: 110 }}
     >
       <div className="kpi-label">{label}</div>
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 8 }}>
         <div>
           <div className="kpi-value tabular-nums">{formattedValue}</div>
-          <div style={{ marginTop: 6 }}>
+          <div style={{ marginTop: 6, display: "flex", alignItems: "baseline", gap: 6 }}>
             <span className={isPositive ? "kpi-change-positive" : "kpi-change-negative"}>
-              {isPositive ? "▲" : "▼"} {Math.abs(change).toFixed(1)}%
+              {isPositive ? "↑" : "↓"} {Math.abs(change).toFixed(1)}%
             </span>
-            <span style={{ fontSize: 11, color: "var(--color-text-muted)", marginLeft: 6 }}>
-              vs periodo anterior
+            <span style={{ fontSize: 10, color: "var(--color-text-muted)" }}>
+              vs anterior
             </span>
           </div>
         </div>
         {chartData.length > 0 && (
-          <div style={{ width: 64, height: 36, flexShrink: 0 }}>
+          <div style={{ width: 64, height: 28, flexShrink: 0, opacity: 0.8 }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
                 <Area
                   type="monotone"
                   dataKey="v"
-                  stroke={isPositive ? "var(--color-wine)" : "var(--color-error)"}
-                  fill={isPositive ? "var(--color-wine-bg)" : "var(--color-error-bg)"}
-                  strokeWidth={1.5}
+                  stroke="var(--color-wine)"
+                  fill="none"
+                  strokeWidth={1.2}
                   dot={false}
                 />
               </AreaChart>
@@ -128,47 +128,67 @@ function AlertItem({
   alert: DashboardData["alerts"][0];
   index: number;
 }) {
-  const Icon = iconMap[alert.iconName];
-  const colors = {
-    warning: { bg: "var(--color-warning-bg)", color: "var(--color-warning)", border: "rgba(178,124,50,0.2)" },
-    error: { bg: "var(--color-error-bg)", color: "var(--color-error)", border: "rgba(168,66,66,0.2)" },
-    success: { bg: "var(--color-success-bg)", color: "var(--color-success)", border: "rgba(71,120,90,0.2)" },
-    info: { bg: "var(--color-wine-bg)", color: "var(--color-wine)", border: "rgba(112,31,45,0.2)" },
+  const typeLabels = {
+    warning: "Atención",
+    error: "Crítico",
+    success: "Listo",
+    info: "Info",
   };
-  const c = colors[alert.type as keyof typeof colors];
+  
+  const typeColors = {
+    warning: "var(--color-warning)",
+    error: "var(--color-error)",
+    success: "var(--color-success)",
+    info: "var(--color-wine)",
+  };
+
+  const label = typeLabels[alert.type as keyof typeof typeLabels] || "Aviso";
+  const textColor = typeColors[alert.type as keyof typeof typeColors] || "var(--color-text)";
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -8 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.5 + index * 0.07 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.2 + index * 0.05 }}
+      style={{
+        borderBottom: "1px solid var(--color-border)",
+        padding: "12px 0",
+      }}
     >
       <Link
         href={alert.link}
         style={{
           display: "flex",
-          alignItems: "center",
-          gap: 10,
-          padding: "10px 12px",
-          background: c.bg,
-          border: `1px solid ${c.border}`,
-          borderRadius: "var(--radius-md)",
+          alignItems: "baseline",
+          justifyContent: "space-between",
           textDecoration: "none",
-          color: c.color,
-          fontSize: 13,
-          fontWeight: 500,
-          transition: "all 0.15s ease",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.transform = "translateX(2px)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.transform = "translateX(0)";
+          gap: 12,
         }}
       >
-        <Icon size={15} style={{ flexShrink: 0 }} />
-        <span style={{ flex: 1 }}>{alert.message}</span>
-        <ChevronRight size={13} style={{ opacity: 0.5, flexShrink: 0 }} />
+        <div style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
+          <span style={{
+            fontSize: 9,
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            color: textColor,
+            border: `1px solid ${textColor}`,
+            padding: "2px 6px",
+            lineHeight: 1,
+            display: "inline-block",
+          }}>
+            {label}
+          </span>
+          <span style={{
+            fontSize: 13,
+            color: "var(--color-text)",
+            fontFamily: "var(--font-sans)",
+            fontWeight: 500
+          }}>
+            {alert.message}
+          </span>
+        </div>
+        <ChevronRight size={12} style={{ color: "var(--color-text-muted)", flexShrink: 0 }} />
       </Link>
     </motion.div>
   );
@@ -203,59 +223,69 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
         transition={{ duration: 0.4 }}
         style={{
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: 28,
-          gap: 16,
+          marginBottom: 36,
+          gap: 20,
           flexWrap: "wrap",
+          borderBottom: "1px solid var(--color-wine)",
+          paddingBottom: 20,
         }}
       >
         <div>
           <h1
             style={{
-              fontSize: 28,
-              fontWeight: 700,
+              fontFamily: "var(--font-editorial)",
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: 32,
               color: "var(--color-text)",
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.01em",
               marginBottom: 4,
             }}
           >
-            Buenos días ☀️
+            Buenos días<span style={{ fontFamily: "var(--font-sans)", fontStyle: "normal", fontWeight: 700, color: "var(--color-wine)" }}>.</span>
           </h1>
-          <p style={{ fontSize: 14, color: "var(--color-text-secondary)" }}>
-            Aquí está el resumen de ANTOJO. para{" "}
-            <span style={{ fontWeight: 500, color: "var(--color-text)" }}>
-              {selectedPeriod.toLowerCase()}
-            </span>
-            .
+          <p style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>
+            Resumen operativo y comercial de ANTOJO. para el periodo seleccionado.
           </p>
         </div>
 
-        {/* Selector de periodo */}
+        {/* Selector de periodo editorial: botones separados por barra inclinada (/) */}
         <div
           style={{
             display: "flex",
-            gap: 4,
-            background: "var(--color-surface)",
-            padding: 4,
-            borderRadius: "var(--radius-md)",
+            alignItems: "center",
             flexWrap: "wrap",
+            gap: 2,
           }}
         >
-          {periods.map((p) => (
-            <button
-              key={p}
-              onClick={() => setSelectedPeriod(p)}
-              className="btn btn-sm"
-              style={{
-                background: selectedPeriod === p ? "var(--color-white)" : "transparent",
-                color: selectedPeriod === p ? "var(--color-text)" : "var(--color-text-secondary)",
-                boxShadow: selectedPeriod === p ? "var(--shadow-card)" : "none",
-                padding: "6px 12px",
-              }}
-            >
-              {p}
-            </button>
+          {periods.map((p, idx) => (
+            <span key={p} style={{ display: "inline-flex", alignItems: "center" }}>
+              {idx > 0 && (
+                <span style={{ color: "var(--color-border)", margin: "0 8px", fontSize: 12 }}>/</span>
+              )}
+              <button
+                onClick={() => setSelectedPeriod(p)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: 10,
+                  fontWeight: selectedPeriod === p ? 700 : 500,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.15em",
+                  color: selectedPeriod === p ? "var(--color-wine)" : "var(--color-text-secondary)",
+                  textDecoration: selectedPeriod === p ? "underline" : "none",
+                  textUnderlineOffset: "6px",
+                  transition: "color 0.15s ease",
+                }}
+              >
+                {p}
+              </button>
+            </span>
           ))}
         </div>
       </motion.div>
@@ -337,9 +367,9 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
               marginBottom: 20,
             }}
           >
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Ventas por día</h2>
-            <span className="badge badge-wine">
-              <TrendingUp size={11} /> +19.5%
+            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Ventas por día</h2>
+            <span style={{ fontSize: 11, fontWeight: 600, color: "var(--color-wine)" }}>
+              ↑ +19.5% <span style={{ fontWeight: 400, color: "var(--color-text-muted)" }}>vs anterior</span>
             </span>
           </div>
           <ResponsiveContainer width="100%" height={200}>
@@ -352,21 +382,21 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
                 dataKey="dia"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: "var(--color-text-muted)" }}
+                tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
+                tick={{ fontSize: 10, fill: "var(--color-text-muted)" }}
                 tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
               />
               <Tooltip
                 contentStyle={{
                   background: "var(--color-white)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: "var(--radius-md)",
-                  boxShadow: "var(--shadow-card-hover)",
-                  fontSize: 13,
+                  border: "1px solid var(--color-wine)",
+                  borderRadius: 0,
+                  boxShadow: "none",
+                  fontSize: 12,
                 }}
                 formatter={(value, name) => [
                   formatCurrency(Number(value)),
@@ -374,8 +404,8 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
                 ]}
                 cursor={{ fill: "var(--color-surface)" }}
               />
-              <Bar dataKey="ventas" fill="var(--color-wine)" radius={[4, 4, 0, 0]} maxBarSize={32} />
-              <Bar dataKey="costo" fill="var(--color-border)" radius={[4, 4, 0, 0]} maxBarSize={32} />
+              <Bar dataKey="ventas" fill="var(--color-wine)" radius={0} maxBarSize={24} />
+              <Bar dataKey="costo" fill="var(--color-border)" radius={0} maxBarSize={24} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
@@ -388,16 +418,16 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
           transition={{ duration: 0.5, delay: 0.25 }}
           style={{ gridColumn: "span 4" }}
         >
-          <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 16 }}>Por canal</h2>
+          <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 16 }}>Por canal</h2>
           <ResponsiveContainer width="100%" height={140}>
             <PieChart>
               <Pie
                 data={salesByChannel}
                 cx="50%"
                 cy="50%"
-                innerRadius={42}
-                outerRadius={66}
-                paddingAngle={3}
+                innerRadius={40}
+                outerRadius={60}
+                paddingAngle={2}
                 dataKey="value"
                 animationBegin={400}
                 animationDuration={800}
@@ -409,9 +439,10 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
               <Tooltip
                 contentStyle={{
                   background: "var(--color-white)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: "var(--radius-md)",
-                  fontSize: 13,
+                  border: "1px solid var(--color-wine)",
+                  borderRadius: 0,
+                  boxShadow: "none",
+                  fontSize: 12,
                 }}
                 formatter={(v) => [`${v}%`, ""]}
               />
@@ -456,12 +487,12 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
               marginBottom: 16,
             }}
           >
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Productos más vendidos</h2>
-            <Link href="/products" className="btn btn-ghost btn-sm" style={{ gap: 4 }}>
-              Ver todo <ArrowRight size={13} />
+            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Más vendidos</h2>
+            <Link href="/products" style={{ fontSize: 11, fontFamily: "var(--font-editorial)", fontStyle: "italic", color: "var(--color-wine)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+              Catálogo completo
             </Link>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {topProducts.map((p, i) => (
               <div
                 key={p.name}
@@ -469,42 +500,36 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
                   display: "flex",
                   alignItems: "center",
                   gap: 12,
-                  padding: "10px 8px",
-                  borderRadius: "var(--radius-md)",
-                  transition: "background 0.1s ease",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background =
-                    "var(--color-surface)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                  padding: "12px 0",
+                  borderBottom: "1px solid var(--color-border)",
                 }}
               >
                 <span
                   style={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: "50%",
-                    background: i === 0 ? "var(--color-wine-bg)" : "var(--color-surface)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: i === 0 ? "var(--color-wine)" : "var(--color-text-muted)",
+                    fontFamily: "var(--font-editorial)",
+                    fontStyle: "italic",
+                    fontSize: 13,
+                    color: "var(--color-wine)",
+                    width: 20,
                     flexShrink: 0,
                   }}
                 >
-                  {i + 1}
+                  {String(i + 1).padStart(2, "0")}
                 </span>
-                <span style={{ flex: 1, fontSize: 14, fontWeight: 500 }}>{p.name}</span>
-                <span style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>
+                <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: "var(--color-text)" }}>{p.name}</span>
+                <span style={{ fontSize: 11, color: "var(--color-text-secondary)", marginRight: 8 }}>
                   {p.units} uds
                 </span>
                 <span
-                  className="badge badge-success"
-                  style={{ flexShrink: 0 }}
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: "var(--color-success)",
+                    border: "1px solid rgba(71,120,90,0.3)",
+                    padding: "1px 5px",
+                    lineHeight: 1,
+                    marginRight: 10,
+                  }}
                 >
                   {p.margin}%
                 </span>
@@ -513,7 +538,7 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
                     fontSize: 13,
                     fontWeight: 600,
                     color: "var(--color-text)",
-                    minWidth: 72,
+                    minWidth: 64,
                     textAlign: "right",
                     fontVariantNumeric: "tabular-nums",
                   }}
@@ -525,7 +550,7 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
           </div>
         </motion.div>
 
-        {/* Alertas — 3 cols */}
+        {/* Alertas — 4 cols */}
         <motion.div
           className="card"
           initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
@@ -541,10 +566,10 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
               marginBottom: 14,
             }}
           >
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Necesita atención</h2>
-            <span className="badge badge-warning">{alerts.length}</span>
+            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Atención requerida</h2>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--color-wine)" }}>({alerts.length})</span>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {alerts.map((a, i) => (
               <AlertItem key={i} alert={a} index={i} />
             ))}
@@ -559,40 +584,44 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
           transition={{ duration: 0.5, delay: 0.38 }}
           style={{ gridColumn: "span 3" }}
         >
-          <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>Meta del mes</h2>
-          <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginBottom: 20 }}>
-            Ventas en junio 2025
+          <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Meta del mes</h2>
+          <p style={{ fontSize: 11, fontFamily: "var(--font-editorial)", fontStyle: "italic", color: "var(--color-text-secondary)", marginBottom: 20 }}>
+            Progreso de facturación mensual
           </p>
-          {/* Progress ring */}
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-            <svg width={120} height={120} viewBox="0 0 120 120">
-              <circle cx={60} cy={60} r={50} fill="none" stroke="var(--color-surface)" strokeWidth={10} />
+          {/* Progress ring editorial (líneas muy delgadas y números elegantes) */}
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+            <svg width={110} height={110} viewBox="0 0 120 120">
+              <circle cx={60} cy={60} r={52} fill="none" stroke="var(--color-border)" strokeWidth={1.5} />
               <circle
                 cx={60}
                 cy={60}
-                r={50}
+                r={52}
                 fill="none"
                 stroke="var(--color-wine)"
-                strokeWidth={10}
-                strokeDasharray={`${2 * Math.PI * 50}`}
-                strokeDashoffset={`${2 * Math.PI * 50 * (1 - (monthlyGoal.current / monthlyGoal.goal))}`}
-                strokeLinecap="round"
+                strokeWidth={2.5}
+                strokeDasharray={`${2 * Math.PI * 52}`}
+                strokeDashoffset={`${2 * Math.PI * 52 * (1 - (monthlyGoal.current / monthlyGoal.goal))}`}
+                strokeLinecap="square"
                 transform="rotate(-90 60 60)"
               />
-              <text x={60} y={56} textAnchor="middle" style={{ fontSize: 20, fontWeight: 700, fill: "var(--color-text)" }}>{Math.round((monthlyGoal.current / monthlyGoal.goal) * 100)}%</text>
-              <text x={60} y={72} textAnchor="middle" style={{ fontSize: 10, fill: "var(--color-text-muted)" }}>completado</text>
+              <text x={60} y={58} textAnchor="middle" style={{ fontSize: 24, fontFamily: "var(--font-editorial)", fontStyle: "italic", fill: "var(--color-wine)" }}>
+                {Math.round((monthlyGoal.current / monthlyGoal.goal) * 100)}%
+              </text>
+              <text x={60} y={76} textAnchor="middle" style={{ fontSize: 8, fontFamily: "var(--font-sans)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, fill: "var(--color-text-muted)" }}>
+                completado
+              </text>
             </svg>
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid var(--color-border)", paddingTop: 12 }}>
             <div>
-              <div style={{ color: "var(--color-text-muted)", fontSize: 11, marginBottom: 2 }}>Actual</div>
-              <div style={{ fontWeight: 700, color: "var(--color-text)" }}>
+              <div style={{ color: "var(--color-text-secondary)", fontFamily: "var(--font-sans)", fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Actual</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--color-wine)", fontVariantNumeric: "tabular-nums" }}>
                 {formatCurrency(monthlyGoal.current, { compact: true })}
               </div>
             </div>
             <div style={{ textAlign: "right" }}>
-              <div style={{ color: "var(--color-text-muted)", fontSize: 11, marginBottom: 2 }}>Meta</div>
-              <div style={{ fontWeight: 700, color: "var(--color-text)" }}>
+              <div style={{ color: "var(--color-text-secondary)", fontFamily: "var(--font-sans)", fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Objetivo</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)", fontVariantNumeric: "tabular-nums" }}>
                 {formatCurrency(monthlyGoal.goal, { compact: true })}
               </div>
             </div>
@@ -615,60 +644,39 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
               marginBottom: 16,
             }}
           >
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Ventas recientes</h2>
-            <Link href="/sales" className="btn btn-ghost btn-sm" style={{ gap: 4 }}>
-              Ver todo <ArrowRight size={13} />
+            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Ventas recientes</h2>
+            <Link href="/sales" style={{ fontSize: 11, fontFamily: "var(--font-editorial)", fontStyle: "italic", color: "var(--color-wine)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+              Ver historial
             </Link>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {recentSales.map((sale) => (
               <div
                 key={sale.folio}
                 style={{
                   display: "flex",
                   alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "12px 0",
+                  borderBottom: "1px solid var(--color-border)",
                   gap: 12,
-                  padding: "10px 8px",
-                  borderRadius: "var(--radius-md)",
-                  transition: "background 0.1s ease",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "var(--color-surface)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "transparent";
                 }}
               >
-                <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: "var(--radius-md)",
-                    background: "var(--color-wine-bg)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                  }}
-                >
-                  <ShoppingCart size={15} color="var(--color-wine)" />
-                </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {sale.customer}
                   </div>
-                  <div style={{ fontSize: 11, color: "var(--color-text-muted)", display: "flex", gap: 8, marginTop: 1 }}>
-                    <span>{sale.folio}</span>
-                    <span>·</span>
-                    <span>{sale.channel}</span>
+                  <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginTop: 2 }}>
+                    <span style={{ fontFamily: "monospace" }}>{sale.folio}</span>
+                    <span style={{ margin: "0 6px", color: "var(--color-border)" }}>|</span>
+                    <span style={{ fontFamily: "var(--font-editorial)", fontStyle: "italic" }}>{sale.channel}</span>
                   </div>
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--color-wine)", fontVariantNumeric: "tabular-nums" }}>
                     {formatCurrency(sale.total)}
                   </div>
-                  <div style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 1, display: "flex", alignItems: "center", gap: 3, justifyContent: "flex-end" }}>
-                    <Clock size={10} />
+                  <div style={{ fontSize: 10, color: "var(--color-text-secondary)", marginTop: 2 }}>
                     {sale.time}
                   </div>
                 </div>
@@ -693,66 +701,57 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
               marginBottom: 16,
             }}
           >
-            <h2 style={{ fontSize: 15, fontWeight: 600 }}>Próximos eventos</h2>
-            <Link href="/events" className="btn btn-ghost btn-sm" style={{ gap: 4 }}>
-              Ver todo <ArrowRight size={13} />
+            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>Próximos eventos</h2>
+            <Link href="/events" style={{ fontSize: 11, fontFamily: "var(--font-editorial)", fontStyle: "italic", color: "var(--color-wine)", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+              Agenda
             </Link>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {upcomingEvents.map((event, i) => (
               <div
                 key={i}
                 style={{
                   display: "flex",
                   alignItems: "center",
+                  padding: "12px 0",
+                  borderBottom: "1px solid var(--color-border)",
                   gap: 12,
-                  padding: "10px 8px",
-                  borderRadius: "var(--radius-md)",
-                  transition: "background 0.1s ease",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "var(--color-surface)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "transparent";
                 }}
               >
                 <div
                   style={{
-                    background:
-                      event.status === "confirmed"
-                        ? "var(--color-success-bg)"
-                        : "var(--color-surface)",
-                    color:
-                      event.status === "confirmed"
-                        ? "var(--color-success)"
-                        : "var(--color-text-muted)",
-                    borderRadius: "var(--radius-sm)",
-                    padding: "6px 8px",
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: 700,
-                    textAlign: "center",
-                    minWidth: 44,
-                    lineHeight: 1.2,
+                    textTransform: "uppercase",
+                    color: "var(--color-wine)",
+                    letterSpacing: "0.05em",
+                    minWidth: 48,
                     flexShrink: 0,
                   }}
                 >
                   {event.date}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {event.name}
                   </div>
                   {event.guests > 0 && (
-                    <div style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 1 }}>
+                    <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginTop: 2 }}>
                       {event.guests} invitados
                     </div>
                   )}
                 </div>
                 <span
-                  className={
-                    event.status === "confirmed" ? "badge badge-success" : "badge badge-neutral"
-                  }
+                  style={{
+                    fontSize: 8,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    color: event.status === "confirmed" ? "var(--color-success)" : "var(--color-text-muted)",
+                    border: `1px solid ${event.status === "confirmed" ? "rgba(71,120,90,0.3)" : "var(--color-border)"}`,
+                    padding: "2px 6px",
+                    lineHeight: 1,
+                  }}
                 >
                   {event.status === "confirmed" ? "Confirmado" : "Prospecto"}
                 </span>
@@ -769,26 +768,36 @@ export function DashboardClient({ data = demoDashboardData }: { data?: Dashboard
           transition={{ duration: 0.5, delay: 0.45 }}
           style={{ gridColumn: "span 3" }}
         >
-          <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 14 }}>Acciones rápidas</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <h2 style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 14 }}>Acciones rápidas</h2>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {[
-              { label: "Registrar venta", icon: ShoppingCart, href: "/sales/new", primary: true },
-              { label: "Crear lote", icon: FlaskConical, href: "/production/new" },
-              { label: "Registrar compra", icon: Package, href: "/purchases/new" },
-              { label: "Registrar gasto", icon: Wallet, href: "/finance/expenses/new" },
-              { label: "Crear cotización", icon: Users, href: "/quotes/new" },
-              { label: "Crear contenido", icon: Megaphone, href: "/marketing/content/new" },
+              { label: "Registrar venta", href: "/sales/new", primary: true },
+              { label: "Crear lote producción", href: "/production/new" },
+              { label: "Registrar compra", href: "/purchases/new" },
+              { label: "Registrar gasto", href: "/finance/expenses/new" },
+              { label: "Crear cotización", href: "/quotes/new" },
+              { label: "Crear contenido", href: "/marketing/content/new" },
             ].map((action) => {
-              const Icon = action.icon;
               return (
                 <Link
                   key={action.href}
                   href={action.href}
-                  className={`btn ${action.primary ? "btn-primary" : "btn-secondary"}`}
-                  style={{ justifyContent: "flex-start", width: "100%" }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "11px 0",
+                    borderBottom: "1px solid var(--color-border)",
+                    color: action.primary ? "var(--color-wine)" : "var(--color-text)",
+                    textDecoration: "none",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    transition: "all 0.15s ease",
+                  }}
+                  className="quick-action-link"
                 >
-                  <Icon size={15} />
-                  {action.label}
+                  <span>{action.label}</span>
+                  <ArrowRight size={13} style={{ opacity: 0.6 }} />
                 </Link>
               );
             })}
