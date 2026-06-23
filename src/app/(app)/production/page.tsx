@@ -1,194 +1,68 @@
 "use client";
 
-import { useState } from "react";
-import { useGlobalState } from "@/lib/state";
-import { Plus, X, Check, AlertCircle } from "lucide-react";
+import { Check, Clock, AlertTriangle } from "lucide-react";
 
-export default function ProduccionPage() {
-  const { production, products, addProductionBatch } = useGlobalState();
-
-  const [modalOpen, setModalOpen] = useState(false);
-
-  // Form State
-  const [selectedProductName, setSelectedProductName] = useState("");
-  const [qty, setQty] = useState(10);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedProductName || qty <= 0) return;
-
-    setErrorMsg("");
-    const success = addProductionBatch({
-      productName: selectedProductName,
-      qty,
-      status: "confirmado",
-    });
-
-    if (!success) {
-      setErrorMsg(
-        "Fallas en stock: No hay suficiente materia prima en inventario para cubrir la receta de este lote."
-      );
-    } else {
-      setSuccessMsg(`¡Lote de ${qty} unidades procesado con éxito!`);
-      setSelectedProductName("");
-      setQty(10);
-      setTimeout(() => {
-        setSuccessMsg("");
-        setModalOpen(false);
-      }, 1200);
-    }
-  };
+export default function ProductionPage() {
+  const batches = [
+    { id: "LOTE-992", product: "Matcha Latte", qty: "50 L", status: "En Proceso", time: "2 hrs restantes" },
+    { id: "LOTE-993", product: "Cold Brew", qty: "120 L", status: "Macerando", time: "18 hrs restantes" },
+    { id: "LOTE-991", product: "Pócima Fresa", qty: "30 L", status: "Completado", time: "Hace 2 hrs" },
+  ];
 
   return (
-    <div className="space-y-8 text-left select-none max-w-7xl mx-auto">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
-        <div>
-          <h1 className="text-3xl font-black tracking-tighter text-black uppercase">
-            LOTES DE <span className="font-light italic text-[var(--color-text-secondary)]">producción.</span>
-          </h1>
-          <p className="text-xs text-[var(--color-text-secondary)] mt-1 font-medium">
-            Registra la elaboración de bebidas frías listas para venta y descuenta insumos.
-          </p>
-        </div>
-
-        <button onClick={() => setModalOpen(true)} className="btn btn-primary self-start">
-          <Plus size={14} />
-          Iniciar Lote
-        </button>
+    <div className="max-w-4xl mx-auto space-y-12 select-none text-left pt-6">
+      <div className="border-b border-[#E5E5E5] pb-8">
+        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-black uppercase" style={{ letterSpacing: "-0.04em" }}>
+          PRODUCCIÓN
+        </h1>
+        <p className="text-sm text-black/60 mt-4 uppercase tracking-widest font-medium">
+          Control de Lotes y Procesos
+        </p>
       </div>
 
-      {/* Metrics (Grid style) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--color-border)] bg-[var(--color-border)] gap-[1px]">
-        <div className="bg-white p-6">
-          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Total Lotes Elaborados</span>
-          <span className="text-3xl font-extrabold text-black tabular-nums">{production.length}</span>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="p-6 border border-[#E5E5E5] flex flex-col justify-between h-32">
+          <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest">En Proceso</span>
+          <span className="text-4xl font-black tracking-tighter">2</span>
         </div>
-        <div className="bg-white p-6">
-          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Bebidas Elaboradas</span>
-          <span className="text-3xl font-extrabold text-black tabular-nums">
-            {production.reduce((acc, p) => acc + p.qty, 0)} uds
-          </span>
+        <div className="p-6 border border-[#E5E5E5] flex flex-col justify-between h-32">
+          <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest">Litros Hoy</span>
+          <span className="text-4xl font-black tracking-tighter">200</span>
+        </div>
+        <div className="p-6 border border-black bg-black text-white flex flex-col justify-between h-32">
+          <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Alertas QC</span>
+          <span className="text-4xl font-black tracking-tighter">0</span>
         </div>
       </div>
 
-      {/* Batch history table */}
-      <div className="table-container">
-        <table className="antojo-table">
-          <thead>
-            <tr>
-              <th>ID Lote</th>
-              <th>Fecha</th>
-              <th>Producto Elaborado</th>
-              <th className="text-right">Cantidad</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {production.map((batch) => (
-              <tr key={batch.id}>
-                <td className="font-extrabold tracking-tight text-black">{batch.id}</td>
-                <td className="text-[var(--color-text-secondary)] font-medium">{batch.date}</td>
-                <td className="font-extrabold text-black">{batch.productName}</td>
-                <td className="text-right font-extrabold text-black tabular-nums">{batch.qty} uds</td>
-                <td>
-                  <span className="badge badge-success">Confirmado</span>
-                </td>
-              </tr>
-            ))}
-            {production.length === 0 && (
-              <tr>
-                <td colSpan={5} className="text-center py-8 text-[var(--color-text-muted)] font-medium">
-                  No hay lotes de producción registrados.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Production Lot Modal */}
-      {modalOpen && (
-        <div className="modal-overlay flex items-center justify-center p-4">
-          <div className="modal-content relative text-left">
-            <button
-              onClick={() => setModalOpen(false)}
-              className="absolute top-4 right-4 text-[var(--color-text-secondary)] hover:text-black"
-            >
-              <X size={18} />
-            </button>
-
-            <h3 className="text-lg font-bold text-black mb-6 uppercase tracking-tight">Iniciar Lote de Producción</h3>
-
-            {successMsg ? (
-              <div className="flex flex-col items-center justify-center py-8 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-[var(--color-success-bg)] text-[var(--color-success)] flex items-center justify-center">
-                  <Check size={20} />
-                </div>
-                <p className="text-sm font-bold text-black">{successMsg}</p>
+      <div>
+        <h2 className="text-xs font-bold text-[#999999] uppercase tracking-widest border-b border-black pb-4 mb-4">Lotes Activos</h2>
+        <div className="space-y-4">
+          {batches.map((batch) => (
+            <div key={batch.id} className="p-6 border border-[#E5E5E5] flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest block mb-1">{batch.id}</span>
+                <h3 className="text-xl font-bold text-black">{batch.product}</h3>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {errorMsg && (
-                  <div className="flex items-center gap-2 p-3 bg-[var(--color-error-bg)] border border-[var(--color-error)] text-[var(--color-error)] text-xs font-bold uppercase tracking-wide">
-                    <AlertCircle size={14} className="flex-shrink-0" />
-                    <span>{errorMsg}</span>
-                  </div>
-                )}
-
-                <div className="form-group">
-                  <label className="label">Bebida a Producir</label>
-                  <select
-                    required
-                    value={selectedProductName}
-                    onChange={(e) => setSelectedProductName(e.target.value)}
-                    className="input-base bg-[var(--color-canvas)]"
-                  >
-                    <option value="">-- Elige --</option>
-                    {products.map((p) => (
-                      <option key={p.id} value={p.name}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
+              <div className="flex gap-8 items-center">
+                <div className="text-center">
+                  <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest block mb-1">Volumen</span>
+                  <span className="text-base font-bold text-black">{batch.qty}</span>
                 </div>
-
-                <div className="form-group">
-                  <label className="label">Cantidad a Elaborar (Uds)</label>
-                  <input
-                    type="number"
-                    required
-                    min={1}
-                    value={qty}
-                    onChange={(e) => setQty(Number(e.target.value))}
-                    className="input-base"
-                  />
+                <div className="text-center">
+                  <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest block mb-1">Estado</span>
+                  <span className={`text-xs font-bold uppercase tracking-widest flex items-center gap-1 ${
+                    batch.status === 'Completado' ? 'text-green-700' : 'text-blue-700'
+                  }`}>
+                    {batch.status === 'Completado' ? <Check size={12}/> : <Clock size={12}/>}
+                    {batch.status}
+                  </span>
                 </div>
-
-                <span className="text-[10px] text-[var(--color-text-muted)] block font-medium">
-                  Nota: El sistema evaluará el inventario actual de matcha, endulzante, vasos y leches antes de confirmar. Si hay desabasto, impedirá la producción.
-                </span>
-
-                <div className="pt-4 border-t border-[var(--color-border)] flex justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setModalOpen(false)}
-                    className="btn btn-secondary"
-                  >
-                    Cancelar
-                  </button>
-                  <button type="submit" className="btn btn-primary">
-                    Elaborar Lote
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }

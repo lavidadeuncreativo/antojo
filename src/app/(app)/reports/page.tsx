@@ -1,15 +1,61 @@
-import { Construction } from "lucide-react";
+"use client";
 
-export default function ReportesPlaceholder() {
+import { Download } from "lucide-react";
+
+export default function ReportsPage() {
+  const reports = [
+    { title: "Cierre Mensual Junio 2026", type: "Financiero", date: "01 Jul 2026", size: "2.4 MB" },
+    { title: "Análisis de Ventas Q2", type: "Comercial", date: "28 Jun 2026", size: "4.1 MB" },
+    { title: "Inventario Físico Semestral", type: "Operativo", date: "25 Jun 2026", size: "1.8 MB" },
+    { title: "Rendimiento Campañas Ads", type: "Marketing", date: "15 Jun 2026", size: "5.2 MB" },
+  ];
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-      <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mb-6">
-        <Construction className="w-8 h-8 text-wine" />
+    <div className="max-w-4xl mx-auto space-y-12 select-none text-left pt-6">
+      <div className="border-b border-[#E5E5E5] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-black uppercase" style={{ letterSpacing: "-0.04em" }}>
+            REPORTES
+          </h1>
+          <p className="text-sm text-black/60 mt-4 uppercase tracking-widest font-medium">
+            Documentos y Cierres
+          </p>
+        </div>
+        <button className="bg-black text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-black/80 transition-colors w-fit">
+          Generar Reporte
+        </button>
       </div>
-      <h1 className="text-2xl font-semibold mb-3">Módulo de Reportes</h1>
-      <p className="text-text-secondary max-w-md">
-        Este módulo se encuentra en construcción y será desarrollado en las próximas fases del proyecto ANTOJO OS.
-      </p>
+
+      <div className="space-y-0">
+        <div className="grid grid-cols-12 gap-4 pb-4 border-b border-black text-xs font-bold uppercase tracking-widest text-[#999999]">
+          <div className="col-span-5">Documento</div>
+          <div className="col-span-3">Categoría</div>
+          <div className="col-span-3 text-right">Fecha</div>
+          <div className="col-span-1 text-right"></div>
+        </div>
+
+        {reports.map((report, idx) => (
+          <div key={idx} className="grid grid-cols-12 gap-4 py-6 border-b border-[#E5E5E5] items-center hover:bg-[#F9F9F9] transition-colors -mx-4 px-4 cursor-pointer">
+            <div className="col-span-5">
+              <div className="text-base font-bold text-black">{report.title}</div>
+              <div className="text-[10px] text-[#999999] font-bold uppercase tracking-widest mt-1">{report.size} • PDF</div>
+            </div>
+            <div className="col-span-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-black bg-[#F5F5F5] px-2 py-1">
+                {report.type}
+              </span>
+            </div>
+            <div className="col-span-3 text-right font-bold text-[#999999] text-sm">
+              {report.date}
+            </div>
+            <div className="col-span-1 flex justify-end">
+              <button className="w-10 h-10 rounded-full border border-[#E5E5E5] flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-colors">
+                <Download size={16} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

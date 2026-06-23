@@ -1,110 +1,74 @@
 "use client";
 
 import { useState } from "react";
-import { useGlobalState } from "@/lib/state";
-import { RefreshCw, Check, AlertTriangle } from "lucide-react";
 
-export default function ConfigurarPage() {
-  const { resetAllData } = useGlobalState();
-  const [successMsg, setSuccessMsg] = useState("");
-
-  const handleReset = () => {
-    if (confirm("¿Estás seguro de que deseas restablecer todos los datos operativos? Esto borrará el historial de ventas, compras, lotes y restablecerá el inventario inicial.")) {
-      resetAllData();
-      setSuccessMsg("¡Datos restablecidos correctamente!");
-      setTimeout(() => {
-        setSuccessMsg("");
-      }, 3000);
-    }
-  };
+export default function SettingsPage() {
+  const [activeTab, setActiveTab] = useState("general");
 
   return (
-    <div className="space-y-8 text-left select-none max-w-4xl mx-auto">
-      
-      {/* Header */}
-      <div className="pb-4 border-b border-[var(--color-border)]">
-        <h1 className="text-3xl font-black tracking-tighter text-black uppercase">
-          CONFIGURACIÓN DEL <span className="font-light italic text-[var(--color-text-secondary)]">sistema.</span>
+    <div className="max-w-4xl mx-auto space-y-12 select-none text-left pt-6">
+      <div className="border-b border-[#E5E5E5] pb-8">
+        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-black uppercase" style={{ letterSpacing: "-0.04em" }}>
+          CONFIGURACIÓN
         </h1>
-        <p className="text-xs text-[var(--color-text-secondary)] mt-1 font-medium">
-          Ajusta los parámetros operativos de ANTOJO OS y gestiona el almacenamiento local.
+        <p className="text-sm text-black/60 mt-4 uppercase tracking-widest font-medium">
+          Ajustes del Sistema y Cuenta
         </p>
       </div>
 
-      {successMsg && (
-        <div className="flex items-center gap-3 p-4 bg-[var(--color-success-bg)] border border-[var(--color-success)] text-[var(--color-success)] text-xs font-bold uppercase tracking-wider">
-          <Check size={16} className="flex-shrink-0" />
-          <span>{successMsg}</span>
-        </div>
-      )}
-
-      {/* Main Settings Card */}
-      <div className="card p-8 space-y-6 border border-[var(--color-border)] bg-white rounded-none">
-        <div>
-          <h3 className="text-sm font-extrabold text-black mb-2 uppercase tracking-tight">Base de Datos & Integración</h3>
-          <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed font-medium">
-            Actualmente, la plataforma está operando en **Modo de Resiliencia Local (Demo Mode)**. 
-            Todos los movimientos de inventario, recetas, producción y ventas se procesan en tiempo real 
-            y se guardan en el almacenamiento local de tu navegador (`localStorage`).
-          </p>
+      <div className="flex flex-col md:flex-row gap-12">
+        <div className="w-full md:w-1/4 space-y-4">
+          <button onClick={() => setActiveTab('general')} className={`block text-sm w-full text-left font-bold ${activeTab === 'general' ? 'text-black' : 'text-[#999999] hover:text-black'}`}>General</button>
+          <button onClick={() => setActiveTab('usuarios')} className={`block text-sm w-full text-left font-bold ${activeTab === 'usuarios' ? 'text-black' : 'text-[#999999] hover:text-black'}`}>Usuarios y Permisos</button>
+          <button onClick={() => setActiveTab('facturacion')} className={`block text-sm w-full text-left font-bold ${activeTab === 'facturacion' ? 'text-black' : 'text-[#999999] hover:text-black'}`}>Facturación y Pagos</button>
+          <button onClick={() => setActiveTab('notificaciones')} className={`block text-sm w-full text-left font-bold ${activeTab === 'notificaciones' ? 'text-black' : 'text-[#999999] hover:text-black'}`}>Notificaciones</button>
+          <button onClick={() => setActiveTab('integraciones')} className={`block text-sm w-full text-left font-bold ${activeTab === 'integraciones' ? 'text-black' : 'text-[#999999] hover:text-black'}`}>Integraciones</button>
         </div>
 
-        <div className="p-4 bg-[var(--color-surface)] border border-[var(--color-border)] text-xs text-[var(--color-text-secondary)] flex items-start gap-3">
-          <AlertTriangle size={16} className="text-black flex-shrink-0 mt-0.5" />
-          <div className="font-medium">
-            <span className="font-extrabold text-black block mb-1 uppercase tracking-tight">Conexión con Supabase</span>
-            Si configuras las claves `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` en tus variables de entorno, la plataforma sincronizará automáticamente las tablas en la nube en lugar del caché local del navegador.
-          </div>
-        </div>
+        <div className="w-full md:w-3/4">
+          {activeTab === 'general' && (
+            <div className="space-y-8">
+              <h2 className="text-2xl font-bold text-black border-b border-[#E5E5E5] pb-4">Ajustes Generales</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-bold text-[#999999] uppercase tracking-widest block mb-2">Nombre de la Empresa</label>
+                  <input type="text" defaultValue="Antojo Beverages" className="w-full border-b border-[#E5E5E5] py-2 text-base font-bold text-black focus:outline-none focus:border-black transition-colors" />
+                </div>
+                
+                <div>
+                  <label className="text-[10px] font-bold text-[#999999] uppercase tracking-widest block mb-2">Moneda Principal</label>
+                  <select className="w-full border-b border-[#E5E5E5] py-2 text-base font-bold text-black focus:outline-none focus:border-black transition-colors bg-transparent">
+                    <option>MXN - Peso Mexicano</option>
+                    <option>USD - Dólar Estadounidense</option>
+                  </select>
+                </div>
 
-        {/* Action Button: Reset Demo Data */}
-        <div className="pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <span className="font-extrabold text-black text-xs block mb-1 uppercase tracking-tight">Restablecer Base de Datos</span>
-            <span className="text-[10px] text-[var(--color-text-muted)] block font-medium">
-              Borra el caché local y recarga los insumos y recetas por defecto.
-            </span>
-          </div>
+                <div>
+                  <label className="text-[10px] font-bold text-[#999999] uppercase tracking-widest block mb-2">Zona Horaria</label>
+                  <select className="w-full border-b border-[#E5E5E5] py-2 text-base font-bold text-black focus:outline-none focus:border-black transition-colors bg-transparent">
+                    <option>America/Mexico_City (GMT-6)</option>
+                    <option>America/Monterrey (GMT-6)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="pt-6">
+                <button className="bg-black text-white px-8 py-4 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-black/80 transition-colors">
+                  Guardar Cambios
+                </button>
+              </div>
+            </div>
+          )}
           
-          <button
-            onClick={handleReset}
-            className="btn btn-destructive btn-sm flex items-center gap-1.5 self-start"
-          >
-            <RefreshCw size={12} />
-            Restablecer Datos
-          </button>
+          {activeTab !== 'general' && (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="text-4xl font-black text-[#E5E5E5] mb-4 tracking-tighter">PRÓXIMAMENTE</div>
+              <p className="text-sm font-bold text-[#999999]">Esta sección de configuración estará disponible en la versión 1.2.</p>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Other Mock settings for completeness */}
-      <div className="card p-8 space-y-4 border border-[var(--color-border)] bg-white rounded-none">
-        <h3 className="text-sm font-extrabold text-black mb-4 uppercase tracking-tight">Preferencias Generales</h3>
-        
-        <div className="flex items-center justify-between text-xs py-3 border-b border-[var(--color-border)]">
-          <div>
-            <span className="font-extrabold text-black block">Divisa Predeterminada</span>
-            <span className="text-[10px] text-[var(--color-text-muted)] mt-0.5 block">Utilizar para reportes y facturas</span>
-          </div>
-          <span className="font-extrabold text-black tabular-nums">MXN ($)</span>
-        </div>
-
-        <div className="flex items-center justify-between text-xs py-3 border-b border-[var(--color-border)]">
-          <div>
-            <span className="font-extrabold text-black block">Impresión de Tickets</span>
-            <span className="text-[10px] text-[var(--color-text-muted)] mt-0.5 block">Generar formato simplificado</span>
-          </div>
-          <span className="badge badge-neutral">Activado</span>
-        </div>
-
-        <div className="flex items-center justify-between text-xs py-3">
-          <div>
-            <span className="font-extrabold text-black block">Alertas de Stock</span>
-            <span className="text-[10px] text-[var(--color-text-muted)] mt-0.5 block">Notificar insumos por debajo del stock mínimo</span>
-          </div>
-          <span className="badge badge-neutral">Crítico</span>
-        </div>
-      </div>
-
     </div>
   );
 }

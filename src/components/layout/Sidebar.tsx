@@ -8,34 +8,27 @@ import { Menu, X, LogOut } from "lucide-react";
 interface NavItemDetails {
   href: string;
   label: string;
-  group: "principal" | "operaciones" | "negocios" | "estrategia" | "sistema";
+  group: "main" | "secondary";
 }
 
 const navItems: NavItemDetails[] = [
-  { href: "/dashboard", label: "Resumen", group: "principal" },
-  { href: "/sales", label: "Ventas", group: "operaciones" },
-  { href: "/products", label: "Productos y Recetas", group: "operaciones" },
-  { href: "/inventory", label: "Inventario", group: "operaciones" },
-  { href: "/production", label: "Producción", group: "operaciones" },
-  { href: "/purchases", label: "Compras", group: "operaciones" },
-  { href: "/finance", label: "Finanzas", group: "negocios" },
-  { href: "/commercial", label: "Comercial", group: "negocios" },
-  { href: "/events", label: "Eventos", group: "negocios" },
-  { href: "/quotes", label: "Cotizaciones", group: "negocios" },
-  { href: "/marketing", label: "Marketing", group: "estrategia" },
-  { href: "/calendar", label: "Calendario", group: "estrategia" },
-  { href: "/growth", label: "Crecimiento", group: "estrategia" },
-  { href: "/reports", label: "Reportes", group: "estrategia" },
-  { href: "/settings", label: "Configuración", group: "sistema" },
+  { href: "/dashboard", label: "Resumen", group: "main" },
+  { href: "/sales", label: "Ventas", group: "main" },
+  { href: "/products", label: "Productos", group: "main" },
+  { href: "/finance", label: "Finanzas", group: "main" },
+  { href: "/commercial", label: "Comercial", group: "main" },
+  { href: "/marketing", label: "Marketing", group: "main" },
+  { href: "/production", label: "Producción", group: "main" },
+  { href: "/inventory", label: "Inventario", group: "main" },
+  
+  { href: "/purchases", label: "Compras", group: "secondary" },
+  { href: "/events", label: "Eventos", group: "secondary" },
+  { href: "/quotes", label: "Cotizaciones", group: "secondary" },
+  { href: "/calendar", label: "Calendario", group: "secondary" },
+  { href: "/growth", label: "Crecimiento", group: "secondary" },
+  { href: "/reports", label: "Reportes", group: "secondary" },
+  { href: "/settings", label: "Configuración", group: "secondary" },
 ];
-
-const groupLabels: Record<string, string> = {
-  principal: "Principal",
-  operaciones: "Operaciones",
-  negocios: "Negocios",
-  estrategia: "Estrategia",
-  sistema: "Sistema",
-};
 
 interface SidebarProps {
   collapsed: boolean;
@@ -45,113 +38,106 @@ interface SidebarProps {
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
 
-  // Group nav items
-  const groups = navItems.reduce<Record<string, NavItemDetails[]>>((acc, item) => {
-    if (!acc[item.group]) acc[item.group] = [];
-    acc[item.group].push(item);
-    return acc;
-  }, {});
+  const mainItems = navItems.filter(i => i.group === "main");
+  const secondaryItems = navItems.filter(i => i.group === "secondary");
 
   return (
-    <aside className="app-sidebar select-none h-screen sticky top-0 overflow-y-auto">
-      {/* Sidebar Header Brand (Clean text logo) */}
-      <div className="p-6 border-b border-[var(--color-border)] flex items-center justify-between">
+    <aside className="app-sidebar select-none h-screen sticky top-0 overflow-y-auto bg-white border-r border-[#E5E5E5] flex flex-col">
+      {/* Sidebar Header Brand */}
+      <div className="p-8 pb-6 flex items-center justify-between">
         <Link href="/dashboard" className="decoration-none">
-          <span className="font-extrabold text-2xl text-black tracking-tighter block leading-none">
-            ANTOJO<span className="text-black">.</span>
-          </span>
-          <span className="text-[11px] font-bold text-[var(--color-text-muted)] tracking-widest uppercase block mt-1.5">
-            control erp
+          <span className="font-extrabold text-sm text-black tracking-widest uppercase block leading-none">
+            ANTOJO OS
           </span>
         </Link>
       </div>
 
-      {/* Navigation List */}
-      <nav className="flex-1 p-4 space-y-6">
-        {Object.entries(groups).map(([group, items]) => (
-          <div key={group} className="space-y-2 mb-6">
-            <span className="text-xs font-extrabold text-[var(--color-text-muted)] uppercase tracking-widest block px-4 mb-2">
-              {groupLabels[group]}
-            </span>
-            <div className="space-y-0.5">
-              {items.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/dashboard" && pathname.startsWith(item.href));
+      <div className="mx-8 border-b border-[#E5E5E5]"></div>
 
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`block px-4 py-2.5 text-[15px] font-bold rounded-lg transition-all leading-tight ${
-                      isActive
-                        ? "bg-black text-white"
-                        : "text-[var(--color-text-secondary)] hover:text-black hover:bg-black/5"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+      {/* Main Navigation */}
+      <nav className="p-8 space-y-4">
+        {mainItems.map((item) => {
+          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`block text-3xl md:text-4xl tracking-tight transition-all ${
+                isActive ? "text-black font-semibold" : "text-black/70 hover:text-black font-normal"
+              }`}
+              style={{ letterSpacing: "-0.03em" }}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
       </nav>
 
-      {/* Logout button at the bottom */}
-      <div className="p-4 border-t border-[var(--color-border)]">
+      <div className="mx-8 border-b border-[#E5E5E5]"></div>
+
+      {/* Secondary Navigation */}
+      <nav className="p-8 space-y-3 flex-1">
+        <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest block mb-4">
+          SISTEMA
+        </span>
+        {secondaryItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`block text-sm transition-all ${
+                isActive ? "text-black font-semibold" : "text-black/70 hover:text-black font-normal"
+              }`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Logout button */}
+      <div className="p-8">
         <button
           onClick={() => {
-            if (typeof window !== "undefined") {
-              window.location.href = "/";
-            }
+            if (typeof window !== "undefined") window.location.href = "/";
           }}
-          className="flex items-center gap-3 px-4 py-3 w-full text-left text-[15px] font-bold text-[var(--color-text-secondary)] hover:text-black transition-all"
+          className="block text-sm text-black/70 hover:text-black font-normal transition-all"
         >
-          <LogOut size={16} />
-          Salir del ERP
+          Cerrar Sesión
         </button>
       </div>
     </aside>
   );
 }
 
-// ── Mobile Bottom Navigation (Floating capsule) ────────────────────
+// ── Mobile Bottom Navigation ────────────────────────────────────────
 
 export function MobileBottomNav({ onMenuOpen }: { onMenuOpen: () => void }) {
   const pathname = usePathname();
 
-  // Simple tabs for mobile shortcuts
   const shortcuts = [
     { href: "/dashboard", label: "Inicio" },
     { href: "/sales", label: "Ventas" },
-    { href: "/inventory", label: "Almacén" },
     { href: "/finance", label: "Caja" },
   ];
 
   return (
     <nav
-      className="fixed bottom-4 left-4 right-4 h-12 z-50 flex items-center justify-around px-2 border"
+      className="fixed bottom-4 left-4 right-4 h-14 z-40 flex items-center justify-around px-4 bg-white border border-[#E5E5E5]"
       style={{
-        background: "#FFFFFF",
-        borderColor: "var(--color-border)",
         borderRadius: "999px",
-        boxShadow: "0 10px 25px rgba(0,0,0,0.06)",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
       }}
     >
       {shortcuts.map((item) => {
-        const isActive =
-          pathname === item.href ||
-          (item.href !== "/dashboard" && pathname.startsWith(item.href));
-
+        const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`px-3 py-1.5 text-xs font-bold rounded-full transition-all ${
-              isActive
-                ? "bg-black text-white"
-                : "text-[var(--color-text-secondary)]"
+            className={`px-4 py-2 text-xs font-semibold rounded-full transition-all ${
+              isActive ? "bg-black text-white" : "text-black/60"
             }`}
           >
             {item.label}
@@ -161,16 +147,16 @@ export function MobileBottomNav({ onMenuOpen }: { onMenuOpen: () => void }) {
 
       <button
         onClick={onMenuOpen}
-        className="px-3 py-1.5 text-xs font-bold text-[var(--color-text-secondary)] flex items-center gap-1"
+        className="px-4 py-2 text-xs font-semibold text-black flex items-center gap-2"
       >
-        <Menu size={14} />
-        Más
+        <Menu size={16} />
+        Menu
       </button>
     </nav>
   );
 }
 
-// ── Mobile Menu Drawer ─────────────────────────────────────────────
+// ── Mobile Menu Fullscreen ──────────────────────────────────────────
 
 export function MobileMenuDrawer({
   open,
@@ -180,86 +166,85 @@ export function MobileMenuDrawer({
   onClose: () => void;
 }) {
   const pathname = usePathname();
-
-  const grouped = navItems.reduce<Record<string, NavItemDetails[]>>((acc, item) => {
-    if (!acc[item.group]) acc[item.group] = [];
-    acc[item.group].push(item);
-    return acc;
-  }, {});
+  const mainItems = navItems.filter(i => i.group === "main");
+  const secondaryItems = navItems.filter(i => i.group === "secondary");
 
   return (
     <AnimatePresence>
       {open && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/30 backdrop-blur-[2px]"
-          />
-
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 28, stiffness: 280 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[var(--color-border)]"
-            style={{
-              borderRadius: "24px 24px 0 0",
-              padding: "16px 20px calc(24px + env(safe-area-inset-bottom))",
-              maxHeight: "80vh",
-              overflowY: "auto",
-              boxShadow: "0 -8px 30px rgba(0,0,0,0.06)",
-            }}
-          >
-            <div className="w-8 h-1 bg-black/10 rounded-full mx-auto mb-6" />
-
-            <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border)] mb-6">
-              <div>
-                <h3 className="font-extrabold text-xl text-black">ANTOJO.</h3>
-                <p className="text-[11px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
-                  Navegación del Negocio
-                </p>
-              </div>
+        <motion.div
+          initial={{ opacity: 0, y: "10%" }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: "10%" }}
+          transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
+          className="fixed inset-0 z-50 bg-white overflow-y-auto"
+        >
+          <div className="min-h-screen flex flex-col p-6 max-w-md mx-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-6">
+              <span className="font-semibold text-sm tracking-widest uppercase text-black">
+                ANTOJO OS
+              </span>
               <button
                 onClick={onClose}
-                className="w-7 h-7 flex items-center justify-center rounded-full border border-black/10 text-black"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-[#F5F5F5] text-black hover:bg-[#E5E5E5] transition-colors"
               >
-                <X size={14} />
+                <X size={20} strokeWidth={1.5} />
               </button>
             </div>
 
-            <div className="space-y-6">
-              {Object.entries(grouped).map(([group, items]) => (
-                <div key={group}>
-                  <h4 className="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-3 px-1 text-left">
-                    {groupLabels[group]}
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {items.map((item) => {
-                      const isActive = pathname === item.href;
-                      return (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          onClick={onClose}
-                          className={`flex items-center px-4 py-3 rounded-xl text-sm font-bold transition-all ${
-                            isActive
-                              ? "bg-black text-white"
-                              : "bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:bg-black/5 hover:text-black"
-                          }`}
-                        >
-                          {item.label}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+            <div className="border-b border-[#E5E5E5] w-full"></div>
+
+            {/* Main Links */}
+            <div className="py-8 space-y-5">
+              {mainItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onClose}
+                    className={`block text-[34px] leading-none tracking-tight ${
+                      isActive ? "text-black font-medium" : "text-black font-light"
+                    }`}
+                    style={{ letterSpacing: "-0.03em" }}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </div>
-          </motion.div>
-        </>
+
+            <div className="border-b border-[#E5E5E5] w-full mb-8"></div>
+
+            {/* Secondary Links */}
+            <div className="space-y-4 flex-1">
+              <button onClick={() => { if (typeof window !== "undefined") window.location.href = "/"; }} className="block text-base text-black font-light mb-8">
+                Cerrar Sesión
+              </button>
+
+              <span className="text-[10px] font-bold text-[#999999] uppercase tracking-widest block mb-4">
+                SISTEMA
+              </span>
+              
+              {secondaryItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onClose}
+                    className={`block text-[15px] ${
+                      isActive ? "text-black font-medium" : "text-black font-light"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );
