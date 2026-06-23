@@ -118,6 +118,13 @@ export function StateProvider({ children }: { children: React.ReactNode }) {
   // Hydrate state from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const version = localStorage.getItem("antojo_version");
+      if (version !== "v2.0") {
+        // Force clear old data to start from zero as requested
+        localStorage.clear();
+        localStorage.setItem("antojo_version", "v2.0");
+      }
+
       const storedProducts = localStorage.getItem("antojo_products");
       const storedInventory = localStorage.getItem("antojo_inventory");
       const storedSales = localStorage.getItem("antojo_sales");

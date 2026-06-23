@@ -664,6 +664,57 @@ export function DashboardClient({ data }: { data?: any }) {
         </div>
       </div>
 
+      {/* ── SECCIONES OPERATIVAS ADICIONALES ───────────────────── */}
+      <div style={{ paddingTop: "0", paddingBottom: "58px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px" }}>
+        {/* Tareas de hoy */}
+        <div>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", borderBottom: S.border, paddingBottom: "14px", marginBottom: "0" }}>
+            <h3 style={{ fontSize: "15px", fontWeight: 900, letterSpacing: "-0.025em", textTransform: "uppercase", color: "#111111" }}>
+              Tareas de hoy
+            </h3>
+          </div>
+          <div style={{ border: S.border, borderTop: "none", padding: "32px 20px", textAlign: "center", background: "rgba(17,17,17,0.02)" }}>
+            <span style={{ fontSize: "11px", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(17,17,17,0.35)" }}>
+              Sin tareas pendientes
+            </span>
+          </div>
+        </div>
+
+        {/* Pedidos a entregar */}
+        <div>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", borderBottom: S.border, paddingBottom: "14px", marginBottom: "0" }}>
+            <h3 style={{ fontSize: "15px", fontWeight: 900, letterSpacing: "-0.025em", textTransform: "uppercase", color: "#111111" }}>
+              Pedidos a entregar
+            </h3>
+          </div>
+          <div style={{ border: S.border, borderTop: "none", padding: "32px 20px", textAlign: "center", background: "rgba(17,17,17,0.02)" }}>
+            <span style={{ fontSize: "11px", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(17,17,17,0.35)" }}>
+              Sin entregas programadas
+            </span>
+          </div>
+        </div>
+
+        {/* Próximos eventos */}
+        <div>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", borderBottom: S.border, paddingBottom: "14px", marginBottom: "0" }}>
+            <h3 style={{ fontSize: "15px", fontWeight: 900, letterSpacing: "-0.025em", textTransform: "uppercase", color: "#111111" }}>
+              Próximos eventos
+            </h3>
+            <Link href="/events" style={{ fontSize: "11px", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(17,17,17,0.50)", textDecoration: "none" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#111111")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(17,17,17,0.50)")}
+            >
+              Agenda →
+            </Link>
+          </div>
+          <div style={{ border: S.border, borderTop: "none", padding: "32px 20px", textAlign: "center", background: "rgba(17,17,17,0.02)" }}>
+            <span style={{ fontSize: "11px", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(17,17,17,0.35)" }}>
+              Sin eventos próximos
+            </span>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }
