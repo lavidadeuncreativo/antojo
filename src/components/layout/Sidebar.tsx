@@ -69,8 +69,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Navigation List */}
       <nav className="flex-1 p-4 space-y-6">
         {Object.entries(groups).map(([group, items]) => (
-          <div key={group} className="space-y-1">
-            <span className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider block px-2 mb-2">
+          <div key={group} className="space-y-2">
+            <span className="text-[10px] font-extrabold text-[var(--color-text-muted)] uppercase tracking-widest block px-3 mb-1">
               {groupLabels[group]}
             </span>
             <div className="space-y-0.5">
@@ -83,7 +83,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`block px-2 py-1.5 text-xs font-semibold rounded transition-all leading-none ${
+                    className={`block px-3 py-2 text-[13px] font-bold rounded transition-all leading-none ${
                       isActive
                         ? "bg-black text-white"
                         : "text-[var(--color-text-secondary)] hover:text-black hover:bg-black/5"
@@ -106,9 +106,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               window.location.href = "/";
             }
           }}
-          className="flex items-center gap-2 px-2 py-1.5 w-full text-left text-xs font-semibold text-[var(--color-text-secondary)] hover:text-black transition-all"
+          className="flex items-center gap-2 px-3 py-2 w-full text-left text-[13px] font-bold text-[var(--color-text-secondary)] hover:text-black transition-all"
         >
-          <LogOut size={13} />
+          <LogOut size={14} />
           Salir del ERP
         </button>
       </div>

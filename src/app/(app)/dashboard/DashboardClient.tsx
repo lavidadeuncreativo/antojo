@@ -136,16 +136,16 @@ export function DashboardClient({ data }: { data?: any }) {
             return (
               <div
                 key={prod.id}
-                className={`card-interactive relative flex flex-col justify-between p-6 overflow-hidden rounded-[28px] ${bgClass} transition-all duration-300 hover:-translate-y-1 h-[280px] border border-black/5`}
+                className={`card-interactive relative flex flex-col justify-between p-6 overflow-hidden rounded-[28px] ${bgClass} transition-all duration-300 hover:-translate-y-1 h-[320px] border border-black/5`}
               >
                 <div className="text-left">
-                  <span className="text-[8px] font-black tracking-widest text-black/40 uppercase block mb-1">
+                  <span className="text-[10px] font-extrabold tracking-widest text-black/50 uppercase block mb-1">
                     {flavorName}
                   </span>
-                  <h3 className="text-base font-extrabold text-black leading-tight tracking-tight">
+                  <h3 className="text-[17px] font-black text-black leading-tight tracking-tight">
                     {prod.name}
                   </h3>
-                  <div className="text-xs font-bold text-black/70 mt-1">
+                  <div className="text-sm font-bold text-black/80 mt-1">
                     {formatCurrency(prod.price)}
                   </div>
                 </div>
@@ -155,7 +155,7 @@ export function DashboardClient({ data }: { data?: any }) {
 
                 {/* Bottom row containing recipe summary and circular arrow link */}
                 <div className="flex items-end justify-between mt-auto">
-                  <div className="text-[8px] font-bold text-black/60 uppercase tracking-wide leading-none text-left">
+                  <div className="text-[10px] font-bold text-black/70 uppercase tracking-wider leading-tight text-left">
                     Receta: {prod.recipe.length} ingredientes <br />
                     Costo: {formatCurrency(prod.cost)}
                   </div>

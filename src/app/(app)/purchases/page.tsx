@@ -65,11 +65,11 @@ export default function ComprasPage() {
       {/* Metrics (Grid style) */}
       <div className="grid grid-cols-1 md:grid-cols-2 border border-[var(--color-border)] bg-[var(--color-border)] gap-[1px]">
         <div className="bg-white p-6">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Órdenes de Compra</span>
+          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Órdenes de Compra</span>
           <span className="text-3xl font-extrabold text-black tabular-nums">{purchases.length}</span>
         </div>
         <div className="bg-white p-6">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Egreso Acumulado</span>
+          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)] block mb-1">Egreso Acumulado</span>
           <span className="text-3xl font-extrabold text-black tabular-nums">
             {formatCurrency(purchases.reduce((acc, p) => acc + p.cost, 0))}
           </span>

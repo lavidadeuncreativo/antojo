@@ -139,15 +139,15 @@ export default function VentasPage() {
                   </td>
                   <td>
                     {sale.items.map((it, idx) => (
-                      <div key={idx} className="text-xs font-medium">
+                      <div key={idx} className="text-sm font-bold text-black py-0.5">
                         {it.qty}x {it.name}
                       </div>
                     ))}
                   </td>
-                  <td className="text-right font-bold text-black tabular-nums">
+                  <td className="text-right font-black text-black tabular-nums">
                     {formatCurrency(sale.total)}
                   </td>
-                  <td className="text-[var(--color-text-secondary)] font-medium">{sale.time}</td>
+                  <td className="text-[var(--color-text-secondary)] font-bold text-xs">{sale.time}</td>
                 </tr>
               ))}
               {filteredSales.length === 0 && (

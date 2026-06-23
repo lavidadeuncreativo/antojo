@@ -70,7 +70,7 @@ export function Topbar({ onMenuToggle }: TopbarProps) {
       <div className="flex items-center gap-4">
         <button
           onClick={onMenuToggle}
-          className="visible-mobile p-1 text-black hover:bg-black/5 rounded"
+          className="md:hidden p-1 text-black hover:bg-black/5 rounded"
           aria-label="Menú principal"
         >
           <Menu size={18} />
@@ -85,7 +85,7 @@ export function Topbar({ onMenuToggle }: TopbarProps) {
       </div>
 
       {/* Navigation (Swiss Minimalist Text Links) */}
-      <nav className="hidden-mobile flex items-center gap-6 mx-auto">
+      <nav className="hidden md:flex items-center gap-6 mx-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (

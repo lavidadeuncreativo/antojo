@@ -131,7 +131,7 @@ export default function ProductosPage() {
           <div key={product.id} className="card p-6 flex flex-col justify-between space-y-4 border border-[var(--color-border)] bg-white rounded-none">
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)]">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)]">
                   Bebida Terminado
                 </span>
                 <button
@@ -148,15 +148,15 @@ export default function ProductosPage() {
               {/* Costing values */}
               <div className="flex items-center gap-4 mt-3 pb-3 border-b border-[var(--color-border)]">
                 <div className="text-left">
-                  <span className="text-[8px] text-[var(--color-text-muted)] block uppercase font-bold">Precio</span>
+                  <span className="text-[10px] text-[var(--color-text-muted)] block uppercase font-extrabold tracking-widest">Precio</span>
                   <span className="text-sm font-extrabold text-black tabular-nums">{formatCurrency(product.price)}</span>
                 </div>
                 <div className="text-left">
-                  <span className="text-[8px] text-[var(--color-text-muted)] block uppercase font-bold">Costo Receta</span>
+                  <span className="text-[10px] text-[var(--color-text-muted)] block uppercase font-extrabold tracking-widest">Costo Receta</span>
                   <span className="text-sm font-bold text-[var(--color-text-secondary)] tabular-nums">{formatCurrency(product.cost)}</span>
                 </div>
                 <div className="text-left">
-                  <span className="text-[8px] text-[var(--color-text-muted)] block uppercase font-bold">Margen</span>
+                  <span className="text-[10px] text-[var(--color-text-muted)] block uppercase font-extrabold tracking-widest">Margen</span>
                   <span className="text-sm font-extrabold text-black tabular-nums">{product.margin}%</span>
                 </div>
               </div>

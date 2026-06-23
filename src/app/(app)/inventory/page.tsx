@@ -115,11 +115,11 @@ export default function InventarioPage() {
                 <div key={item.id} className="card p-5 text-left flex flex-col justify-between min-h-[140px] border border-[var(--color-border)] bg-white rounded-none">
                   <div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[9px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
+                      <span className="text-[10px] font-extrabold text-[var(--color-text-muted)] uppercase tracking-widest">
                         Insumo Base
                       </span>
                       {isLow && (
-                        <span className="text-[9px] font-bold text-[var(--color-error)] bg-[var(--color-error-bg)] px-2 py-0.5 border border-[var(--color-error)]">
+                        <span className="text-[10px] font-extrabold text-[var(--color-error)] bg-[var(--color-error-bg)] px-2 py-0.5 border border-[var(--color-error)] tracking-wider">
                           Stock Bajo
                         </span>
                       )}
@@ -130,11 +130,11 @@ export default function InventarioPage() {
                   <div className="flex items-baseline justify-between border-t border-[var(--color-border)] pt-3 mt-3">
                     <span className="text-2xl font-extrabold text-black tabular-nums">
                       {item.stock}{" "}
-                      <span className="text-xs font-normal text-[var(--color-text-secondary)]">
+                      <span className="text-xs font-semibold text-[var(--color-text-secondary)]">
                         {item.unit}
                       </span>
                     </span>
-                    <span className="text-[9px] text-[var(--color-text-muted)] font-bold uppercase tracking-wide">
+                    <span className="text-[10px] text-[var(--color-text-muted)] font-extrabold uppercase tracking-widest">
                       Min: {item.min_stock} {item.unit}
                     </span>
                   </div>

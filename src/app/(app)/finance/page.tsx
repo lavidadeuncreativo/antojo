@@ -31,7 +31,7 @@ export default function FinanzasPage() {
         <div className="bg-white p-8 flex flex-col justify-between min-h-[140px] text-left">
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-[9px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider">
+              <span className="text-[11px] font-extrabold text-[var(--color-text-secondary)] uppercase tracking-widest">
                 Ingresos Totales
               </span>
               <div className="w-7 h-7 rounded-full bg-[var(--color-success-bg)] text-[var(--color-success)] flex items-center justify-center">
@@ -52,7 +52,7 @@ export default function FinanzasPage() {
         <div className="bg-white p-8 flex flex-col justify-between min-h-[140px] text-left">
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-[9px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider">
+              <span className="text-[11px] font-extrabold text-[var(--color-text-secondary)] uppercase tracking-widest">
                 Egresos de Caja
               </span>
               <div className="w-7 h-7 rounded-full bg-[var(--color-error-bg)] text-[var(--color-error)] flex items-center justify-center">
@@ -73,7 +73,7 @@ export default function FinanzasPage() {
         <div className="bg-white p-8 flex flex-col justify-between min-h-[140px] text-left">
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)]">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--color-text-secondary)]">
                 Flujo Neto
               </span>
               <div className="w-7 h-7 rounded-full flex items-center justify-center bg-black/5 text-black">

@@ -14,7 +14,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-layout">
       {/* Sidebar — desktop only */}
-      <div className="hidden-mobile">
+      <div className="hidden md:block">
         <Sidebar
           collapsed={sidebarCollapsed}
           onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -37,7 +37,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Mobile Bottom Nav */}
-      <div className="visible-mobile">
+      <div className="block md:hidden">
         <MobileBottomNav onMenuOpen={() => setMobileMenuOpen(true)} />
         <MobileMenuDrawer
           open={mobileMenuOpen}
