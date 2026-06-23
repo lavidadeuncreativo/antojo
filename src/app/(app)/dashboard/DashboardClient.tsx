@@ -34,55 +34,16 @@ import {
 import { formatCurrency, formatNumber, formatPercent, percentChange } from "@/lib/utils";
 import Link from "next/link";
 
-// ── Datos de demostración ─────────────────────────────────────
+import { DashboardData } from "@/types/dashboard";
 
-const salesByDay = [
-  { dia: "Lun", ventas: 1240, costo: 580 },
-  { dia: "Mar", ventas: 890, costo: 420 },
-  { dia: "Mié", ventas: 1680, costo: 790 },
-  { dia: "Jue", ventas: 2100, costo: 980 },
-  { dia: "Vie", ventas: 3200, costo: 1480 },
-  { dia: "Sáb", ventas: 4100, costo: 1890 },
-  { dia: "Dom", ventas: 2800, costo: 1300 },
-];
-
-const salesByChannel = [
-  { name: "Calle directa", value: 38, color: "#701F2D" },
-  { name: "Instagram", value: 24, color: "#A7606B" },
-  { name: "WhatsApp", value: 18, color: "#F2E5E8" },
-  { name: "Eventos", value: 12, color: "#B27C32" },
-  { name: "Mayoreo", value: 8, color: "#47785A" },
-];
-
-const topProducts = [
-  { name: "PÓCIMA", units: 142, revenue: 9230, margin: 67 },
-  { name: "El Mañanero", units: 98, revenue: 5880, margin: 62 },
-  { name: "AURA", units: 74, revenue: 4440, margin: 58 },
-  { name: "Mojito Mezcal", units: 45, revenue: 3375, margin: 54 },
-  { name: "Limonada Mineral", units: 38, revenue: 1900, margin: 48 },
-];
-
-const alerts = [
-  { type: "warning", message: "Quedan 14 latas transparentes", link: "/inventory/alerts", icon: Package },
-  { type: "warning", message: "PÓCIMA está por debajo del stock mínimo", link: "/inventory/alerts", icon: AlertTriangle },
-  { type: "info", message: "Hay 3 cotizaciones sin seguimiento", link: "/quotes", icon: Users },
-  { type: "success", message: "El Mañanero — lote #012 listo para liberar", link: "/production", icon: CheckCircle2 },
-  { type: "error", message: "La promo 2×$100 reduce el margen al 18%", link: "/promotions/simulator", icon: XCircle },
-];
-
-const upcomingEvents = [
-  { name: "Boda García — Barra completa", date: "28 Jun", guests: 120, status: "confirmed" },
-  { name: "Activación Reforma", date: "2 Jul", guests: 0, status: "prospect" },
-  { name: "Cumple corporativo Grupo Herdez", date: "5 Jul", guests: 80, status: "confirmed" },
-];
-
-const recentSales = [
-  { folio: "VTA-00089", customer: "Sofía Ramírez", total: 650, channel: "Instagram", time: "hace 12 min" },
-  { folio: "VTA-00088", customer: "Cliente general", total: 390, channel: "Calle", time: "hace 38 min" },
-  { folio: "VTA-00087", customer: "Café Delicias", total: 2400, channel: "Mayoreo", time: "hace 2 h" },
-];
-
-const periods = ["Hoy", "Ayer", "Esta semana", "Este mes", "Este año"];
+// Mapeo de strings a componentes de icono
+const iconMap = {
+  Package,
+  AlertTriangle,
+  Users,
+  CheckCircle2,
+  XCircle,
+};
 
 // ── Componentes helper ────────────────────────────────────────
 
@@ -163,10 +124,10 @@ function AlertItem({
   alert,
   index,
 }: {
-  alert: (typeof alerts)[0];
+  alert: DashboardData["alerts"][0];
   index: number;
 }) {
-  const Icon = alert.icon;
+  const Icon = iconMap[alert.iconName];
   const colors = {
     warning: { bg: "var(--color-warning-bg)", color: "var(--color-warning)", border: "rgba(178,124,50,0.2)" },
     error: { bg: "var(--color-error-bg)", color: "var(--color-error)", border: "rgba(168,66,66,0.2)" },
@@ -214,12 +175,21 @@ function AlertItem({
 
 // ── Dashboard Principal ───────────────────────────────────────
 
-export function DashboardClient() {
+const periods = ["Hoy", "Ayer", "Esta semana", "Este mes", "Este año"];
+
+export function DashboardClient({ data }: { data: DashboardData }) {
   const [selectedPeriod, setSelectedPeriod] = useState("Esta semana");
 
-  const miniSalesData = [1240, 890, 1680, 2100, 3200, 4100, 2800];
-  const miniUnitsData = [34, 22, 46, 58, 88, 112, 77];
-  const miniMarginData = [62, 64, 61, 65, 67, 63, 66];
+  const {
+    salesByDay,
+    salesByChannel,
+    topProducts,
+    alerts,
+    upcomingEvents,
+    recentSales,
+    kpis,
+    monthlyGoal,
+  } = data;
 
   return (
     <div style={{ maxWidth: 1400, margin: "0 auto" }}>
@@ -298,44 +268,44 @@ export function DashboardClient() {
       >
         <KPICard
           label="Ventas totales"
-          value={16010}
-          previous={13400}
-          miniData={miniSalesData}
+          value={kpis.totalSales.current}
+          previous={kpis.totalSales.previous}
+          miniData={kpis.totalSales.miniData}
           delay={0}
         />
         <KPICard
           label="Utilidad estimada"
-          value={9526}
-          previous={7800}
-          miniData={miniSalesData.map((v) => v * 0.6)}
+          value={kpis.estimatedProfit.current}
+          previous={kpis.estimatedProfit.previous}
+          miniData={kpis.estimatedProfit.miniData}
           delay={0.06}
         />
         <KPICard
           label="Margen promedio"
-          value={59.5}
-          previous={58.2}
+          value={kpis.avgMargin.current}
+          previous={kpis.avgMargin.previous}
           format="percent"
-          miniData={miniMarginData}
+          miniData={kpis.avgMargin.miniData}
           delay={0.12}
         />
         <KPICard
           label="Unidades vendidas"
-          value={437}
-          previous={382}
+          value={kpis.unitsSold.current}
+          previous={kpis.unitsSold.previous}
           format="number"
-          miniData={miniUnitsData}
+          miniData={kpis.unitsSold.miniData}
           delay={0.18}
         />
         <KPICard
           label="Ticket promedio"
-          value={366}
-          previous={351}
+          value={kpis.avgTicket.current}
+          previous={kpis.avgTicket.previous}
           delay={0.24}
         />
         <KPICard
           label="Gastos"
-          value={3200}
-          previous={2800}
+          value={kpis.expenses.current}
+          previous={kpis.expenses.previous}
           delay={0.3}
         />
       </div>
@@ -602,11 +572,11 @@ export function DashboardClient() {
                 stroke="var(--color-wine)"
                 strokeWidth={10}
                 strokeDasharray={`${2 * Math.PI * 50}`}
-                strokeDashoffset={`${2 * Math.PI * 50 * (1 - 0.73)}`}
+                strokeDashoffset={`${2 * Math.PI * 50 * (1 - (monthlyGoal.current / monthlyGoal.goal))}`}
                 strokeLinecap="round"
                 transform="rotate(-90 60 60)"
               />
-              <text x={60} y={56} textAnchor="middle" style={{ fontSize: 20, fontWeight: 700, fill: "var(--color-text)" }}>73%</text>
+              <text x={60} y={56} textAnchor="middle" style={{ fontSize: 20, fontWeight: 700, fill: "var(--color-text)" }}>{Math.round((monthlyGoal.current / monthlyGoal.goal) * 100)}%</text>
               <text x={60} y={72} textAnchor="middle" style={{ fontSize: 10, fill: "var(--color-text-muted)" }}>completado</text>
             </svg>
           </div>
@@ -614,13 +584,13 @@ export function DashboardClient() {
             <div>
               <div style={{ color: "var(--color-text-muted)", fontSize: 11, marginBottom: 2 }}>Actual</div>
               <div style={{ fontWeight: 700, color: "var(--color-text)" }}>
-                {formatCurrency(54800, { compact: true })}
+                {formatCurrency(monthlyGoal.current, { compact: true })}
               </div>
             </div>
             <div style={{ textAlign: "right" }}>
               <div style={{ color: "var(--color-text-muted)", fontSize: 11, marginBottom: 2 }}>Meta</div>
               <div style={{ fontWeight: 700, color: "var(--color-text)" }}>
-                {formatCurrency(75000, { compact: true })}
+                {formatCurrency(monthlyGoal.goal, { compact: true })}
               </div>
             </div>
           </div>

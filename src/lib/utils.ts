@@ -274,9 +274,9 @@ export function simulatePromotion(
   let riskLevel: "green" | "yellow" | "red";
   let recommendation: string;
 
-  if (margin >= minMargin && profitDiff >= 0) {
+  if (margin >= minMargin) {
     riskLevel = "green";
-    recommendation = `Esta promoción es rentable. Genera $${formatCurrency(unitProfit)} de contribución por unidad, manteniendo un margen de ${margin.toFixed(1)}%.`;
+    recommendation = `Esta promoción es viable. Genera $${formatCurrency(unitProfit)} de contribución unitaria (margen de ${margin.toFixed(1)}%). ${additionalUnitsNeeded > 0 ? `Se requiere vender ${additionalUnitsNeeded} unidades adicionales para igualar la utilidad total normal.` : ""}`;
   } else if (margin >= minMargin * 0.6 && margin < minMargin) {
     riskLevel = "yellow";
     recommendation = `Esta promoción reduce el margen a ${margin.toFixed(1)}% (mínimo permitido: ${minMargin}%). Solo es viable si vendes ${additionalUnitsNeeded > 0 ? `${additionalUnitsNeeded} unidades adicionales` : "volúmenes altos"}.`;
