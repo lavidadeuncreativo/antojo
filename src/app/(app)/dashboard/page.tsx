@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE !== "false" || !process.env.NEXT_PUBLIC_SUPABASE_URL;
   
   let data: DashboardData;
 

@@ -13,7 +13,8 @@ export function middleware(request: NextRequest) {
   // Redirigir login al dashboard en modo demo
   if (pathname.startsWith("/login")) {
     const isDemoMode = request.nextUrl.searchParams.get("demo") !== null ||
-      process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+      process.env.NEXT_PUBLIC_DEMO_MODE !== "false" ||
+      !process.env.NEXT_PUBLIC_SUPABASE_URL;
 
     if (isDemoMode) {
       const dashboardUrl = request.nextUrl.clone();
